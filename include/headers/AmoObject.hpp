@@ -30,6 +30,10 @@ public:
     void set_is_move_(bool move) {is_move_ = move;}
     // tuy loai dan ma kich co khac nhau phai goi them ham nay
     void SetWidthHeight(const int& width, const int& height) {rect_.w = width, rect_.y = height;}
+    void Set_x_val(const int& val) {x_val_ = val;}
+    int Get_x_val(){return x_val_;}
+    void Set_y_val(const int& val) {y_val_ = val;}
+    int Get_y_val(){return y_val_;}
 private:
     int x_val_;
     int y_val_;

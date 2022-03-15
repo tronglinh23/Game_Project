@@ -49,14 +49,14 @@ void quitSDL(SDL_Window* window, SDL_Renderer* renderer)
 
 
 bool LoadBackground(BaseObject &background){
-    bool ret = background.LoadIMG("res/space.png",renderer);
-    background.setSize(SCREEN_WIDTH,SCREEN_HEIGHT);
+    bool ret = background.LoadIMG("res/bg4800.png",renderer);
+    // background.setSize(SCREEN_WIDTH,SCREEN_HEIGHT);
     if(ret == false) return false;
     return true;
 }
 
 bool LoadMainObject(MainObject &p_mainobject){
-    bool ret = p_mainobject.LoadIMG("res/airship.png",renderer);
+    bool ret = p_mainobject.LoadIMG("res/plane_fly.png",renderer);
     p_mainobject.SetRect(100,200);
     p_mainobject.setSize(WIDTH_MAIN_OBJECT,HEIGHT_MAIN_OBJECT);
     if(ret == false) return false;
@@ -68,6 +68,7 @@ int main(int argc, char* argv[])
 {
     srand(5);
     initSDL(window, renderer);
+
     // Init MainObject
     BaseObject g_background;
     MainObject g_mainobject;
@@ -80,7 +81,7 @@ int main(int argc, char* argv[])
         ThreatObject* p_threat = p_threat_list + i;
         p_threat->LoadIMG("res/af1.png",renderer);
         int ran_num = rand() % (SCREEN_HEIGHT + 400);
-        std::cout << ran_num << " "; 
+        // std::cout << ran_num << " "; 
         if(ran_num > SCREEN_HEIGHT - 200) ran_num *= 5.0/10;
         p_threat->SetRect(SCREEN_WIDTH + i * 400,ran_num);
         p_threat->Set_x_val(6);
@@ -89,10 +90,11 @@ int main(int argc, char* argv[])
         p_threat->init(threat_amo,renderer);
     }
 
-
     SDL_SetRenderDrawColor(renderer, 255,255,255,255);
     SDL_RenderClear(renderer);
 
+    int bkgn_x = 0;
+    bool is_run_screen = true;
     bool is_quit = false;
     while(!is_quit){
         while(SDL_PollEvent(&event)){
@@ -102,37 +104,53 @@ int main(int argc, char* argv[])
             }
             g_mainobject.HandleInputAction(event,renderer);
         }
+        
+        // Load 2 tam anh lien tiep de cho cam tuong dang chay
+        // g_background.SetRect(bkgn_x,0);
+        // g_background.Render(renderer,NULL);
+        // g_background.SetRect(bkgn_x + SCREEN_WIDTH,0);
+        // g_background.Render(renderer,NULL);
+        // if(bkgn_x <= -SCREEN_WIDTH) bkgn_x = 0;
 
-        g_background.Render(renderer,NULL);
+        if(is_run_screen){
+            bkgn_x -= 2;
+            if(bkgn_x <= - (WIDTH_BACKGROUND - SCREEN_WIDTH)) is_run_screen = false; // den man hinh cuoi cung thi dung lai de danh boss
+            g_background.SetRect(bkgn_x,0);
+            g_background.Render(renderer,NULL);
+        }
+        else{
+            g_background.SetRect(bkgn_x,0);
+            g_background.Render(renderer,NULL);
+        }
         g_mainobject.HandMove();
         g_mainobject.Render(renderer,NULL);
-        for(int i = 0 ; i < g_mainobject.GetAmoList().size(); i++){
-            std::vector<AmoObject*> amo_list = g_mainobject.GetAmoList(); 
-            // tao ra mot cai list để chứa các viên đạn , bắn ra một cách liên tục
-            AmoObject* p_amo = amo_list.at(i); // xét từ vị trí viên đầu tiên
-            if(p_amo != NULL){
-                if(p_amo->get_is_move_()){
-                    p_amo->HandleMove(SCREEN_WIDTH,SCREEN_HEIGHT); // KHi gap vat can thi xoa vien dan
-                    p_amo->Render(renderer,NULL);
-                }
-                // khi gap vat can thi get_is_move = false -> lệnh else thực hiện và xóa đi viên đạn đấy, 
-                else{
-                    if(p_amo != NULL){
-                        amo_list.erase(amo_list.begin() + i); 
-                        // thao tác bắn sẽ được xóa khỏi mảng => từ đó hàm amo_list được khởi tạo lại và mất đi thao tác vừa rồi
-                        g_mainobject.SetAmoList(amo_list); // SetAmolist mới , để amo_list = g_mainobject.GetAmoList() được thay đổi 
-                        delete p_amo; // delete để k bị thất thoát bộ nhớ
-                        p_amo = NULL;
-                    }
-                }
-            }
-        }
+        g_mainobject.Display_Amo(renderer);
         // run Threat
         for(int t = 0 ; t < Amount_Threat ; t++){
             ThreatObject* p_threat = (p_threat_list + t);
-            p_threat->Render(renderer,NULL);
             p_threat->HandleMove(SCREEN_WIDTH,SCREEN_HEIGHT);
+            p_threat->Render(renderer,NULL);
             p_threat->MakeAmo(renderer,SCREEN_WIDTH,SCREEN_HEIGHT);
+            bool check_col = p_threat->CheckCollision(g_mainobject.GetRect(),p_threat->GetRect());
+            if(check_col){
+                if(MessageBox(NULL,L"GAME OVER",L"INFO",MB_OK) == IDOK){
+                    delete [] p_threat_list;
+                    quitSDL(window, renderer);
+                    return 0;
+                }
+                return 0;
+            }
+            std::vector<AmoObject*> amo_list = g_mainobject.GetAmoList();
+            for(int k = 0 ; k < amo_list.size(); k++){
+                AmoObject* p_amo = amo_list.at(k);
+                if(p_amo){
+                    bool ret_col = p_amo->CheckCollision(p_amo->GetRect(),p_threat->GetRect());
+                    if(ret_col){
+                        p_threat->ResetThreat(SCREEN_WIDTH + t * 400);
+                        g_mainobject.RemoveAmo(k);
+                    }
+                }
+            }
         }
         SDL_RenderPresent(renderer);
     }

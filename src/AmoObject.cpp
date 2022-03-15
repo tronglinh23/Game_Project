@@ -13,14 +13,14 @@ AmoObject::~AmoObject(){
 }
 
 void AmoObject::HandleMoveFromRighttoLeft(const int& x_border, const int& y_border){
-    rect_.x -= 10;
+    rect_.x -= x_val_;
     if(rect_.x < 0){
         is_move_ = false;
     }
 }
 
 void AmoObject::HandleMove(const int& x_border, const int& y_border){
-    rect_.x += 20; // dan ban huong thang ------------ . Co the them rect_y de dan bay xuong duoi hoac len tren
+    rect_.x += x_val_; // dan ban huong thang ------------ . Co the them rect_y de dan bay xuong duoi hoac len tren
     if(rect_.x > x_border)
     {
         is_move_ = false;

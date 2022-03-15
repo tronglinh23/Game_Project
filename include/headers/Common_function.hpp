@@ -5,6 +5,9 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <iostream>
+// background
+const int WIDTH_BACKGROUND = 4800;
+const int HEIGHT_BACKGROUND = 600;
 // Init default
 static SDL_Window* window = NULL;
 static SDL_Renderer* renderer = NULL;

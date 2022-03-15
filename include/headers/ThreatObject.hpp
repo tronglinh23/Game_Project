@@ -19,7 +19,8 @@ public:
     void Set_y_val(const int& val) {y_val_ = val;}
     int Get_y_val(){return y_val_;}
     std::vector<AmoObject*> Get_Amo_list() {return p_amo_list_;}
-
+    void ResetThreat(const int& xborder);
+    void ResetAmo(AmoObject* p_amo);
 private:
     int x_val_;
     int y_val_;

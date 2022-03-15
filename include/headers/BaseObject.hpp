@@ -14,6 +14,7 @@ public:
 
     bool LoadIMG(std::string path, SDL_Renderer* screen); // loadimage de ve ra 
     void Render(SDL_Renderer* des, const SDL_Rect* clip = NULL); // day len render 
+    bool CheckCollision(const SDL_Rect &object1 ,const SDL_Rect &object2);
     void Free();
 protected:
     SDL_Texture* p_object_;

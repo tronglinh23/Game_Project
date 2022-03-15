@@ -6,6 +6,8 @@
 #include <time.h>
 #define WIDTH_MAIN_OBJECT 77
 #define HEIGHT_MAIN_OBJECT 52
+
+const int Under_Limit_Threat = 100;
 class MainObject : public BaseObject
 {
 public:
@@ -15,6 +17,9 @@ public:
     void HandMove();
     void SetAmoList(std::vector<AmoObject*> amo_list) {p_amo_list_ = amo_list;}
     std::vector<AmoObject*> GetAmoList() const {return p_amo_list_;}
+    
+    void Display_Amo(SDL_Renderer* des);
+    void RemoveAmo(const int& x);
 private:
     float x_val_;
     float y_val_;

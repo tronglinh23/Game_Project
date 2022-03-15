@@ -30,6 +30,7 @@ void ThreatObject::init(AmoObject* P_amo,SDL_Renderer* screen){
             P_amo->set_is_move_(true);
             P_amo->SetWidthHeight(WIDTH_SPHERE,HEIGHT_SPHERE);
             P_amo->SetRect(rect_.x - 5, rect_.y + rect_.h * 0.7);
+            P_amo->Set_x_val(8); // toc do dan ban cua threat
             p_amo_list_.push_back(P_amo);
         }
     }
@@ -66,7 +67,24 @@ void ThreatObject::HandleMove(const int& x_border, const int& y_boder){
         // std::cout << rect_.y << " "; 
         if(rect_.y > SCREEN_HEIGHT - 200){
             rect_.y *= 5.0/10;
-            std::cout << rect_.y << " ";
+            // std::cout << rect_.y << " ";
         }
     }
 }
+
+void ThreatObject::ResetThreat(const int& xborder){
+    rect_.x = xborder;
+    rect_.y = rand() % (SCREEN_HEIGHT + 400);
+    if(rect_.y > SCREEN_HEIGHT - 200){
+        rect_.y *= 5.0/10;
+    }
+    for(int i = 0 ; i < p_amo_list_.size();i++){
+        AmoObject* p_amo = p_amo_list_.at(i);
+        if(p_amo) ResetAmo(p_amo);
+    }
+
+}
+
+void ThreatObject::ResetAmo(AmoObject* p_amo){
+    p_amo->SetRect(rect_.x - 5, rect_.y + rect_.h * 0.7);
+} 
