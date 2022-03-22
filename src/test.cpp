@@ -29,9 +29,7 @@ void initSDL(SDL_Window* &window, SDL_Renderer* &renderer)
 
     if (!window) logSDLError(std::cout, "CreateWindow", true); // window == nullptr
 
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | 
-                                              SDL_RENDERER_PRESENTVSYNC);
-\
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
     if (!renderer) logSDLError(std::cout, "CreateRenderer", true);  // renderer == nullptr
 
@@ -66,7 +64,7 @@ bool LoadMainObject(MainObject &p_mainobject){
 // Main
 int main(int argc, char* argv[])
 {
-    srand(5);
+    srand(time(NULL));
     initSDL(window, renderer);
 
     // Init MainObject
@@ -133,13 +131,13 @@ int main(int argc, char* argv[])
             p_threat->MakeAmo(renderer,SCREEN_WIDTH,SCREEN_HEIGHT);
             bool check_col = p_threat->CheckCollision(g_mainobject.GetRect(),p_threat->GetRect());
             if(check_col){
-                if(MessageBox(NULL,L"GAME OVER",L"INFO",MB_OK) == IDOK){
+                if(MessageBox(NULL,"GAME OVER","INFO",MB_OK) == IDOK){
                     delete [] p_threat_list;
                     quitSDL(window, renderer);
                     return 0;
                 }
-                return 0;
             }
+            // xu li va cham vien dan voi may bay
             std::vector<AmoObject*> amo_list = g_mainobject.GetAmoList();
             for(int k = 0 ; k < amo_list.size(); k++){
                 AmoObject* p_amo = amo_list.at(k);
@@ -147,7 +145,7 @@ int main(int argc, char* argv[])
                     bool ret_col = p_amo->CheckCollision(p_amo->GetRect(),p_threat->GetRect());
                     if(ret_col){
                         p_threat->ResetThreat(SCREEN_WIDTH + t * 400);
-                        g_mainobject.RemoveAmo(k);
+                        g_mainobject.RemoveAmo(k); // xoa vien dan cua mainobject
                     }
                 }
             }
