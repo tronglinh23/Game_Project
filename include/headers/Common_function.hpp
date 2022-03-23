@@ -5,6 +5,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <iostream>
+// Explosion
+
 // background
 const int WIDTH_BACKGROUND = 4800;
 const int HEIGHT_BACKGROUND = 600;

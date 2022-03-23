@@ -7,6 +7,7 @@
 #include "MainObject.hpp"
 #include "ThreatObject.hpp"
 #include "time.h"
+#include "ExplosionObject.hpp"
 
 void logSDLError(std::ostream& os, const std::string &msg, bool fatal){
     os << msg << " Error: " << SDL_GetError() << std::endl;
@@ -90,7 +91,12 @@ int main(int argc, char* argv[])
 
     SDL_SetRenderDrawColor(renderer, 255,255,255,255);
     SDL_RenderClear(renderer);
-
+    // Init ExplosionObject
+    ExplosionObject EXP_main;
+    EXP_main.LoadIMG("res/exp_main.png",renderer);
+    EXP_main.SetRect(165,165);
+    EXP_main.set_clip();
+    //
     int bkgn_x = 0;
     bool is_run_screen = true;
     bool is_quit = false;
@@ -129,8 +135,18 @@ int main(int argc, char* argv[])
             p_threat->HandleMove(SCREEN_WIDTH,SCREEN_HEIGHT);
             p_threat->Render(renderer,NULL);
             p_threat->MakeAmo(renderer,SCREEN_WIDTH,SCREEN_HEIGHT);
+            // kiem tra va cham
             bool check_col = p_threat->CheckCollision(g_mainobject.GetRect(),p_threat->GetRect());
             if(check_col){
+                for(int ex = 0 ; ex < 4 ; ex++){
+                    int x_pos = g_mainobject.GetRect().x + g_mainobject.GetRect().w*0.5 - 0.5*EXP_WIDTH;
+                    int y_pos = g_mainobject.GetRect().y + g_mainobject.GetRect().w*0.5 - 0.5*EXP_HEIGHT;
+                    EXP_main.set_frame(ex);
+                    EXP_main.SetRect(x_pos,y_pos);
+                    EXP_main.RenderEx(renderer,NULL);
+                    SDL_Delay(100);
+                    SDL_RenderPresent(renderer);
+                }
                 if(MessageBox(NULL,"GAME OVER","INFO",MB_OK) == IDOK){
                     delete [] p_threat_list;
                     quitSDL(window, renderer);
