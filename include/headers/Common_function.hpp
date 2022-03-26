@@ -5,6 +5,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <iostream>
+// Window title
+const std::string WINDOW_TITLE = "SDL2 _ GAME CPP";
 // Explosion
 
 // background

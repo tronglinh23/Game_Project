@@ -7,6 +7,8 @@
 #define WIDTH_MAIN_OBJECT 77
 #define HEIGHT_MAIN_OBJECT 52
 
+const int x_step = WIDTH_MAIN_OBJECT/7;
+const int y_step = HEIGHT_MAIN_OBJECT/6;
 const int Under_Limit_Threat = 100;
 class MainObject : public BaseObject
 {

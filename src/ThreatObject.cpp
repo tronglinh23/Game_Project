@@ -22,7 +22,6 @@ ThreatObject::~ThreatObject(){
         p_amo_list_.clear();
     }
 }
-
 void ThreatObject::init(AmoObject* P_amo,SDL_Renderer* screen){
     if(P_amo != NULL){
         bool ret = P_amo->LoadIMG("res/sphere.png",screen);
@@ -88,3 +87,10 @@ void ThreatObject::ResetThreat(const int& xborder){
 void ThreatObject::ResetAmo(AmoObject* p_amo){
     p_amo->SetRect(rect_.x - 5, rect_.y + rect_.h * 0.7);
 } 
+
+void ThreatObject::RemoveAmo_Threat(const int& k){
+    if(k < p_amo_list_.size()){
+        AmoObject* p_amo = p_amo_list_.at(k);
+        ResetAmo(p_amo);
+    }
+}

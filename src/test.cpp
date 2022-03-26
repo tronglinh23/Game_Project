@@ -17,9 +17,6 @@ void logSDLError(std::ostream& os, const std::string &msg, bool fatal){
     }
 }
 
-const std::string WINDOW_TITLE = "SDL2 _ GAME CPP";
-
-
 void initSDL(SDL_Window* &window, SDL_Renderer* &renderer) 
 {
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
@@ -56,12 +53,18 @@ bool LoadBackground(BaseObject &background){
 
 bool LoadMainObject(MainObject &p_mainobject){
     bool ret = p_mainobject.LoadIMG("res/plane_fly.png",renderer);
-    p_mainobject.SetRect(100,200);
+    p_mainobject.SetRect(100,200); // vi tri xuat hien
     p_mainobject.setSize(WIDTH_MAIN_OBJECT,HEIGHT_MAIN_OBJECT);
     if(ret == false) return false;
     return true;
 }
 
+std::string random_pics(){
+    const std::string pics_threats[] = {"res/Planets/Baren.png","res/Planets/Ice.png",
+                            "res/Planets/Lava.png","res/Planets/Terran.png"};
+    int ran = rand() % 4;
+    return pics_threats[ran];
+}
 // Main
 int main(int argc, char* argv[])
 {
@@ -75,12 +78,12 @@ int main(int argc, char* argv[])
     if(LoadMainObject(g_mainobject) == false) return -1;
     SDL_Rect mainobject = g_mainobject.GetRect();
     ThreatObject * p_threat_list = new ThreatObject[Amount_Threat];
+
     for(int i = 0 ; i < Amount_Threat ; i++)
     {
         ThreatObject* p_threat = p_threat_list + i;
-        p_threat->LoadIMG("res/af1.png",renderer);
+        p_threat->LoadIMG(random_pics(),renderer);
         int ran_num = rand() % (SCREEN_HEIGHT + 400);
-        // std::cout << ran_num << " "; 
         if(ran_num > SCREEN_HEIGHT - 200) ran_num *= 5.0/10;
         p_threat->SetRect(SCREEN_WIDTH + i * 400,ran_num);
         p_threat->Set_x_val(6);
@@ -94,12 +97,18 @@ int main(int argc, char* argv[])
     // Init ExplosionObject
     ExplosionObject EXP_main;
     EXP_main.LoadIMG("res/exp_main.png",renderer);
-    EXP_main.SetRect(165,165);
+    // EXP_main.SetRect(165,165);
     EXP_main.set_clip();
     //
     int bkgn_x = 0;
     bool is_run_screen = true;
     bool is_quit = false;
+
+    
+    // mau cua mainobject
+    const int health = 1000;
+    int remain = health;
+    //
     while(!is_quit){
         while(SDL_PollEvent(&event)){
             if(event.type == SDL_QUIT){
@@ -153,6 +162,24 @@ int main(int argc, char* argv[])
                     return 0;
                 }
             }
+            // xu li dan cua threat vao mainobject
+            std::vector<AmoObject*> threat_amo_list = p_threat->Get_Amo_list();
+            for(int k = 0 ; k < threat_amo_list.size(); k++){
+                AmoObject* p_amo = threat_amo_list.at(k);
+                if(p_amo){
+                    bool check_col = p_amo->CheckCollision(p_amo->GetRect(),g_mainobject.GetRect());
+                    if(check_col == true){
+                        p_threat->RemoveAmo_Threat(k);
+    
+                        remain -= 200;
+                        std::cout << remain << " ";
+                    }
+                    if(remain <= 0){   
+                        std::cout << "Died";
+                        return 0;
+                    }
+                }
+            }
             // xu li va cham vien dan voi may bay
             std::vector<AmoObject*> amo_list = g_mainobject.GetAmoList();
             for(int k = 0 ; k < amo_list.size(); k++){
@@ -165,6 +192,7 @@ int main(int argc, char* argv[])
                     }
                 }
             }
+            
         }
         SDL_RenderPresent(renderer);
     }

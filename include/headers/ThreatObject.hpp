@@ -21,6 +21,7 @@ public:
     std::vector<AmoObject*> Get_Amo_list() {return p_amo_list_;}
     void ResetThreat(const int& xborder);
     void ResetAmo(AmoObject* p_amo);
+    void RemoveAmo_Threat(const int& k);
 private:
     int x_val_;
     int y_val_;

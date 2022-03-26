@@ -18,38 +18,37 @@ void MainObject::HandleInputAction(SDL_Event events, SDL_Renderer* screen){
     if(events.type == SDL_KEYDOWN){
         switch(events.key.keysym.sym)
         {
+           
+            
             case SDLK_UP:
-                y_val_ -= HEIGHT_MAIN_OBJECT/6;
+                y_val_ = -y_step;
                 break;
             case SDLK_DOWN:
-                y_val_ +=  HEIGHT_MAIN_OBJECT/6;
+                y_val_ = y_step;
                 break;
             case SDLK_RIGHT:
-                x_val_ += WIDTH_MAIN_OBJECT/6;
-                std::cout << x_val_ << " ";
+                x_val_ = x_step;
                 break;
             case SDLK_LEFT:
-                x_val_ -= WIDTH_MAIN_OBJECT/6;
-                std::cout << x_val_ << " ";
+                x_val_ = -x_step;
                 break;
+            
         }
     }
     else if(events.type == SDL_KEYUP){
         switch(events.key.keysym.sym)
         {
             case SDLK_UP:
-                y_val_ += HEIGHT_MAIN_OBJECT/6;
+                y_val_ += y_step;
                 break;
             case SDLK_DOWN:
-                y_val_ -=  HEIGHT_MAIN_OBJECT/6;
+                y_val_ -=  y_step;
                 break;
             case SDLK_RIGHT:
-                x_val_ -= WIDTH_MAIN_OBJECT/6;
-                std::cout << x_val_ << " ";
+                x_val_ -= x_step;
                 break;
             case SDLK_LEFT:
-                x_val_ += WIDTH_MAIN_OBJECT/6;
-                std::cout << x_val_ << " ";
+                x_val_ += x_step;
                 break;
         }
     }
@@ -102,6 +101,8 @@ void MainObject::Display_Amo(SDL_Renderer* des){
 }
 
 void MainObject::HandMove(){
+    if(x_val_ > x_step || x_val_ < -x_step) x_val_/=2;
+     if(y_val_ > y_step || y_val_ < -y_step) y_val_/=2;
     rect_.x += x_val_;
     if(rect_.x < 0 || rect_.x + WIDTH_MAIN_OBJECT > SCREEN_WIDTH) rect_.x -= x_val_;
     rect_.y += y_val_;
