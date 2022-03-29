@@ -117,14 +117,16 @@ int main(int argc, char* argv[])
             }
             g_mainobject.HandleInputAction(event,renderer);
         }
-        
-        // Load 2 tam anh lien tiep de cho cam tuong dang chay
+        // // Load 2 tam anh lien tiep de cho cam tuong dang chay
+        // bkgn_x -= 2;
         // g_background.SetRect(bkgn_x,0);
         // g_background.Render(renderer,NULL);
         // g_background.SetRect(bkgn_x + SCREEN_WIDTH,0);
         // g_background.Render(renderer,NULL);
         // if(bkgn_x <= -SCREEN_WIDTH) bkgn_x = 0;
 
+
+        // 1 background
         if(is_run_screen){
             bkgn_x -= 2;
             if(bkgn_x <= - (WIDTH_BACKGROUND - SCREEN_WIDTH)) is_run_screen = false; // den man hinh cuoi cung thi dung lai de danh boss
