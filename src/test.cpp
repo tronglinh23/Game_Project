@@ -1,6 +1,7 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_mixer.h>
 #include <stdio.h>
 #include "Common_function.hpp"
 #include "BaseObject.hpp"
@@ -8,7 +9,7 @@
 #include "ThreatObject.hpp"
 #include "time.h"
 #include "ExplosionObject.hpp"
-
+#include <SDL2/SDL_mixer.h>
 void logSDLError(std::ostream& os, const std::string &msg, bool fatal){
     os << msg << " Error: " << SDL_GetError() << std::endl;
     if (fatal) {
@@ -58,19 +59,55 @@ bool LoadMainObject(MainObject &p_mainobject){
     if(ret == false) return false;
     return true;
 }
-
+// de sau cai tien len 
 std::string random_pics(){
     const std::string pics_threats[] = {"res/Planets/Baren.png","res/Planets/Ice.png",
                             "res/Planets/Lava.png","res/Planets/Terran.png"};
     int ran = rand() % 4;
     return pics_threats[ran];
 }
+// INIT AUDIO
+void Init()
+{
+    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0){
+        logSDLError(std::cout,"CREATE AUDIO",true);
+    }
+    // Initialize img
+    int imgFlags = IMG_INIT_PNG;
+    if( !( IMG_Init( imgFlags ) & imgFlags ) )
+    {
+        logSDLError(std::cout,"SDL_image could not initialize",true);
+    }
+
+        //Initialize SDL_mixer
+    if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 )
+    {
+        logSDLError(std::cout,"SDL_mixer could not initialize",true);
+    }
+}
+
+// Load Sound
+void InitSound(){
+    // Sound effect
+    g_sound_bullet[0] = Mix_LoadWAV("res/Gun+Silencer.wav");
+    g_sound_bullet[1] = Mix_LoadWAV("res/Gun+1.wav");
+    g_sound_explosion = Mix_LoadWAV("res/Explosion+5.wav");
+    // Sound Game
+    gMusic = Mix_LoadMUS("res/hurricane.wav");
+    
+    // Check Excute
+    if(g_sound_bullet[0] == NULL || g_sound_bullet[1] == NULL || g_sound_explosion == NULL || gMusic == NULL){
+        logSDLError(std::cout,"MIX_LOADWAV SOUND could not initialize",true);
+    }
+}
+
 // Main
 int main(int argc, char* argv[])
 {
     srand(time(NULL));
     initSDL(window, renderer);
-
+    Init();
+    InitSound();
     // Init MainObject
     BaseObject g_background;
     MainObject g_mainobject;
@@ -115,7 +152,7 @@ int main(int argc, char* argv[])
                 is_quit = true;
                 break;
             }
-            g_mainobject.HandleInputAction(event,renderer);
+            g_mainobject.HandleInputAction(event,renderer,g_sound_bullet,gMusic);
         }
         // // Load 2 tam anh lien tiep de cho cam tuong dang chay
         // bkgn_x -= 2;
@@ -158,6 +195,7 @@ int main(int argc, char* argv[])
                     SDL_Delay(100);
                     SDL_RenderPresent(renderer);
                 }
+                Mix_PlayChannel(0,g_sound_explosion,0);
                 if(MessageBox(NULL,"GAME OVER","INFO",MB_OK) == IDOK){
                     delete [] p_threat_list;
                     quitSDL(window, renderer);
@@ -191,6 +229,7 @@ int main(int argc, char* argv[])
                     if(ret_col){
                         p_threat->ResetThreat(SCREEN_WIDTH + t * 400);
                         g_mainobject.RemoveAmo(k); // xoa vien dan cua mainobject
+                        Mix_PlayChannel(0,g_sound_explosion,0);
                     }
                 }
             }

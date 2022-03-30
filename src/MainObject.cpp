@@ -14,7 +14,7 @@ MainObject::~MainObject(){
 }
 
 // xu li cac thao tac ban phim va chuot
-void MainObject::HandleInputAction(SDL_Event events, SDL_Renderer* screen){
+void MainObject::HandleInputAction(SDL_Event events, SDL_Renderer* screen, Mix_Chunk* bullet[2], Mix_Music* gMusic){
     if(events.type == SDL_KEYDOWN){
         switch(events.key.keysym.sym)
         {
@@ -32,7 +32,35 @@ void MainObject::HandleInputAction(SDL_Event events, SDL_Renderer* screen){
             case SDLK_LEFT:
                 x_val_ = -x_step;
                 break;
+            case SDLK_9:
+            //If there is no music playing
+            if( Mix_PlayingMusic() == 0 )
+            {
+                //Play the music
+                Mix_PlayMusic(gMusic, -1 );
+            }
+            //If music is being played
+            else
+            {
+                //If the music is paused
+                if( Mix_PausedMusic() == 1 )
+                {
+                    //Resume the music
+                    Mix_ResumeMusic();
+                }
+                //If the music is playing
+                else
+                {
+                    //Pause the music
+                    Mix_PauseMusic();
+                }
+            }
+            break;
             
+            case SDLK_0:
+            //Stop the music
+            Mix_HaltMusic();
+            break;
         }
     }
     else if(events.type == SDL_KEYUP){
@@ -60,11 +88,13 @@ void MainObject::HandleInputAction(SDL_Event events, SDL_Renderer* screen){
             p_amo->SetWidthHeight(WIDTH_LASER,HEIGHT_LASER);
             p_amo->LoadIMG("res/laser.png",screen);
             p_amo->set_type(AmoObject::LASER);
+            Mix_PlayChannel(-1,bullet[0],0);
         }
         else if(events.button.button == SDL_BUTTON_RIGHT){
             p_amo->SetWidthHeight(WIDTH_SPHERE,HEIGHT_SPHERE);
             p_amo->LoadIMG("res/sphere.png",screen);
             p_amo->set_type(AmoObject::SPHERE);
+            Mix_PlayChannel(-1,bullet[1],0);
         }
         p_amo->SetRect(this->rect_.x + this->rect_.w  - 15 , this->rect_.y + this->rect_.h * 0.7);
         p_amo->set_is_move_(true);

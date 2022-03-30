@@ -15,7 +15,7 @@ class MainObject : public BaseObject
 public:
     MainObject();
     ~MainObject();
-    void HandleInputAction(SDL_Event events, SDL_Renderer* screen);
+    void HandleInputAction(SDL_Event events, SDL_Renderer* screen, Mix_Chunk* bulletsound[2], Mix_Music* gMusic_);
     void HandMove();
     void SetAmoList(std::vector<AmoObject*> amo_list) {p_amo_list_ = amo_list;}
     std::vector<AmoObject*> GetAmoList() const {return p_amo_list_;}

@@ -5,6 +5,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <iostream>
+#include <SDL2/SDL_mixer.h>
 // Window title
 const std::string WINDOW_TITLE = "SDL2 _ GAME CPP";
 // Explosion
@@ -27,3 +28,9 @@ const int SCREEN_BPP = 32;
 const int COLOR_KEY_R = 0;
 const int COLOR_KEY_G = 255;
 const int COLOR_KEY_B = 255;
+
+// AUDIO
+static Mix_Chunk* g_sound_bullet[2];
+static Mix_Chunk* g_sound_explosion = NULL;
+static Mix_Chunk* g_sound_ex_main = NULL;
+static Mix_Music *gMusic = NULL; // Sound game
