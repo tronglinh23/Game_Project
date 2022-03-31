@@ -11,6 +11,10 @@
 #include "ExplosionObject.hpp"
 #include <SDL2/SDL_mixer.h>
 #include "PlayerPower.hpp"
+#include <SDL2/SDL_ttf.h>
+#include <Text_Object.hpp>
+
+TTF_Font* g_font_text = NULL;
 void logSDLError(std::ostream& os, const std::string &msg, bool fatal){
     os << msg << " Error: " << SDL_GetError() << std::endl;
     if (fatal) {
@@ -106,6 +110,12 @@ void InitSound(){
     }
 }
 
+void InitText(){
+    if( TTF_Init() == -1 ) logSDLError(std::cout,"SDL_ttf could not initialize! SDL_ttf ",true);
+    g_font_text = TTF_OpenFont( "res/font/comicate.ttf", 30);
+    if(g_font_text == NULL) logSDLError(std::cout,"Failed to load lazy font! SDL_ttf ",true);
+
+}
 // Main
 int main(int argc, char* argv[])
 {
@@ -146,7 +156,10 @@ int main(int argc, char* argv[])
     PlayerPower life_player;
     life_player.LoadIMG("res/play_power.png",renderer);
     life_player.Init();
-
+    // Init TextoBJECT
+    InitText();
+    TextObject mark_game;
+    mark_game.SetColor(128,0,0);
     //
     int bkgn_x = 0;
     bool is_run_screen = true;
@@ -154,6 +167,7 @@ int main(int argc, char* argv[])
     
     // mau cua mainobject
     unsigned int die_nums = 0;
+    unsigned int mark_value_game = 0;
     //
     while(!is_quit){
         while(SDL_PollEvent(&event)){
@@ -242,6 +256,7 @@ int main(int argc, char* argv[])
                 if(p_amo){
                     bool ret_col = p_amo->CheckCollision(p_amo->GetRect(),p_threat->GetRect());
                     if(ret_col){
+                        mark_value_game++;
                         p_threat->ResetThreat(SCREEN_WIDTH + t * 400);
                         g_mainobject.RemoveAmo(k); // xoa vien dan cua mainobject
                         Mix_PlayChannel(0,g_sound_explosion,0);
@@ -250,6 +265,12 @@ int main(int argc, char* argv[])
             }
             
         }
+        std::string val_str_mark = std::to_string(mark_value_game);
+        std::string text("Mark: ");
+        text += val_str_mark;
+        mark_game.SetText(text);
+        mark_game.loadFromRenderedText(g_font_text,renderer);
+        mark_game.RenderText(renderer,500,10);
         SDL_RenderPresent(renderer);
     }
     delete [] p_threat_list;

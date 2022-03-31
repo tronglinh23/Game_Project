@@ -1,2 +1,2 @@
-g++ -Iinclude -Iinclude/headers -Llib -o bin/main.exe src/test.cpp src/BaseObject.cpp src/ExplosionObject.cpp src/MainObject.cpp src/AmoObject.cpp src/ThreatObject.cpp src/PlayerPower.cpp -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer
+g++ -Iinclude -Iinclude/headers -Llib -o bin/main.exe src/test.cpp src/BaseObject.cpp src/ExplosionObject.cpp src/MainObject.cpp src/AmoObject.cpp src/ThreatObject.cpp src/PlayerPower.cpp src/Text_Object.cpp -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf
 bin\main

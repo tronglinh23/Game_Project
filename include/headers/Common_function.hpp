@@ -6,8 +6,11 @@
 #include <SDL2/SDL_image.h>
 #include <iostream>
 #include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL_ttf.h>
 // Window title
 const std::string WINDOW_TITLE = "SDL2 _ GAME CPP";
+// Font title
+
 // Main Object
 const int mainobject_Pos_X_Start = 100;
 const int mainobject_Pos_Y_Start = 200;
