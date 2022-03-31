@@ -10,6 +10,7 @@
 #include "time.h"
 #include "ExplosionObject.hpp"
 #include <SDL2/SDL_mixer.h>
+#include "PlayerPower.hpp"
 void logSDLError(std::ostream& os, const std::string &msg, bool fatal){
     os << msg << " Error: " << SDL_GetError() << std::endl;
     if (fatal) {
@@ -54,7 +55,7 @@ bool LoadBackground(BaseObject &background){
 
 bool LoadMainObject(MainObject &p_mainobject){
     bool ret = p_mainobject.LoadIMG("res/plane_fly.png",renderer);
-    p_mainobject.SetRect(100,200); // vi tri xuat hien
+    p_mainobject.SetRect(mainobject_Pos_X_Start,mainobject_Pos_Y_Start); // vi tri xuat hien
     p_mainobject.setSize(WIDTH_MAIN_OBJECT,HEIGHT_MAIN_OBJECT);
     if(ret == false) return false;
     return true;
@@ -140,15 +141,19 @@ int main(int argc, char* argv[])
     EXP_main.LoadIMG("res/exp_main.png",renderer);
     // EXP_main.SetRect(165,165);
     EXP_main.set_clip();
+
+    //Make main life power
+    PlayerPower life_player;
+    life_player.LoadIMG("res/play_power.png",renderer);
+    life_player.Init();
+
     //
     int bkgn_x = 0;
     bool is_run_screen = true;
     bool is_quit = false;
-
     
     // mau cua mainobject
-    const int health = 1000;
-    int remain = health;
+    unsigned int die_nums = 0;
     //
     while(!is_quit){
         while(SDL_PollEvent(&event)){
@@ -178,6 +183,10 @@ int main(int argc, char* argv[])
             g_background.SetRect(bkgn_x,0);
             g_background.Render(renderer,NULL);
         }
+        //render player life
+        life_player.DisplayLife(renderer);
+
+        //
         g_mainobject.HandMove();
         g_mainobject.Render(renderer,NULL);
         g_mainobject.Display_Amo(renderer);
@@ -199,11 +208,21 @@ int main(int argc, char* argv[])
                     SDL_Delay(100);
                     SDL_RenderPresent(renderer);
                 }
-                Mix_PlayChannel(0,g_sound_explosion,0);
-                if(MessageBox(NULL,"GAME OVER","INFO",MB_OK) == IDOK){
-                    delete [] p_threat_list;
-                    quitSDL(window, renderer);
-                    return 0;
+                die_nums ++;
+                if(die_nums <= 2){
+                    SDL_Delay(500);
+                    g_mainobject.SetRect(mainobject_Pos_X_Start,mainobject_Pos_Y_Start);
+                    life_player.Decrease();
+                    life_player.DisplayLife(renderer);
+                    SDL_RenderPresent(renderer);
+                }
+                else{
+                    Mix_PlayChannel(0,g_sound_explosion,0);
+                    if(MessageBox(NULL,"GAME OVER","INFO",MB_OK) == IDOK){
+                        delete [] p_threat_list;
+                        quitSDL(window, renderer);
+                        return 0;
+                    }
                 }
             }
             // xu li dan cua threat vao mainobject
@@ -212,16 +231,8 @@ int main(int argc, char* argv[])
                 AmoObject* p_amo = threat_amo_list.at(k);
                 if(p_amo){
                     bool check_col = p_amo->CheckCollision(p_amo->GetRect(),g_mainobject.GetRect());
-                    if(check_col == true){
+                    if(check_col == true)
                         p_threat->RemoveAmo_Threat(k);
-    
-                        remain -= 200;
-                        std::cout << remain << " ";
-                    }
-                    if(remain <= 0){   
-                        std::cout << "Died";
-                        return 0;
-                    }
                 }
             }
             // xu li va cham vien dan voi may bay

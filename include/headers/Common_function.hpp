@@ -8,6 +8,10 @@
 #include <SDL2/SDL_mixer.h>
 // Window title
 const std::string WINDOW_TITLE = "SDL2 _ GAME CPP";
+// Main Object
+const int mainobject_Pos_X_Start = 100;
+const int mainobject_Pos_Y_Start = 200;
+
 // Explosion
 
 // background
