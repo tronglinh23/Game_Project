@@ -94,10 +94,14 @@ void InitSound(){
     g_sound_explosion = Mix_LoadWAV("res/Explosion+5.wav");
     // Sound Game
     gMusic = Mix_LoadMUS("res/hurricane.wav");
-    
     // Check Excute
     if(g_sound_bullet[0] == NULL || g_sound_bullet[1] == NULL || g_sound_explosion == NULL || gMusic == NULL){
         logSDLError(std::cout,"MIX_LOADWAV SOUND could not initialize",true);
+    }
+    if( Mix_PlayingMusic() == 0 )
+    {
+        //Play the music
+        Mix_PlayMusic(gMusic, -1 );
     }
 }
 

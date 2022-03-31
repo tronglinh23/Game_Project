@@ -19,7 +19,6 @@ void MainObject::HandleInputAction(SDL_Event events, SDL_Renderer* screen, Mix_C
         switch(events.key.keysym.sym)
         {
            
-            
             case SDLK_UP:
                 y_val_ = -y_step;
                 break;
@@ -34,29 +33,28 @@ void MainObject::HandleInputAction(SDL_Event events, SDL_Renderer* screen, Mix_C
                 break;
             case SDLK_9:
             //If there is no music playing
-            if( Mix_PlayingMusic() == 0 )
-            {
-                //Play the music
-                Mix_PlayMusic(gMusic, -1 );
-            }
-            //If music is being played
-            else
-            {
-                //If the music is paused
-                if( Mix_PausedMusic() == 1 )
+                if( Mix_PlayingMusic() == 0 )
                 {
-                    //Resume the music
-                    Mix_ResumeMusic();
+                    //Play the music
+                    Mix_PlayMusic(gMusic, -1 );
                 }
-                //If the music is playing
+                //If music is being played
                 else
                 {
-                    //Pause the music
-                    Mix_PauseMusic();
+                    //If the music is paused
+                    if( Mix_PausedMusic() == 1 )
+                    {
+                        //Resume the music
+                        Mix_ResumeMusic();
+                    }
+                    //If the music is playing
+                    else
+                    {
+                        //Pause the music
+                        Mix_PauseMusic();
+                    }
                 }
-            }
-            break;
-            
+                break;
             case SDLK_0:
             //Stop the music
             Mix_HaltMusic();
