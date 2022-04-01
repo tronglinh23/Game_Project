@@ -9,7 +9,10 @@
 #include <SDL2/SDL_ttf.h>
 // Window title
 const std::string WINDOW_TITLE = "SDL2 _ GAME CPP";
-// Font title
+// Font text - title
+    //Mark
+    static std::string font_mark_game = "res/font/comicate.ttf";
+    const int size_mark = 30;
 
 // Main Object
 const int mainobject_Pos_X_Start = 100;

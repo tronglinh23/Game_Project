@@ -3,16 +3,17 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
 #include <stdio.h>
+#include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL_ttf.h>
 #include "Common_function.hpp"
 #include "BaseObject.hpp"
 #include "MainObject.hpp"
 #include "ThreatObject.hpp"
+#include "BulletObject.hpp"
 #include "time.h"
 #include "ExplosionObject.hpp"
-#include <SDL2/SDL_mixer.h>
 #include "PlayerPower.hpp"
-#include <SDL2/SDL_ttf.h>
-#include <Text_Object.hpp>
+#include "Text_Object.hpp"
 
 TTF_Font* g_font_text = NULL;
 void logSDLError(std::ostream& os, const std::string &msg, bool fatal){
@@ -51,14 +52,14 @@ void quitSDL(SDL_Window* window, SDL_Renderer* renderer)
 
 
 bool LoadBackground(BaseObject &background){
-    bool ret = background.LoadIMG("res/bg4800.png",renderer);
+    bool ret = background.LoadIMG("res/pics/bg4800.png",renderer);
     // background.setSize(SCREEN_WIDTH,SCREEN_HEIGHT);
     if(ret == false) return false;
     return true;
 }
 
 bool LoadMainObject(MainObject &p_mainobject){
-    bool ret = p_mainobject.LoadIMG("res/plane_fly.png",renderer);
+    bool ret = p_mainobject.LoadIMG("res/pics/plane_fly.png",renderer);
     p_mainobject.SetRect(mainobject_Pos_X_Start,mainobject_Pos_Y_Start); // vi tri xuat hien
     p_mainobject.setSize(WIDTH_MAIN_OBJECT,HEIGHT_MAIN_OBJECT);
     if(ret == false) return false;
@@ -94,11 +95,11 @@ void Init()
 // Load Sound
 void InitSound(){
     // Sound effect
-    g_sound_bullet[0] = Mix_LoadWAV("res/Gun+Silencer.wav");
-    g_sound_bullet[1] = Mix_LoadWAV("res/Gun+1.wav");
-    g_sound_explosion = Mix_LoadWAV("res/Explosion+5.wav");
+    g_sound_bullet[0] = Mix_LoadWAV("res/sound/Gun+Silencer.wav");
+    g_sound_bullet[1] = Mix_LoadWAV("res/sound/Gun+1.wav");
+    g_sound_explosion = Mix_LoadWAV("res/sound/ES_Explosion Space 2 - SFX Producer.mp3");
     // Sound Game
-    gMusic = Mix_LoadMUS("res/hurricane.wav");
+    gMusic = Mix_LoadMUS("res/sound/ES_Letting Go of the Day - Hanna Lindgren.mp3");
     // Check Excute
     if(g_sound_bullet[0] == NULL || g_sound_bullet[1] == NULL || g_sound_explosion == NULL || gMusic == NULL){
         logSDLError(std::cout,"MIX_LOADWAV SOUND could not initialize",true);
@@ -112,7 +113,7 @@ void InitSound(){
 
 void InitText(){
     if( TTF_Init() == -1 ) logSDLError(std::cout,"SDL_ttf could not initialize! SDL_ttf ",true);
-    g_font_text = TTF_OpenFont( "res/font/comicate.ttf", 30);
+    g_font_text = TTF_OpenFont(font_mark_game.c_str(),size_mark);
     if(g_font_text == NULL) logSDLError(std::cout,"Failed to load lazy font! SDL_ttf ",true);
 
 }
@@ -140,7 +141,7 @@ int main(int argc, char* argv[])
         p_threat->SetRect(SCREEN_WIDTH + i * 400,ran_num);
         p_threat->Set_x_val(6);
 
-        AmoObject* threat_amo = new AmoObject();
+        BulletObject* threat_amo = new BulletObject();
         p_threat->init(threat_amo,renderer);
     }
 
@@ -148,13 +149,13 @@ int main(int argc, char* argv[])
     SDL_RenderClear(renderer);
     // Init ExplosionObject
     ExplosionObject EXP_main;
-    EXP_main.LoadIMG("res/exp_main.png",renderer);
+    EXP_main.LoadIMG("res/pics/exp_main.png",renderer);
     // EXP_main.SetRect(165,165);
     EXP_main.set_clip();
 
     //Make main life power
     PlayerPower life_player;
-    life_player.LoadIMG("res/play_power.png",renderer);
+    life_player.LoadIMG("res/pics/play_power.png",renderer);
     life_player.Init();
     // Init TextoBJECT
     InitText();
@@ -165,7 +166,7 @@ int main(int argc, char* argv[])
     bool is_run_screen = true;
     bool is_quit = false;
     
-    // mau cua mainobject
+    // numbers of life ---- mark: kill threats
     unsigned int die_nums = 0;
     unsigned int mark_value_game = 0;
     //
@@ -235,28 +236,29 @@ int main(int argc, char* argv[])
                     if(MessageBox(NULL,"GAME OVER","INFO",MB_OK) == IDOK){
                         delete [] p_threat_list;
                         quitSDL(window, renderer);
+                        mark_game.Free();
                         return 0;
                     }
                 }
             }
-            // xu li dan cua threat vao mainobject
-            std::vector<AmoObject*> threat_amo_list = p_threat->Get_Amo_list();
+            // xu li dan cua threats ban vao mainobject
+            std::vector<BulletObject*> threat_amo_list = p_threat->Get_Amo_list();
             for(int k = 0 ; k < threat_amo_list.size(); k++){
-                AmoObject* p_amo = threat_amo_list.at(k);
+                BulletObject* p_amo = threat_amo_list.at(k);
                 if(p_amo){
                     bool check_col = p_amo->CheckCollision(p_amo->GetRect(),g_mainobject.GetRect());
                     if(check_col == true)
                         p_threat->RemoveAmo_Threat(k);
                 }
             }
-            // xu li va cham vien dan voi may bay
-            std::vector<AmoObject*> amo_list = g_mainobject.GetAmoList();
+            // xu li va cham vien dan cua mainobject voi Threats
+            std::vector<BulletObject*> amo_list = g_mainobject.GetAmoList();
             for(int k = 0 ; k < amo_list.size(); k++){
-                AmoObject* p_amo = amo_list.at(k);
+                BulletObject* p_amo = amo_list.at(k);
                 if(p_amo){
                     bool ret_col = p_amo->CheckCollision(p_amo->GetRect(),p_threat->GetRect());
                     if(ret_col){
-                        mark_value_game++;
+                        mark_value_game++; // ha guc dc 1 thi diem ++
                         p_threat->ResetThreat(SCREEN_WIDTH + t * 400);
                         g_mainobject.RemoveAmo(k); // xoa vien dan cua mainobject
                         Mix_PlayChannel(0,g_sound_explosion,0);
@@ -265,6 +267,7 @@ int main(int argc, char* argv[])
             }
             
         }
+        // Render Text 
         std::string val_str_mark = std::to_string(mark_value_game);
         std::string text("Mark: ");
         text += val_str_mark;
@@ -273,6 +276,7 @@ int main(int argc, char* argv[])
         mark_game.RenderText(renderer,500,10);
         SDL_RenderPresent(renderer);
     }
+    mark_game.Free();
     delete [] p_threat_list;
     quitSDL(window, renderer);
     return 0;

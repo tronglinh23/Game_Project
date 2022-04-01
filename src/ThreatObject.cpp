@@ -13,7 +13,7 @@ ThreatObject::~ThreatObject(){
     if(p_amo_list_.size() > 0){
         for (int i = 0; i < p_amo_list_.size(); i++)
         {
-            AmoObject* p_amo = p_amo_list_.at(i);
+            BulletObject* p_amo = p_amo_list_.at(i);
             if(p_amo != NULL){
                 delete p_amo;
                 p_amo = NULL;
@@ -22,9 +22,9 @@ ThreatObject::~ThreatObject(){
         p_amo_list_.clear();
     }
 }
-void ThreatObject::init(AmoObject* P_amo,SDL_Renderer* screen){
+void ThreatObject::init(BulletObject* P_amo,SDL_Renderer* screen){
     if(P_amo != NULL){
-        bool ret = P_amo->LoadIMG("res/sphere.png",screen);
+        bool ret = P_amo->LoadIMG("res/pics/sphere.png",screen);
         if(ret){
             P_amo->set_is_move_(true);
             P_amo->SetWidthHeight(WIDTH_SPHERE,HEIGHT_SPHERE);
@@ -39,7 +39,7 @@ void ThreatObject::MakeAmo(SDL_Renderer* des, const int& x_limit , const int& y_
 {
     for (int i = 0; i < p_amo_list_.size(); i++)
     {
-        AmoObject * obs_amo = p_amo_list_.at(i);
+        BulletObject * obs_amo = p_amo_list_.at(i);
         if(obs_amo){
             if(obs_amo->get_is_move_()){
                 obs_amo->Render(des,NULL);
@@ -78,19 +78,19 @@ void ThreatObject::ResetThreat(const int& xborder){
         rect_.y *= 5.0/10;
     }
     for(int i = 0 ; i < p_amo_list_.size();i++){
-        AmoObject* p_amo = p_amo_list_.at(i);
+        BulletObject* p_amo = p_amo_list_.at(i);
         if(p_amo) ResetAmo(p_amo);
     }
 
 }
 
-void ThreatObject::ResetAmo(AmoObject* p_amo){
+void ThreatObject::ResetAmo(BulletObject* p_amo){
     p_amo->SetRect(rect_.x - 5, rect_.y + rect_.h * 0.7);
 } 
 
 void ThreatObject::RemoveAmo_Threat(const int& k){
     if(k < p_amo_list_.size()){
-        AmoObject* p_amo = p_amo_list_.at(k);
+        BulletObject* p_amo = p_amo_list_.at(k);
         ResetAmo(p_amo);
     }
 }

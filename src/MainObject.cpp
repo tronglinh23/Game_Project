@@ -81,17 +81,17 @@ void MainObject::HandleInputAction(SDL_Event events, SDL_Renderer* screen, Mix_C
     else if(events.type == SDL_MOUSEBUTTONDOWN)
     {
 
-        AmoObject* p_amo = new AmoObject();
+        BulletObject* p_amo = new BulletObject();
         if(events.button.button == SDL_BUTTON_LEFT){
             p_amo->SetWidthHeight(WIDTH_LASER,HEIGHT_LASER);
-            p_amo->LoadIMG("res/laser.png",screen);
-            p_amo->set_type(AmoObject::LASER);
+            p_amo->LoadIMG("res/pics/laser.png",screen);
+            p_amo->set_type(BulletObject::LASER);
             Mix_PlayChannel(-1,bullet[0],0);
         }
         else if(events.button.button == SDL_BUTTON_RIGHT){
             p_amo->SetWidthHeight(WIDTH_SPHERE,HEIGHT_SPHERE);
-            p_amo->LoadIMG("res/sphere.png",screen);
-            p_amo->set_type(AmoObject::SPHERE);
+            p_amo->LoadIMG("res/pics/sphere.png",screen);
+            p_amo->set_type(BulletObject::SPHERE);
             Mix_PlayChannel(-1,bullet[1],0);
         }
         p_amo->SetRect(this->rect_.x + this->rect_.w  - 15 , this->rect_.y + this->rect_.h * 0.7);
@@ -109,7 +109,7 @@ void MainObject::HandleInputAction(SDL_Event events, SDL_Renderer* screen, Mix_C
 void MainObject::Display_Amo(SDL_Renderer* des){
     for(int i = 0 ; i < p_amo_list_.size(); i++){
         // tao ra mot cai list để chứa các viên đạn , bắn ra một cách liên tục
-        AmoObject* p_amo = p_amo_list_.at(i); // xét từ vị trí viên đầu tiên
+        BulletObject* p_amo = p_amo_list_.at(i); // xét từ vị trí viên đầu tiên
         if(p_amo != NULL){
             if(p_amo->get_is_move_()){
                 p_amo->HandleMove(SCREEN_WIDTH,SCREEN_HEIGHT); // KHi gap vat can thi xoa vien dan
@@ -139,7 +139,7 @@ void MainObject::HandMove(){
 }
 void MainObject::RemoveAmo(const int& x){  
     if(x < p_amo_list_.size()){
-        AmoObject* p_amo = p_amo_list_.at(x);
+        BulletObject* p_amo = p_amo_list_.at(x);
         p_amo_list_.erase(p_amo_list_.begin() + x);
         if(p_amo != NULL){
             delete p_amo;
