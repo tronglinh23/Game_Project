@@ -18,19 +18,35 @@ void MainObject::HandleInputAction(SDL_Event events, SDL_Renderer* screen, Mix_C
     if(events.type == SDL_KEYDOWN){
         switch(events.key.keysym.sym)
         {
-           
+            //up
             case SDLK_UP:
                 y_val_ = -y_step;
                 break;
+            case SDLK_w:
+                y_val_ = -y_step;
+                break;
+            //down
             case SDLK_DOWN:
                 y_val_ = y_step;
                 break;
+            case SDLK_s:
+                y_val_ = y_step;
+                break;
+            //right
             case SDLK_RIGHT:
                 x_val_ = x_step;
                 break;
+            case SDLK_d:
+                x_val_ = x_step;
+                break;
+            //left
             case SDLK_LEFT:
                 x_val_ = -x_step;
                 break;
+            case SDLK_a:
+                x_val_ = -x_step;
+                break;
+            // turn on Music
             case SDLK_9:
             //If there is no music playing
                 if( Mix_PlayingMusic() == 0 )
@@ -67,13 +83,28 @@ void MainObject::HandleInputAction(SDL_Event events, SDL_Renderer* screen, Mix_C
             case SDLK_UP:
                 y_val_ += y_step;
                 break;
+            case SDLK_w:
+                y_val_ += y_step;
+                break;
+            
             case SDLK_DOWN:
                 y_val_ -=  y_step;
                 break;
+            case SDLK_s:
+                y_val_ -=  y_step;
+                break;
+
             case SDLK_RIGHT:
                 x_val_ -= x_step;
                 break;
+            case SDLK_d:
+                x_val_ -= x_step;
+                break;
+            
             case SDLK_LEFT:
+                x_val_ += x_step;
+                break;
+            case SDLK_a:
                 x_val_ += x_step;
                 break;
         }
