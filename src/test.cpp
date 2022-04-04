@@ -160,7 +160,10 @@ int main(int argc, char* argv[])
     // Init TextoBJECT
     InitText();
     TextObject mark_game;
-    mark_game.SetColor(128,0,0);
+    mark_game.SetColor(0,255,255);
+
+    TextObject Time_game;
+    Time_game.SetColor(0,255,255);
     //
     int bkgn_x = 0;
     bool is_run_screen = true;
@@ -211,7 +214,7 @@ int main(int argc, char* argv[])
             p_threat->HandleMove(SCREEN_WIDTH,SCREEN_HEIGHT);
             p_threat->Render(renderer,NULL);
             p_threat->MakeAmo(renderer,SCREEN_WIDTH,SCREEN_HEIGHT);
-            // kiem tra va cham
+            // kiem tra va cham Threat voi Object
             bool check_col = p_threat->CheckCollision(g_mainobject.GetRect(),p_threat->GetRect());
             if(check_col){
                 for(int ex = 0 ; ex < 4 ; ex++){
@@ -223,6 +226,8 @@ int main(int argc, char* argv[])
                     SDL_Delay(100);
                     SDL_RenderPresent(renderer);
                 }
+                Mix_PlayChannel(0,g_sound_explosion,0);
+                p_threat->ResetThreat(SCREEN_WIDTH + t * 400); // sau khi va cham thi threats bien mat
                 die_nums ++;
                 if(die_nums <= 2){
                     SDL_Delay(500);
@@ -232,7 +237,6 @@ int main(int argc, char* argv[])
                     SDL_RenderPresent(renderer);
                 }
                 else{
-                    Mix_PlayChannel(0,g_sound_explosion,0);
                     if(MessageBox(NULL,"GAME OVER","INFO",MB_OK) == IDOK){
                         delete [] p_threat_list;
                         quitSDL(window, renderer);
@@ -267,13 +271,19 @@ int main(int argc, char* argv[])
             }
             
         }
-        // Render Text 
-        std::string val_str_mark = std::to_string(mark_value_game);
-        std::string text("Mark: ");
-        text += val_str_mark;
-        mark_game.SetText(text);
+        // Render mark_Text 
+        std::string val_str_mark = text + std::to_string(mark_value_game);
+        mark_game.SetText(val_str_mark);
         mark_game.loadFromRenderedText(g_font_text,renderer);
         mark_game.RenderText(renderer,500,10);
+
+        // Render time_text
+        unsigned int time = SDL_GetTicks()/1000;
+        std::string Time_present = val_time + std::to_string(time);
+        Time_game.SetText(Time_present);
+        Time_game.loadFromRenderedText(g_font_text,renderer);
+        Time_game.RenderText(renderer,SCREEN_WIDTH-200,10);
+
         SDL_RenderPresent(renderer);
     }
     mark_game.Free();

@@ -12,7 +12,12 @@
 // Font text - title
     //Mark
     static std::string font_mark_game = "res/font/comicate.ttf";
+    static std::string text("Mark: ");
     const int size_mark = 30;
+
+    //Time_Text
+    static std::string val_time("Time: ");
+    const int size_time = 30;
 
 // Main Object
     const int mainobject_Pos_X_Start = 100;
