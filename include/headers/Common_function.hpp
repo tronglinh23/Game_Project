@@ -8,17 +8,37 @@
 #include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_ttf.h>
 // Window title
-    const std::string WINDOW_TITLE = "SDL2 _ GAME CPP";
+    const std::string WINDOW_TITLE = "SDL2 _ SpaceGame";
 // Font text - title
+    // MenuText
+    const int size_menu_text = 50;
+        // title game
+        const std::string title = "Space Game";
+        const int pos_title_x = 450;
+        const int pos_title_y = 40;
+        const int color_title_R = 0;
+        const int color_title_G = 255;
+        const int color_title_B = 255;
+        const int color_title_change_R = 255;
+        const int color_title_change_G = 255;
+        const int color_title_change_B = 0;
+        
+        // Text Menu 1 : Play Game
+        const int color_ItemText_R = 0;
+        const int color_ItemText_G = 255;
+        const int color_ItemText_B = 255;
+        const int color_Change_ItemText_R = 255;
+        const int color_Change_ItemText_G = 255;
+        const int color_Change_ItemText_B = 255;
+
     //Mark
-    static std::string font_mark_game = "res/font/comicate.ttf";
-    static std::string text("Mark: ");
+    const std::string font_mark_game = "res/font/comicate.ttf";
+    const std::string text("Mark: ");
     const int size_mark = 30;
 
     //Time_Text
-    static std::string val_time("Time: ");
+    const std::string val_time("Time: ");
     const int size_time = 30;
-
 // Main Object
     const int mainobject_Pos_X_Start = 100;
     const int mainobject_Pos_Y_Start = 200;
@@ -26,14 +46,19 @@
 // Explosion
 
 // background
-    const int WIDTH_BACKGROUND = 4800;
+    const int amount_pics_background = 4;
+    static const std::string pics_background[] = {"res/file anh/1.jpg",
+                                                  "res/file anh/2.jpg",
+                                                  "res/file anh/3.jpg",
+                                                  "res/file anh/4.jpg"};
+    const int WIDTH_BACKGROUND = 1200;
     const int HEIGHT_BACKGROUND = 600;
 // Init default
     static SDL_Window* window = NULL;
     static SDL_Renderer* renderer = NULL;
     static SDL_Event event;
 //Amount of THREAT_OBJECT
-    const int Amount_Threat = 3;
+    const int Amount_Threat = 4;
 //Screen
     const int SCREEN_WIDTH = 1200;
     const int SCREEN_HEIGHT = 600;

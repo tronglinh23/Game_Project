@@ -16,6 +16,8 @@
 #include "Text_Object.hpp"
 
 TTF_Font* g_font_text = NULL;
+TTF_Font* menu_font_text = NULL;
+
 void logSDLError(std::ostream& os, const std::string &msg, bool fatal){
     os << msg << " Error: " << SDL_GetError() << std::endl;
     if (fatal) {
@@ -51,15 +53,18 @@ void quitSDL(SDL_Window* window, SDL_Renderer* renderer)
 }
 
 
-bool LoadBackground(BaseObject &background){
-    bool ret = background.LoadIMG("res/pics/bg4800.png",renderer);
-    // background.setSize(SCREEN_WIDTH,SCREEN_HEIGHT);
-    if(ret == false) return false;
+bool LoadBackground(BaseObject background[], int n){
+    bool ret;
+    for(int i = 0 ; i < n ; i++){
+        ret = background[i].LoadIMG(pics_background[i].c_str(),renderer);
+        if(ret == false) return false;
+        background[i].setSize(WIDTH_BACKGROUND,HEIGHT_BACKGROUND);
+    }
     return true;
 }
 
 bool LoadMainObject(MainObject &p_mainobject){
-    bool ret = p_mainobject.LoadIMG("res/pics/plane_fly.png",renderer);
+    bool ret = p_mainobject.LoadIMG("res/pics/airship.png",renderer);
     p_mainobject.SetRect(mainobject_Pos_X_Start,mainobject_Pos_Y_Start); // vi tri xuat hien
     p_mainobject.setSize(WIDTH_MAIN_OBJECT,HEIGHT_MAIN_OBJECT);
     if(ret == false) return false;
@@ -114,8 +119,107 @@ void InitSound(){
 void InitText(){
     if( TTF_Init() == -1 ) logSDLError(std::cout,"SDL_ttf could not initialize! SDL_ttf ",true);
     g_font_text = TTF_OpenFont(font_mark_game.c_str(),size_mark);
+    menu_font_text = TTF_OpenFont(font_mark_game.c_str(),size_menu_text);
     if(g_font_text == NULL) logSDLError(std::cout,"Failed to load lazy font! SDL_ttf ",true);
 
+}
+
+// ShowMenu
+bool checkfocuswithrect(const int& x, const int& y, const SDL_Rect& rect){
+    if( x >= rect.x && x < rect.x + rect.w &&
+        y >= rect.y && y <= rect.y + rect.h)
+    {
+        return true;
+    }
+    return false;
+}
+// can sua
+int Show_Menu(SDL_Renderer* des,BaseObject& Menu_show,TTF_Font* font_game_menu)
+{
+    bool ret = Menu_show.LoadIMG("res/pics/space.png",des);
+    if(ret){
+        Menu_show.setSize(SCREEN_WIDTH,SCREEN_HEIGHT);
+    }
+    // Title menu
+    TextObject title_menu_game;
+    title_menu_game.SetText(title);
+    title_menu_game.SetColor(color_title_R,color_title_G,color_title_B);
+    title_menu_game.SetRect(pos_title_x, pos_title_y);
+
+    const int MenuItems = 2;
+    SDL_Rect pos_items[MenuItems];
+    pos_items[0].x = 150;
+    pos_items[0].y = 300;
+    pos_items[1].x = 150;
+    pos_items[1].y = 375;
+    
+    TextObject text_menu[MenuItems];
+    text_menu[0].SetText("Play Game");
+    text_menu[0].SetColor(color_ItemText_R,color_ItemText_G,color_ItemText_B);
+    text_menu[0].SetRect(pos_items[0].x, pos_items[0].y);
+
+    text_menu[1].SetText("Quit Game");
+    text_menu[1].SetColor(color_ItemText_R,color_ItemText_G,color_ItemText_B);
+    text_menu[1].SetRect(pos_items[1].x, pos_items[1].y);
+
+    SDL_Event menu_event;
+    int xm = 0 , ym = 0;
+    // vo han
+    while(true){
+        Menu_show.Render(des,NULL);
+        for(int i = 0 ; i < MenuItems ; i++){
+            text_menu[i].loadFromRenderedText(font_game_menu,des);
+            text_menu[i].RenderText(des,pos_items[i].x,pos_items[i].y);
+
+        }
+        while(SDL_PollEvent(&menu_event)){
+            switch(menu_event.type){
+
+                case SDL_QUIT:
+                    return 1;
+                case SDL_MOUSEMOTION:
+                {
+                    // lay vi tri cua con chuot
+                    xm = menu_event.motion.x;
+                    ym = menu_event.motion.y;
+                    // change colors
+                    for(int i = 0 ; i < MenuItems; i++){
+                        if(checkfocuswithrect(xm,ym,text_menu[i].GetRect())){
+                            text_menu[i].SetColor(color_Change_ItemText_R, color_Change_ItemText_G, color_Change_ItemText_B);
+                        }
+                        else{
+                            text_menu[i].SetColor(color_ItemText_R,color_ItemText_G,color_ItemText_B);
+                        }
+                    }
+
+                    if(checkfocuswithrect(xm,ym,title_menu_game.GetRect())) 
+                        title_menu_game.SetColor(color_title_change_R,color_title_change_G,color_title_change_B);
+                    else 
+                        title_menu_game.SetColor(color_title_R,color_title_G,color_title_B);
+
+                    break;
+                }
+                // if button down
+                case SDL_MOUSEBUTTONDOWN:
+                {
+                    xm = menu_event.button.x;
+                    ym = menu_event.button.y;
+                    for(int i = 0 ; i < MenuItems; i++){
+                        if(checkfocuswithrect(xm,ym,text_menu[i].GetRect())){
+                            return i;
+                        }
+                    }
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+        title_menu_game.loadFromRenderedText(font_game_menu,des);
+        title_menu_game.RenderText(des,pos_title_x,pos_title_y);
+        SDL_RenderPresent(des);
+    }
+    return 1;
 }
 // Main
 int main(int argc, char* argv[])
@@ -125,9 +229,9 @@ int main(int argc, char* argv[])
     Init();
     InitSound();
     // Init MainObject
-    BaseObject g_background;
+    BaseObject g_background[amount_pics_background];
     MainObject g_mainobject;
-    if(LoadBackground(g_background) == false) return -1;
+    if(LoadBackground(g_background,amount_pics_background) == false) return -1;
     if(LoadMainObject(g_mainobject) == false) return -1;
     SDL_Rect mainobject = g_mainobject.GetRect();
     ThreatObject * p_threat_list = new ThreatObject[Amount_Threat];
@@ -168,11 +272,17 @@ int main(int argc, char* argv[])
     int bkgn_x = 0;
     bool is_run_screen = true;
     bool is_quit = false;
-    
+
+    //Show Menu
+    BaseObject menu_show;
+    int ret_menu = Show_Menu(renderer,menu_show, menu_font_text);
+    if(ret_menu == 1) is_quit = true;
+
     // numbers of life ---- mark: kill threats
     unsigned int die_nums = 0;
     unsigned int mark_value_game = 0;
-    //
+
+    // Path flow
     while(!is_quit){
         while(SDL_PollEvent(&event)){
             if(event.type == SDL_QUIT){
@@ -181,26 +291,31 @@ int main(int argc, char* argv[])
             }
             g_mainobject.HandleInputAction(event,renderer,g_sound_bullet,gMusic);
         }
-        // // Load 2 tam anh lien tiep de cho cam tuong dang chay
-        // bkgn_x -= 2;
-        // g_background.SetRect(bkgn_x,0);
-        // g_background.Render(renderer,NULL);
-        // g_background.SetRect(bkgn_x + SCREEN_WIDTH,0);
-        // g_background.Render(renderer,NULL);
-        // if(bkgn_x <= -SCREEN_WIDTH) bkgn_x = 0;
+        // Load 2 tam anh lien tiep de cho cam tuong dang chay
+        bkgn_x -= 2;
+        g_background[0].SetRect(bkgn_x,0);
+        g_background[0].Render(renderer,NULL);
+        g_background[1].SetRect(bkgn_x + SCREEN_WIDTH,0);
+        g_background[1].Render(renderer,NULL);
+        g_background[2].SetRect(bkgn_x + 2 * SCREEN_WIDTH,0);
+        g_background[2].Render(renderer,NULL);
+        g_background[3].SetRect(bkgn_x + 3 * SCREEN_WIDTH,0);
+        g_background[3].Render(renderer,NULL);
+        if(bkgn_x <= -(amount_pics_background - 1)  * SCREEN_WIDTH) bkgn_x = 0;
 
 
         // 1 background
-        if(is_run_screen){
-            bkgn_x -= 2;
-            if(bkgn_x <= - (WIDTH_BACKGROUND - SCREEN_WIDTH)) is_run_screen = false; // den man hinh cuoi cung thi dung lai de danh boss
-            g_background.SetRect(bkgn_x,0);
-            g_background.Render(renderer,NULL);
-        }
-        else{
-            g_background.SetRect(bkgn_x,0);
-            g_background.Render(renderer,NULL);
-        }
+        // if(is_run_screen){
+        //     bkgn_x -= 2;
+        //     if(bkgn_x <= - (WIDTH_BACKGROUND - SCREEN_WIDTH)) is_run_screen = false; // den man hinh cuoi cung thi dung lai de danh boss
+        //     g_background.SetRect(bkgn_x,0);
+        //     g_background.Render(renderer,NULL);
+        // }
+        // else{
+        //     g_background.SetRect(bkgn_x,0);
+        //     g_background.Render(renderer,NULL);
+        // }
+
         //render player life
         life_player.DisplayLife(renderer);
 
@@ -240,6 +355,7 @@ int main(int argc, char* argv[])
                     if(MessageBox(NULL,"GAME OVER","INFO",MB_OK) == IDOK){
                         delete [] p_threat_list;
                         quitSDL(window, renderer);
+                        Time_game.Free();
                         mark_game.Free();
                         return 0;
                     }
@@ -286,6 +402,7 @@ int main(int argc, char* argv[])
 
         SDL_RenderPresent(renderer);
     }
+    Time_game.Free();
     mark_game.Free();
     delete [] p_threat_list;
     quitSDL(window, renderer);

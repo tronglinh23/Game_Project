@@ -32,8 +32,8 @@ void TextObject::loadFromRenderedText(TTF_Font* font, SDL_Renderer* des){
             std::cout << "Unable to create texture from rendered text! SDL Error: %s\n" << SDL_GetError();
         }
         else{
-            width_ = load_surface->w;
-            height_ = load_surface->h;
+            rect_.w = load_surface->w;
+            rect_.h = load_surface->h;
         }
 
     }
@@ -50,7 +50,7 @@ void TextObject::RenderText(SDL_Renderer* screen, int xpos, int ypos,
                     SDL_Rect* clip /*= NULL */, double angle /*= 0.0 */,
                     SDL_Point* center /*= NULL*/, SDL_RendererFlip flip /*= SDL_FLIP_NONE */)
 {
-    SDL_Rect renderquad = {xpos,ypos,width_,height_};
+    SDL_Rect renderquad = {xpos,ypos,rect_.w,rect_.h};
     if(clip != NULL){
         renderquad.w = clip->w;
         renderquad.h = clip->h;
