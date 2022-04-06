@@ -9,13 +9,20 @@
 #include <SDL2/SDL_ttf.h>
 // Window title
     const std::string WINDOW_TITLE = "SDL2 _ SpaceGame";
+
+//Screen
+    const int SCREEN_WIDTH = 1200;
+    const int SCREEN_HEIGHT = 600;
+    const int SCREEN_BPP = 32;
+
 // Font text - title
     // MenuText
     const int size_menu_text = 50;
         // title game
+        const std::string font_menu_game = "res/font/xeros_theorem.ttf";
         const std::string title = "Space Game";
-        const int pos_title_x = 450;
-        const int pos_title_y = 40;
+        const int pos_title_x = SCREEN_WIDTH/3;
+        const int pos_title_y = 30;
         const int color_title_R = 0;
         const int color_title_G = 255;
         const int color_title_B = 255;
@@ -29,7 +36,7 @@
         const int color_ItemText_B = 255;
         const int color_Change_ItemText_R = 255;
         const int color_Change_ItemText_G = 255;
-        const int color_Change_ItemText_B = 255;
+        const int color_Change_ItemText_B = 0;
 
     //Mark
     const std::string font_mark_game = "res/font/comicate.ttf";
@@ -46,12 +53,14 @@
 // Explosion
 
 // background
-    const int amount_pics_background = 4;
-    static const std::string pics_background[] = {"res/file anh/1.jpg",
-                                                  "res/file anh/2.jpg",
-                                                  "res/file anh/3.jpg",
-                                                  "res/file anh/4.jpg"};
-    const int WIDTH_BACKGROUND = 1200;
+    // const int amount_pics_background = 4;
+    // static const std::string pics_background[] = {"res/file anh/1.jpg",
+    //                                               "res/file anh/2.jpg",
+    //                                               "res/file anh/3.jpg",
+    //                                               "res/file anh/4.jpg"};
+
+    const std::string pics_background = "res/file anh/6569652.png";
+    const int WIDTH_BACKGROUND = 4800;
     const int HEIGHT_BACKGROUND = 600;
 // Init default
     static SDL_Window* window = NULL;
@@ -59,10 +68,7 @@
     static SDL_Event event;
 //Amount of THREAT_OBJECT
     const int Amount_Threat = 4;
-//Screen
-    const int SCREEN_WIDTH = 1200;
-    const int SCREEN_HEIGHT = 600;
-    const int SCREEN_BPP = 32;
+
 
 // transparent background
     const int COLOR_KEY_R = 0;

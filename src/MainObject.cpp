@@ -165,7 +165,7 @@ void MainObject::HandMove(){
     rect_.x += x_val_;
     if(rect_.x < 0 || rect_.x + WIDTH_MAIN_OBJECT > SCREEN_WIDTH) rect_.x -= x_val_;
     rect_.y += y_val_;
-    if(rect_.y < 0 || rect_.y + HEIGHT_MAIN_OBJECT > SCREEN_HEIGHT - Under_Limit_Threat) rect_.y -= y_val_;
+    if(rect_.y < 0 || rect_.y + HEIGHT_MAIN_OBJECT > SCREEN_HEIGHT) rect_.y -= y_val_;
     
 }
 void MainObject::RemoveAmo(const int& x){  

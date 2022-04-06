@@ -64,7 +64,7 @@ void ThreatObject::HandleMove(const int& x_border, const int& y_boder){
         rect_.x = SCREEN_WIDTH;
         rect_.y = rand() % (SCREEN_HEIGHT + 400);
         // std::cout << rect_.y << " "; 
-        if(rect_.y > SCREEN_HEIGHT - 200){
+        if(rect_.y >= SCREEN_HEIGHT - 50){
             rect_.y *= 5.0/10;
             // std::cout << rect_.y << " ";
         }
@@ -74,7 +74,7 @@ void ThreatObject::HandleMove(const int& x_border, const int& y_boder){
 void ThreatObject::ResetThreat(const int& xborder){
     rect_.x = xborder;
     rect_.y = rand() % (SCREEN_HEIGHT + 400);
-    if(rect_.y > SCREEN_HEIGHT - 200){
+    if(rect_.y >= SCREEN_HEIGHT - 50){
         rect_.y *= 5.0/10;
     }
     for(int i = 0 ; i < p_amo_list_.size();i++){
