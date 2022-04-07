@@ -115,14 +115,14 @@ void MainObject::HandleInputAction(SDL_Event events, SDL_Renderer* screen, Mix_C
         BulletObject* p_amo = new BulletObject();
         if(events.button.button == SDL_BUTTON_LEFT){
             p_amo->SetWidthHeight(WIDTH_LASER,HEIGHT_LASER);
-            p_amo->LoadIMG("res/pics/laser.png",screen);
+            p_amo->LoadIMG("res/file anh/bullet/Bullet6.png",screen);
             p_amo->set_type(BulletObject::LASER);
             Mix_PlayChannel(-1,bullet[0],0);
         }
         else if(events.button.button == SDL_BUTTON_RIGHT){
-            p_amo->SetWidthHeight(WIDTH_SPHERE,HEIGHT_SPHERE);
-            p_amo->LoadIMG("res/pics/sphere.png",screen);
-            p_amo->set_type(BulletObject::SPHERE);
+            p_amo->SetWidthHeight(WIDTH_BULLET_THREAT,HEIGHT_BULLET_THREAT);
+            p_amo->LoadIMG("res/file anh/bullet/Bullet2.png",screen);
+            p_amo->set_type(BulletObject::LASER_2);
             Mix_PlayChannel(-1,bullet[1],0);
         }
         p_amo->SetRect(this->rect_.x + this->rect_.w  - 20 , this->rect_.y + this->rect_.h * 0.5);

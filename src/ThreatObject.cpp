@@ -24,10 +24,10 @@ ThreatObject::~ThreatObject(){
 }
 void ThreatObject::init(BulletObject* P_amo,SDL_Renderer* screen){
     if(P_amo != NULL){
-        bool ret = P_amo->LoadIMG("res/pics/sphere.png",screen);
+        bool ret = P_amo->LoadIMG("res/file anh/bullet/Bullet1.png",screen);
         if(ret){
             P_amo->set_is_move_(true);
-            P_amo->SetWidthHeight(WIDTH_SPHERE,HEIGHT_SPHERE);
+            P_amo->SetWidthHeight(WIDTH_BULLET_THREAT,HEIGHT_BULLET_THREAT);
             P_amo->SetRect(rect_.x - 5, rect_.y + rect_.h * 0.5);
             P_amo->Set_x_val(8); // toc do dan ban cua threat
             p_amo_list_.push_back(P_amo);
