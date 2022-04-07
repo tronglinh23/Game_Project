@@ -15,8 +15,7 @@
 #include "PlayerPower.hpp"
 #include "Text_Object.hpp"
 
-TTF_Font* g_font_text = NULL;
-TTF_Font* menu_font_text = NULL;
+
 
 void logSDLError(std::ostream& os, const std::string &msg, bool fatal){
     os << msg << " Error: " << SDL_GetError() << std::endl;
@@ -66,7 +65,7 @@ bool LoadBackground(BaseObject &background){
 }
 
 bool LoadMainObject(MainObject &p_mainobject){
-    bool ret = p_mainobject.LoadIMG("res/pics/airship.png",renderer);
+    bool ret = p_mainobject.LoadIMG("res/file anh/mainobject.png",renderer);
     p_mainobject.SetRect(mainobject_Pos_X_Start,mainobject_Pos_Y_Start); // vi tri xuat hien
     p_mainobject.setSize(WIDTH_MAIN_OBJECT,HEIGHT_MAIN_OBJECT);
     if(ret == false) return false;
@@ -74,9 +73,10 @@ bool LoadMainObject(MainObject &p_mainobject){
 }
 // de sau cai tien len 
 std::string random_pics(){
-    const std::string pics_threats[] = {"res/Planets/Baren.png","res/Planets/Ice.png",
-                            "res/Planets/Lava.png","res/Planets/Terran.png"};
-    int ran = rand() % 4;
+    const std::string pics_threats[] = {"res/file anh/threats1.png", "res/file anh/threats2.png",
+                                        "res/file anh/threats3.png", "res/file anh/threats4.png",
+                                        "res/file anh/threats5.png", "res/file anh/threats6.png"};
+    int ran = rand() % 6;
     return pics_threats[ran];
 }
 // INIT AUDIO
@@ -138,7 +138,7 @@ bool checkfocuswithrect(const int& x, const int& y, const SDL_Rect& rect){
 // can sua
 int Show_Menu(SDL_Renderer* des,BaseObject& Menu_show,TTF_Font* font_game_menu)
 {
-    bool ret = Menu_show.LoadIMG("res/file anh/menu_pics.jpg",des);
+    bool ret = Menu_show.LoadIMG("res/file anh/menu_pics.png",des);
     if(ret){
         Menu_show.setSize(SCREEN_WIDTH,SCREEN_HEIGHT);
     }
@@ -242,6 +242,7 @@ int main(int argc, char* argv[])
     {
         ThreatObject* p_threat = p_threat_list + i;
         p_threat->LoadIMG(random_pics(),renderer);
+        p_threat->setSize(WIDTH_THREAT,HEIGHT_THREAT);
         int ran_num = rand() % (SCREEN_HEIGHT + 400);
         if(ran_num >= SCREEN_HEIGHT - 50) ran_num *= 5.0/10;
         p_threat->SetRect(SCREEN_WIDTH + i * 400,ran_num);

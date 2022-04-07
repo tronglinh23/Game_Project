@@ -28,7 +28,7 @@ void ThreatObject::init(BulletObject* P_amo,SDL_Renderer* screen){
         if(ret){
             P_amo->set_is_move_(true);
             P_amo->SetWidthHeight(WIDTH_SPHERE,HEIGHT_SPHERE);
-            P_amo->SetRect(rect_.x - 5, rect_.y + rect_.h * 0.7);
+            P_amo->SetRect(rect_.x - 5, rect_.y + rect_.h * 0.5);
             P_amo->Set_x_val(8); // toc do dan ban cua threat
             p_amo_list_.push_back(P_amo);
         }
@@ -49,7 +49,7 @@ void ThreatObject::MakeAmo(SDL_Renderer* des, const int& x_limit , const int& y_
             else{
                 // de dan dc ban ra mot cach lien tuc;
                 obs_amo->set_is_move_(true);
-                obs_amo->SetRect(rect_.x  - 5, rect_.y + rect_.h * 0.7);
+                obs_amo->SetRect(rect_.x  - 5, rect_.y + rect_.h * 0.5);
             }
         }
         

@@ -125,7 +125,7 @@ void MainObject::HandleInputAction(SDL_Event events, SDL_Renderer* screen, Mix_C
             p_amo->set_type(BulletObject::SPHERE);
             Mix_PlayChannel(-1,bullet[1],0);
         }
-        p_amo->SetRect(this->rect_.x + this->rect_.w  - 15 , this->rect_.y + this->rect_.h * 0.7);
+        p_amo->SetRect(this->rect_.x + this->rect_.w  - 20 , this->rect_.y + this->rect_.h * 0.5);
         p_amo->set_is_move_(true);
         p_amo->Set_x_val(20); // xet toc do vien dan cua mainobject
         p_amo_list_.push_back(p_amo); // mot loat cac vien dan k phai ban rieng le

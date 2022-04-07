@@ -19,6 +19,8 @@
     // MenuText
     const int size_menu_text = 50;
         // title game
+        
+        static TTF_Font* menu_font_text = NULL;
         const std::string font_menu_game = "res/font/xeros_theorem.ttf";
         const std::string title = "Space Game";
         const int pos_title_x = SCREEN_WIDTH/3;
@@ -39,6 +41,7 @@
         const int color_Change_ItemText_B = 0;
 
     //Mark
+    static TTF_Font* g_font_text = NULL;
     const std::string font_mark_game = "res/font/comicate.ttf";
     const std::string text("Mark: ");
     const int size_mark = 30;
