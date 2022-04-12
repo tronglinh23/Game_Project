@@ -14,7 +14,7 @@
 #include "ExplosionObject.hpp"
 #include "PlayerPower.hpp"
 #include "Text_Object.hpp"
-
+#include "SupportObject.hpp"
 
 
 void logSDLError(std::ostream& os, const std::string &msg, bool fatal){
@@ -223,6 +223,15 @@ int Show_Menu(SDL_Renderer* des,BaseObject& Menu_show,TTF_Font* font_game_menu)
     }
     return 1;
 }
+// Init Support Object
+
+void Init_Support_Object(SupportObject * list_object){
+    for(int sp_ob = 0 ; sp_ob < Amount_Support_Object; sp_ob++){
+        list_object[sp_ob].LoadIMG("res/Planets/Baren.png",renderer);
+        list_object[sp_ob].SetRect(SCREEN_WIDTH/2 + sp_ob*10, SCREEN_HEIGHT - 100);
+        list_object[sp_ob].Render(renderer,NULL);
+    }
+}
 // Main
 int main(int argc, char* argv[])
 {
@@ -273,6 +282,18 @@ int main(int argc, char* argv[])
     TextObject Time_game;
     Time_game.SetColor(0,255,255);
     //
+
+    // Support Object
+    SupportObject* list_object_support = new SupportObject[Amount_Support_Object];
+    for(int sp_ob = 0 ; sp_ob < Amount_Support_Object; sp_ob++){
+        SupportObject* list_spp = list_object_support + sp_ob;
+        list_spp->LoadIMG("res/Planets/Baren.png",renderer);
+        list_spp->setSize(30,25);
+        list_spp->SetRect(SCREEN_WIDTH + sp_ob*50, SCREEN_HEIGHT - 100);
+        list_spp->Set_x_pos(3);
+    }
+    
+
     int bkgn_x = 0;
     bool is_run_screen = true;
     bool is_quit = false;
@@ -285,7 +306,7 @@ int main(int argc, char* argv[])
     // numbers of life ---- mark: kill threats
     unsigned int die_nums = 0;
     unsigned int mark_value_game = 0;
-
+    unsigned int time = 0;
     // Path flow
     while(!is_quit){
         while(SDL_PollEvent(&event)){
@@ -326,6 +347,22 @@ int main(int argc, char* argv[])
         life_player.DisplayLife(renderer);
 
         //
+        if(time > 5)
+        {
+            for(int list_ob = 0 ; list_ob < Amount_Support_Object ; list_ob++) 
+            {
+                SupportObject* ob_sp = list_object_support + list_ob;
+                ob_sp->Hand_Support_Move(SCREEN_WIDTH,SCREEN_HEIGHT);
+                ob_sp->Render(renderer,NULL);
+                // check collision support_ob and mainob
+                bool crashing = ob_sp->CheckCollision(ob_sp->GetRect(),g_mainobject.GetRect());
+                if(crashing){
+                    mark_value_game += 5;
+                    ob_sp->ResetThreat(SCREEN_WIDTH);
+                }
+            }
+        }
+
         g_mainobject.HandMove();
         g_mainobject.Render(renderer,NULL);
         g_mainobject.Display_Amo(renderer);
@@ -375,6 +412,7 @@ int main(int argc, char* argv[])
                     bool check_col = p_amo->CheckCollision(p_amo->GetRect(),g_mainobject.GetRect());
                     if(check_col == true)
                         p_threat->RemoveAmo_Threat(k);
+
                 }
             }
             // xu li va cham vien dan cua mainobject voi Threats
@@ -400,12 +438,12 @@ int main(int argc, char* argv[])
         mark_game.RenderText(renderer,500,10);
 
         // Render time_text
-        unsigned int time = SDL_GetTicks()/1000;
+        time = SDL_GetTicks()/1000;
         std::string Time_present = val_time + std::to_string(time);
         Time_game.SetText(Time_present);
         Time_game.loadFromRenderedText(g_font_text,renderer);
         Time_game.RenderText(renderer,SCREEN_WIDTH-200,10);
-
+      
         SDL_RenderPresent(renderer);
     }
     Time_game.Free();

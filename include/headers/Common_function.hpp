@@ -83,3 +83,6 @@
     static Mix_Chunk* g_sound_explosion = NULL;
     static Mix_Chunk* g_sound_ex_main = NULL;
     static Mix_Music *gMusic = NULL; // Sound game
+
+// Support Object
+    const int Amount_Support_Object = 4;
