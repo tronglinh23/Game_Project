@@ -305,6 +305,7 @@ int main(int argc, char* argv[])
     unsigned int die_nums = 0;
     unsigned int mark_value_game = 0;
     unsigned int time = 0;
+    unsigned int amount_bullet_main_object = 3;
     // Path flow
     while(!is_quit){
         while(SDL_PollEvent(&event)){
@@ -362,11 +363,20 @@ int main(int argc, char* argv[])
             if(list_object_support[Amount_Support_Object - 1].GetRect().x  < 0){
                     Init_Support_Object(list_object_support);
                 }
+            // toc do threat tang len theo tung muc
+            if(time == 20){
+                for(int t = 0 ; t < Amount_Threat ; t++){
+                    ThreatObject* p_threat = (p_threat_list + t);
+                    p_threat->Set_x_val(7); // 
+                }
+            }
+           
         }
 
 
         g_mainobject.HandMove();
         g_mainobject.Render(renderer,NULL);
+        g_mainobject.Set_Amount_Bullet(amount_bullet_main_object);
         g_mainobject.Display_Amo(renderer);
         // run Threat
         for(int t = 0 ; t < Amount_Threat ; t++){
@@ -418,16 +428,18 @@ int main(int argc, char* argv[])
                 }
             }
             // xu li va cham vien dan cua mainobject voi Threats
-            std::vector<BulletObject*> amo_list = g_mainobject.GetAmoList();
-            for(int k = 0 ; k < amo_list.size(); k++){
-                BulletObject* p_amo = amo_list.at(k);
-                if(p_amo){
-                    bool ret_col = p_amo->CheckCollision(p_amo->GetRect(),p_threat->GetRect());
-                    if(ret_col){
-                        mark_value_game++; // ha guc dc 1 thi diem ++
-                        p_threat->ResetThreat(SCREEN_WIDTH + t * 400);
-                        g_mainobject.RemoveAmo(k); // xoa vien dan cua mainobject
-                        Mix_PlayChannel(0,g_sound_explosion,0);
+            for(int stt = 0 ; stt < amount_bullet_main_object ; stt++){
+                std::vector<BulletObject*> amo_list = g_mainobject.GetAmoList(stt);
+                for(int k = 0 ; k < amo_list.size(); k++){
+                    BulletObject* p_amo = amo_list.at(k);
+                    if(p_amo){
+                        bool ret_col = p_amo->CheckCollision(p_amo->GetRect(),p_threat->GetRect());
+                        if(ret_col){
+                            mark_value_game++; // ha guc dc 1 thi diem ++
+                            p_threat->ResetThreat(SCREEN_WIDTH + t * 400);
+                            g_mainobject.RemoveAmo(stt,k); // xoa vien dan cua mainobject
+                            Mix_PlayChannel(0,g_sound_explosion,0);
+                        }
                     }
                 }
             }

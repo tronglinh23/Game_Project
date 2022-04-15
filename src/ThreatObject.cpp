@@ -29,7 +29,7 @@ void ThreatObject::init(BulletObject* P_amo,SDL_Renderer* screen){
             P_amo->set_is_move_(true);
             P_amo->SetWidthHeight(WIDTH_BULLET_THREAT,HEIGHT_BULLET_THREAT);
             P_amo->SetRect(rect_.x - 5, rect_.y + rect_.h * 0.5);
-            P_amo->Set_x_val(8); // toc do dan ban cua threat
+            P_amo->Set_x_val(x_val_ + 3); // toc do dan ban cua threat
             p_amo_list_.push_back(P_amo);
         }
     }
