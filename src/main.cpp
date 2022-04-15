@@ -276,8 +276,8 @@ int main(int argc, char* argv[])
 
     //Make main life power
     PlayerPower life_player;
-    life_player.LoadIMG("res/pics/Magical rainbow star.png",renderer);
-    life_player.setSize(40,40);
+    life_player.LoadIMG("res/file anh/star.png",renderer);
+    life_player.setSize(45,45);
     life_player.Init();
     // Init TextoBJECT
     InitText();
@@ -367,7 +367,7 @@ int main(int argc, char* argv[])
             if(time == 20){
                 for(int t = 0 ; t < Amount_Threat ; t++){
                     ThreatObject* p_threat = (p_threat_list + t);
-                    p_threat->Set_x_val(7); // 
+                    p_threat->Set_x_val(7); //
                 }
             }
            

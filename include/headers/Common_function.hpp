@@ -42,7 +42,7 @@
 
     //Mark
     static TTF_Font* g_font_text = NULL;
-    const std::string font_mark_game = "res/font/comicate.ttf";
+    const std::string font_mark_game = "res/font/V5PRC___.TTF";
     const std::string text("Mark: ");
     const int size_mark = 30;
 
