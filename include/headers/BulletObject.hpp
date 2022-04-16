@@ -25,8 +25,8 @@ public:
 
     void HandleMoveFromRighttoLeft(const int& x_border, const int& y_border);
     
-    int get_type() const {return amo_type_;}
-    void set_type(const int &type) {amo_type_ = type;}
+    int get_type() const {return bullet_type_;}
+    void set_type(const int &type) {bullet_type_ = type;}
 
     bool get_is_move_() const {return is_move_;}
     void set_is_move_(bool move) {is_move_ = move;}
@@ -40,5 +40,5 @@ private:
     int x_val_;
     int y_val_;
     bool is_move_;
-    int amo_type_;
+    int bullet_type_;
 };

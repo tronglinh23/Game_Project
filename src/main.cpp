@@ -226,6 +226,7 @@ int Show_Menu(SDL_Renderer* des,BaseObject& Menu_show,TTF_Font* font_game_menu)
 // Init Support Object
 
 void Init_Support_Object(SupportObject * list_object){
+
     int ran_num;
     for(int sp_ob = 0 ; sp_ob < Amount_Support_Object; sp_ob++){
         SupportObject* list_spp = list_object + sp_ob;
@@ -237,7 +238,30 @@ void Init_Support_Object(SupportObject * list_object){
         list_spp->Set_x_pos(3);
     }
 }
+
+void Show_Menu_Options(){
+    bool time_pause = true;
+    BaseObject Options_menu_background;
+    Options_menu_background.LoadIMG("res/file anh/1.jpg",renderer);
+    Options_menu_background.setSize(500,300);
+    Options_menu_background.SetRect(SCREEN_WIDTH/3, SCREEN_HEIGHT/3);
+    SDL_Event event_options;
+    while(time_pause){
+        Options_menu_background.Render(renderer,NULL);
+        SDL_RenderPresent(renderer);
+        while(SDL_PollEvent(&event_options)){
+            if(event_options.type = SDL_KEYDOWN){
+                switch(event_options.key.keysym.sym){
+                    case SDLK_2: time_pause = false; break;
+                }
+            }
+        }
+            
+    }
+}
+
 // Main
+
 int main(int argc, char* argv[])
 {
     srand(time(NULL));
@@ -262,8 +286,8 @@ int main(int argc, char* argv[])
         p_threat->SetRect(SCREEN_WIDTH + i * 400,ran_num);
         p_threat->Set_x_val(6);
 
-        BulletObject* threat_amo = new BulletObject();
-        p_threat->init(threat_amo,renderer);
+        BulletObject* threat_bullet = new BulletObject();
+        p_threat->init(threat_bullet,renderer);
     }
 
     SDL_SetRenderDrawColor(renderer, 255,255,255,255);
@@ -314,6 +338,13 @@ int main(int argc, char* argv[])
                 break;
             }
             g_mainobject.HandleInputAction(event,renderer,g_sound_bullet,gMusic);
+
+            if(event.type = SDL_KEYDOWN){
+                switch(event.key.keysym.sym){
+                    case SDLK_ESCAPE: Show_Menu_Options(); break;
+                    default : break;
+                }
+            }
         }
         // Load 2 tam anh lien tiep de cho cam tuong dang chay
         // bkgn_x -= 2;
@@ -377,13 +408,13 @@ int main(int argc, char* argv[])
         g_mainobject.HandMove();
         g_mainobject.Render(renderer,NULL);
         g_mainobject.Set_Amount_Bullet(amount_bullet_main_object);
-        g_mainobject.Display_Amo(renderer);
+        g_mainobject.Display_bullet(renderer);
         // run Threat
         for(int t = 0 ; t < Amount_Threat ; t++){
             ThreatObject* p_threat = (p_threat_list + t);
             p_threat->HandleMove(SCREEN_WIDTH,SCREEN_HEIGHT);
             p_threat->Render(renderer,NULL);
-            p_threat->MakeAmo(renderer,SCREEN_WIDTH,SCREEN_HEIGHT);
+            p_threat->Makebullet(renderer,SCREEN_WIDTH,SCREEN_HEIGHT);
             // kiem tra va cham Threat voi Object
             bool check_col = p_threat->CheckCollision(g_mainobject.GetRect(),p_threat->GetRect());
             if(check_col){
@@ -417,27 +448,27 @@ int main(int argc, char* argv[])
                 }
             }
             // xu li dan cua threats ban vao mainobject
-            std::vector<BulletObject*> threat_amo_list = p_threat->Get_Amo_list();
-            for(int k = 0 ; k < threat_amo_list.size(); k++){
-                BulletObject* p_amo = threat_amo_list.at(k);
-                if(p_amo){
-                    bool check_col = p_amo->CheckCollision(p_amo->GetRect(),g_mainobject.GetRect());
+            std::vector<BulletObject*> threat_bullet_list = p_threat->Get_bullet_list();
+            for(int k = 0 ; k < threat_bullet_list.size(); k++){
+                BulletObject* p_bullet = threat_bullet_list.at(k);
+                if(p_bullet){
+                    bool check_col = p_bullet->CheckCollision(p_bullet->GetRect(),g_mainobject.GetRect());
                     if(check_col == true)
-                        p_threat->RemoveAmo_Threat(k);
+                        p_threat->Removebullet_Threat(k);
 
                 }
             }
             // xu li va cham vien dan cua mainobject voi Threats
             for(int stt = 0 ; stt < amount_bullet_main_object ; stt++){
-                std::vector<BulletObject*> amo_list = g_mainobject.GetAmoList(stt);
-                for(int k = 0 ; k < amo_list.size(); k++){
-                    BulletObject* p_amo = amo_list.at(k);
-                    if(p_amo){
-                        bool ret_col = p_amo->CheckCollision(p_amo->GetRect(),p_threat->GetRect());
+                std::vector<BulletObject*> bullet_list = g_mainobject.GetbulletList(stt);
+                for(int k = 0 ; k < bullet_list.size(); k++){
+                    BulletObject* p_bullet = bullet_list.at(k);
+                    if(p_bullet){
+                        bool ret_col = p_bullet->CheckCollision(p_bullet->GetRect(),p_threat->GetRect());
                         if(ret_col){
                             mark_value_game++; // ha guc dc 1 thi diem ++
                             p_threat->ResetThreat(SCREEN_WIDTH + t * 400);
-                            g_mainobject.RemoveAmo(stt,k); // xoa vien dan cua mainobject
+                            g_mainobject.Removebullet(stt,k); // xoa vien dan cua mainobject
                             Mix_PlayChannel(0,g_sound_explosion,0);
                         }
                     }

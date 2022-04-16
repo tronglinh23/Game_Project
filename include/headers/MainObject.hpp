@@ -17,15 +17,15 @@ public:
     ~MainObject();
     void HandleInputAction(SDL_Event events, SDL_Renderer* screen, Mix_Chunk* bulletsound[2], Mix_Music* gMusic_);
     void HandMove();
-    void SetAmoList(std::vector<BulletObject*> amo_list, const int& stt) {p_amo_list_[stt] = amo_list;}
-    std::vector<BulletObject*> GetAmoList(const int& stt) const {return p_amo_list_[stt];}
+    void SetbulletList(std::vector<BulletObject*> bullet_list, const int& stt) {p_bullet_list_[stt] = bullet_list;}
+    std::vector<BulletObject*> GetbulletList(const int& stt) const {return p_bullet_list_[stt];}
     
-    void Display_Amo(SDL_Renderer* des);
-    void RemoveAmo(const int& stt,const int& x);
+    void Display_bullet(SDL_Renderer* des);
+    void Removebullet(const int& stt,const int& x);
     void Set_Amount_Bullet(const int& amount_bullet){amount_bullet_ = amount_bullet;}
 private:
     float x_val_;
     float y_val_;
     int amount_bullet_;
-    std::vector<BulletObject*> p_amo_list_[3];
+    std::vector<BulletObject*> p_bullet_list_[3];
 };

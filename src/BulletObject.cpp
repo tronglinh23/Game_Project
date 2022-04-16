@@ -6,7 +6,7 @@ BulletObject::BulletObject(){
     x_val_ = 0;
     y_val_ = 0;
     is_move_ = false;
-    amo_type_ = NONE;
+    bullet_type_ = NONE;
 }
 BulletObject::~BulletObject(){
 
