@@ -86,3 +86,14 @@
 
 // Support Object
     const int Amount_Support_Object = 4;
+
+
+// Menu option 2
+static TTF_Font *menu_options_text_2 = NULL;
+const std::string font_menu_text = "res/font/V5PRC___.TTF";
+const int size_text_menu_2 = 30;
+const int x_pos_menu_options = SCREEN_WIDTH/4 + 80;
+const int y_pos_menu_options = SCREEN_HEIGHT/4;
+const int color_items_menu_2_R= 2;
+const int color_items_menu_2_G = 25;
+const int color_items_menu_2_B = 61;

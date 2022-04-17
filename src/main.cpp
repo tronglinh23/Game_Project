@@ -122,8 +122,8 @@ void InitText(){
     if( TTF_Init() == -1 ) logSDLError(std::cout,"SDL_ttf could not initialize! SDL_ttf ",true);
     g_font_text = TTF_OpenFont(font_mark_game.c_str(),size_mark);
     menu_font_text = TTF_OpenFont(font_menu_game.c_str(),size_menu_text);
+    menu_options_text_2 = TTF_OpenFont(font_menu_game.c_str(),size_text_menu_2);
     if(g_font_text == NULL) logSDLError(std::cout,"Failed to load lazy font! SDL_ttf ",true);
-
 }
 
 // ShowMenu
@@ -239,25 +239,73 @@ void Init_Support_Object(SupportObject * list_object){
     }
 }
 
-void Show_Menu_Options(){
+int Show_Menu_Options(){
     bool time_pause = true;
     BaseObject Options_menu_background;
-    Options_menu_background.LoadIMG("res/file anh/1.jpg",renderer);
-    Options_menu_background.setSize(500,300);
-    Options_menu_background.SetRect(SCREEN_WIDTH/3, SCREEN_HEIGHT/3);
+    Options_menu_background.LoadIMG("res/file anh/support.png",renderer);
+    Options_menu_background.setSize(400,400);
+    Options_menu_background.SetRect(x_pos_menu_options, y_pos_menu_options);
+    const int MenuItems = 2;
+    SDL_Rect pos_items[MenuItems];
+    pos_items[0].x = x_pos_menu_options + 80;
+    pos_items[0].y = 300;
+    pos_items[1].x = x_pos_menu_options + 80;
+    pos_items[1].y = 375;
+    TextObject text_menu[MenuItems];
+    text_menu[0].SetText("CONTINUE");
+    text_menu[0].SetColor(color_items_menu_2_R,color_items_menu_2_G,color_items_menu_2_B);
+    text_menu[0].SetRect(pos_items[0].x, pos_items[0].y);
+
+    text_menu[1].SetText("MENU");
+    text_menu[1].SetColor(color_items_menu_2_R,color_items_menu_2_G,color_items_menu_2_B);
+    text_menu[1].SetRect(pos_items[1].x, pos_items[1].y);
+    int x = 0, y = 0;
     SDL_Event event_options;
     while(time_pause){
         Options_menu_background.Render(renderer,NULL);
-        SDL_RenderPresent(renderer);
+        for(int i = 0 ; i < MenuItems ; i++){
+            text_menu[i].loadFromRenderedText(menu_options_text_2,renderer);
+            text_menu[i].RenderText(renderer,pos_items[i].x,pos_items[i].y);
+
+        }    
         while(SDL_PollEvent(&event_options)){
-            if(event_options.type = SDL_KEYDOWN){
-                switch(event_options.key.keysym.sym){
-                    case SDLK_2: time_pause = false; break;
+            switch(event_options.type){
+                case SDL_QUIT:
+                    return 1;
+                case SDL_MOUSEMOTION:
+                {
+                    // lay vi tri cua con chuot
+                    x = event_options.motion.x;
+                    y = event_options.motion.y;
+                    // change colors
+                    for(int i = 0 ; i < MenuItems; i++){
+                        if(checkfocuswithrect(x,y,text_menu[i].GetRect())){
+                            text_menu[i].SetColor(color_Change_ItemText_R, color_Change_ItemText_G, color_Change_ItemText_B);
+                        }
+                        else
+                            text_menu[i].SetColor(color_items_menu_2_R,color_items_menu_2_G,color_items_menu_2_B);
+                    }
+                    break;
                 }
+                // if button down
+                case SDL_MOUSEBUTTONDOWN:
+                {
+                    x = event_options.button.x;
+                    y = event_options.button.y;
+                    for(int i = 0 ; i < MenuItems; i++){
+                        if(checkfocuswithrect(x,y,text_menu[i].GetRect())){
+                            return i;
+                        }
+                    }
+                    break;
+                }
+                default:
+                    break;
             }
         }
-            
+        SDL_RenderPresent(renderer);   
     }
+    return 1;
 }
 
 // Main
@@ -337,14 +385,23 @@ int main(int argc, char* argv[])
                 is_quit = true;
                 break;
             }
-            g_mainobject.HandleInputAction(event,renderer,g_sound_bullet,gMusic);
-
-            if(event.type = SDL_KEYDOWN){
+            if(event.type == SDL_KEYDOWN){
                 switch(event.key.keysym.sym){
-                    case SDLK_ESCAPE: Show_Menu_Options(); break;
-                    default : break;
+                    case SDLK_ESCAPE:{
+                        if(Show_Menu_Options() == 0){
+                            break;
+                        }
+                        else{
+                            ret_menu = Show_Menu(renderer,menu_show, menu_font_text);
+                            if(ret_menu == 1) is_quit = true;
+                        }
+                        break;
+                    }
+                    default: break;
                 }
             }
+            g_mainobject.HandleInputAction(event,renderer,g_sound_bullet,gMusic);
+
         }
         // Load 2 tam anh lien tiep de cho cam tuong dang chay
         // bkgn_x -= 2;
