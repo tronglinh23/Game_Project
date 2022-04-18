@@ -378,6 +378,8 @@ int main(int argc, char* argv[])
     unsigned int mark_value_game = 0;
     unsigned int time = 0;
     unsigned int amount_bullet_main_object = 3;
+    unsigned int time_menu_stop = 0;
+    unsigned int step_time_menu = 0;
     // Path flow
     while(!is_quit){
         while(SDL_PollEvent(&event)){
@@ -388,13 +390,15 @@ int main(int argc, char* argv[])
             if(event.type == SDL_KEYDOWN){
                 switch(event.key.keysym.sym){
                     case SDLK_ESCAPE:{
+                        time_menu_stop = time;
                         if(Show_Menu_Options() == 0){
-                            break;
+            
                         }
                         else{
                             ret_menu = Show_Menu(renderer,menu_show, menu_font_text);
                             if(ret_menu == 1) is_quit = true;
                         }
+                        step_time_menu = SDL_GetTicks()/1000 - time_menu_stop;
                         break;
                     }
                     default: break;
@@ -455,7 +459,7 @@ int main(int argc, char* argv[])
             if(time == 20){
                 for(int t = 0 ; t < Amount_Threat ; t++){
                     ThreatObject* p_threat = (p_threat_list + t);
-                    p_threat->Set_x_val(7); //
+                    p_threat->Set_x_val(7); /// cai tien toc do cho threat , threat tang nhanh
                 }
             }
            
@@ -540,12 +544,12 @@ int main(int argc, char* argv[])
         mark_game.RenderText(renderer,500,10);
 
         // Render time_text
-        time = SDL_GetTicks()/1000;
+        time = SDL_GetTicks()/1000 - step_time_menu;
         std::string Time_present = val_time + std::to_string(time);
         Time_game.SetText(Time_present);
         Time_game.loadFromRenderedText(g_font_text,renderer);
         Time_game.RenderText(renderer,SCREEN_WIDTH-200,10);
-      
+
         SDL_RenderPresent(renderer);
     }
     Time_game.Free();
@@ -557,3 +561,10 @@ int main(int argc, char* argv[])
 
 
 
+/*
+    tach time
+    goi 2 lan sdl_gettick();
+    khi showmenu;
+    save gia tri time dau vao 1 diem;
+    sau day tra lai gia tri
+*/
