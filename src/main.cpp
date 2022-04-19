@@ -239,6 +239,11 @@ void Init_Support_Object(SupportObject * list_object){
     }
 }
 
+void Init_life_Support_Object(SupportObject &life_suport){
+    life_suport.SetRect(SCREEN_WIDTH,rand() % (SCREEN_HEIGHT - 100));
+    life_suport.Set_x_pos(5);
+}
+
 int Show_Menu_Options(){
     bool time_pause = true;
     BaseObject Options_menu_background;
@@ -270,8 +275,9 @@ int Show_Menu_Options(){
         }    
         while(SDL_PollEvent(&event_options)){
             switch(event_options.type){
-                case SDL_QUIT:
-                    return 1;
+                case SDL_QUIT: return 2;
+                case SDL_KEYDOWN:
+                    if(event.key.keysym.sym == SDLK_ESCAPE) return 0;
                 case SDL_MOUSEMOTION:
                 {
                     // lay vi tri cua con chuot
@@ -363,7 +369,13 @@ int main(int argc, char* argv[])
     // Support Object
     SupportObject* list_object_support = new SupportObject[Amount_Support_Object];
     Init_Support_Object(list_object_support);
+    
+    SupportObject life_object_support;
+    life_object_support.LoadIMG("res/file anh/star.png",renderer);
+    life_object_support.setSize(50,50);
+    Init_life_Support_Object(life_object_support);
 
+    //Path run
     int bkgn_x = 0;
     bool is_run_screen = true;
     bool is_quit = false;
@@ -379,7 +391,7 @@ int main(int argc, char* argv[])
     unsigned int time = 0;
     unsigned int amount_bullet_main_object = 3;
     unsigned int time_menu_stop = 0;
-    unsigned int step_time_menu = 0;
+    unsigned int step_time_menu = SDL_GetTicks()/1000;
     // Path flow
     while(!is_quit){
         while(SDL_PollEvent(&event)){
@@ -391,9 +403,10 @@ int main(int argc, char* argv[])
                 switch(event.key.keysym.sym){
                     case SDLK_ESCAPE:{
                         time_menu_stop = time;
-                        if(Show_Menu_Options() == 0){
-            
+                        int result_path = Show_Menu_Options();
+                        if(result_path == 0){
                         }
+                        else if(result_path == 2) is_quit = true;
                         else{
                             ret_menu = Show_Menu(renderer,menu_show, menu_font_text);
                             if(ret_menu == 1) is_quit = true;
@@ -456,13 +469,25 @@ int main(int argc, char* argv[])
                     Init_Support_Object(list_object_support);
                 }
             // toc do threat tang len theo tung muc
-            if(time == 20){
+            if(time >= 10){
                 for(int t = 0 ; t < Amount_Threat ; t++){
                     ThreatObject* p_threat = (p_threat_list + t);
-                    p_threat->Set_x_val(7); /// cai tien toc do cho threat , threat tang nhanh
+                    p_threat->Set_x_val(6 + time/10); /// cai tien toc do cho threat , threat tang nhanh
+                    p_threat->Upgrade_speed_Bullet();
                 }
+                
             }
            
+            life_object_support.Hand_Support_Move(SCREEN_WIDTH,SCREEN_HEIGHT);
+            life_object_support.Render(renderer,NULL);
+            bool check_collid_life_main = life_object_support.CheckCollision(life_object_support.GetRect(), g_mainobject.GetRect());
+            if(check_collid_life_main && die_nums > 0){
+                die_nums--;
+                life_player.Increase();
+                life_player.DisplayLife(renderer);
+                Init_life_Support_Object(life_object_support);
+                SDL_RenderPresent(renderer);
+            }
         }
 
 
@@ -560,11 +585,3 @@ int main(int argc, char* argv[])
 }
 
 
-
-/*
-    tach time
-    goi 2 lan sdl_gettick();
-    khi showmenu;
-    save gia tri time dau vao 1 diem;
-    sau day tra lai gia tri
-*/

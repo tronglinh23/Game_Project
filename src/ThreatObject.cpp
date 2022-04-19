@@ -34,6 +34,13 @@ void ThreatObject::init(BulletObject* P_bullet,SDL_Renderer* screen){
         }
     }
 }
+void ThreatObject::Upgrade_speed_Bullet(){
+    for(int i = 0 ; i < p_bullet_list_.size(); i++){
+        BulletObject* P_bullet = p_bullet_list_.at(i);
+        P_bullet->Set_x_val(x_val_ + 3);
+    }
+    
+}
 
 void ThreatObject::Makebullet(SDL_Renderer* des, const int& x_limit , const int& y_limit)
 {

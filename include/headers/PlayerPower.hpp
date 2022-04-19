@@ -11,6 +11,7 @@ public:
     void DisplayLife(SDL_Renderer* des);
     void Init();
     void Decrease();
+    void Increase();
 private:
     int number_;
     std::vector<int> pos_life_;

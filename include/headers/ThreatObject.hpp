@@ -11,6 +11,7 @@ public:
     ThreatObject();
     ~ThreatObject();
     void init(BulletObject * p_bullet, SDL_Renderer* screen);
+    void Upgrade_speed_Bullet();
     void Makebullet(SDL_Renderer* des, const int& x_limit , const int& y_limit); // KIEM TRA KHI NAO DEN CUOI MAP THI GET_IS_MOVE = FALSE;
     void HandleMove(const int& x_border, const int& y_border);
     void HandleInputAction(SDL_Event events);
