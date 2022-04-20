@@ -364,6 +364,10 @@ int main(int argc, char* argv[])
 
     TextObject Time_game;
     Time_game.SetColor(0,255,255);
+
+    TextObject Subtr_Mark_game;
+    Subtr_Mark_game.SetColor(255,0,0);
+
     //
 
     // Support Object
@@ -510,9 +514,14 @@ int main(int argc, char* argv[])
                     EXP_main.set_frame(ex);
                     EXP_main.SetRect(x_pos,y_pos);
                     EXP_main.RenderEx(renderer,NULL);
+                    Subtr_Mark_game.SetText("-5");
+                    Subtr_Mark_game.loadFromRenderedText(g_font_text,renderer);
+                    Subtr_Mark_game.RenderText(renderer, g_mainobject.GetRect().x + 30 , g_mainobject.GetRect().y - 30);
                     SDL_Delay(100);
                     SDL_RenderPresent(renderer);
                 }
+                if(mark_value_game > 5) mark_value_game -=5;
+
                 Mix_PlayChannel(0,g_sound_explosion,0);
                 p_threat->ResetThreat(SCREEN_WIDTH + t * 400); // sau khi va cham thi threats bien mat
                 die_nums ++;
@@ -539,8 +548,16 @@ int main(int argc, char* argv[])
                 BulletObject* p_bullet = threat_bullet_list.at(k);
                 if(p_bullet){
                     bool check_col = p_bullet->CheckCollision(p_bullet->GetRect(),g_mainobject.GetRect());
-                    if(check_col == true)
+                    if(check_col == true){
                         p_threat->Removebullet_Threat(k);
+                        
+                        Subtr_Mark_game.SetText("-1");
+                        Subtr_Mark_game.loadFromRenderedText(g_font_text,renderer);
+                        Subtr_Mark_game.RenderText(renderer, g_mainobject.GetRect().x + 30 , g_mainobject.GetRect().y - 30);
+            
+                        if(mark_value_game > 0 ) mark_value_game--; //va cham dan thi -1 diem 
+                                                                        
+                    }
 
                 }
             }
