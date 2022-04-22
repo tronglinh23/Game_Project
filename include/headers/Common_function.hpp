@@ -14,6 +14,7 @@
     const int SCREEN_WIDTH = 1200;
     const int SCREEN_HEIGHT = 600;
     const int SCREEN_BPP = 32;
+    const int speed_run_screen = 2;
 
 // Font text - title
     // MenuText
@@ -45,10 +46,21 @@
     const std::string font_mark_game = "res/font/V5PRC___.TTF";
     const std::string text("Mark: ");
     const int size_mark = 30;
+    const int x_pos_render_mark_text = 500;
+    const int y_pos_render_mark_text = 10;
 
     //Time_Text
     const std::string val_time("Time: ");
     const int size_time = 30;
+    const int x_pos_render_time_text = SCREEN_WIDTH - 200;
+    const int y_pos_render_time_text = 10;
+    // Subtract mark text - collid
+    static TTF_Font *Subtr_mark = NULL;
+    const std::string subtr_mark_text = "res/font/Tabaquera.ttf";
+    const int size_subtr_mark_text = 35;
+    const int color_SubtrText_R = 255;
+    const int color_SubtrText_G = 0;
+    const int color_SubtrText_B = 0;
 // Main Object
     const int mainobject_Pos_X_Start = 100;
     const int mainobject_Pos_Y_Start = 200;
@@ -56,12 +68,7 @@
 // Explosion
 
 // background
-    // const int amount_pics_background = 4;
-    // static const std::string pics_background[] = {"res/file anh/1.jpg",
-    //                                               "res/file anh/2.jpg",
-    //                                               "res/file anh/3.jpg",
-    //                                               "res/file anh/4.jpg"};
-
+    
     const std::string pics_background = "res/file anh/6569652.png";
     const int WIDTH_BACKGROUND = 4800;
     const int HEIGHT_BACKGROUND = 600;
@@ -71,7 +78,7 @@
     static SDL_Event event;
 //Amount of THREAT_OBJECT
     const int Amount_Threat = 4;
-
+    const int Speed_Threat_default = 6;
 
 // transparent background
     const int COLOR_KEY_R = 0;
@@ -87,6 +94,9 @@
 // Support Object
     const int Amount_Support_Object = 4;
 
+    // life_support_object
+    const int speed_life_support_default = 10;
+
 
 // Menu option 2
 static TTF_Font *menu_options_text_2 = NULL;
@@ -97,3 +107,7 @@ const int y_pos_menu_options = SCREEN_HEIGHT/4;
 const int color_items_menu_2_R= 2;
 const int color_items_menu_2_G = 25;
 const int color_items_menu_2_B = 61;
+
+
+
+// 

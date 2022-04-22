@@ -48,6 +48,8 @@ void quitSDL(SDL_Window* window, SDL_Renderer* renderer)
 {
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
+    Mix_Quit();
+    IMG_Quit();
 	SDL_Quit();
 }
 
@@ -123,7 +125,8 @@ void InitText(){
     g_font_text = TTF_OpenFont(font_mark_game.c_str(),size_mark);
     menu_font_text = TTF_OpenFont(font_menu_game.c_str(),size_menu_text);
     menu_options_text_2 = TTF_OpenFont(font_menu_game.c_str(),size_text_menu_2);
-    if(g_font_text == NULL) logSDLError(std::cout,"Failed to load lazy font! SDL_ttf ",true);
+    Subtr_mark = TTF_OpenFont(subtr_mark_text.c_str(),size_subtr_mark_text);
+    if(!g_font_text && !menu_font_text && !menu_options_text_2 && !Subtr_mark) logSDLError(std::cout,"Failed to load lazy font! SDL_ttf ",true);
 }
 
 // ShowMenu
@@ -239,12 +242,16 @@ void Init_Support_Object(SupportObject * list_object){
     }
 }
 
-void Init_life_Support_Object(SupportObject &life_suport){
-    life_suport.SetRect(SCREEN_WIDTH,rand() % (SCREEN_HEIGHT - 100));
-    life_suport.Set_x_pos(5);
+void Init_life_Support_Object(SupportObject &life_suport, int speed_life){
+    life_suport.SetRect(SCREEN_WIDTH , rand() % (SCREEN_HEIGHT - 100));
+    life_suport.Set_x_pos(speed_life);
 }
 
 int Show_Menu_Options(){
+    // return 0 : Continue
+    // return 1 : Show menu
+    // return 2 : Quit game
+    
     bool time_pause = true;
     BaseObject Options_menu_background;
     Options_menu_background.LoadIMG("res/file anh/support.png",renderer);
@@ -338,7 +345,7 @@ int main(int argc, char* argv[])
         int ran_num = rand() % (SCREEN_HEIGHT + 400);
         if(ran_num >= SCREEN_HEIGHT - 50) ran_num *= 5.0/10;
         p_threat->SetRect(SCREEN_WIDTH + i * 400,ran_num);
-        p_threat->Set_x_val(6);
+        p_threat->Set_x_val(Speed_Threat_default);
 
         BulletObject* threat_bullet = new BulletObject();
         p_threat->init(threat_bullet,renderer);
@@ -348,7 +355,7 @@ int main(int argc, char* argv[])
     SDL_RenderClear(renderer);
     // Init ExplosionObject
     ExplosionObject EXP_main;
-    EXP_main.LoadIMG("res/pics/exp_main.png",renderer);
+    EXP_main.LoadIMG("res/pics/exp.png",renderer);
     // EXP_main.SetRect(165,165);
     EXP_main.set_clip();
 
@@ -360,13 +367,13 @@ int main(int argc, char* argv[])
     // Init TextoBJECT
     InitText();
     TextObject mark_game;
-    mark_game.SetColor(0,255,255);
+    mark_game.SetColor(color_title_R,color_title_G,color_title_B);
 
     TextObject Time_game;
-    Time_game.SetColor(0,255,255);
+    Time_game.SetColor(color_title_R,color_title_G,color_title_B);
 
     TextObject Subtr_Mark_game;
-    Subtr_Mark_game.SetColor(255,0,0);
+    Subtr_Mark_game.SetColor(color_SubtrText_R,color_SubtrText_G,color_SubtrText_B);
 
     //
 
@@ -377,8 +384,7 @@ int main(int argc, char* argv[])
     SupportObject life_object_support;
     life_object_support.LoadIMG("res/file anh/star.png",renderer);
     life_object_support.setSize(50,50);
-    Init_life_Support_Object(life_object_support);
-
+    Init_life_Support_Object(life_object_support, speed_life_support_default);
     //Path run
     int bkgn_x = 0;
     bool is_run_screen = true;
@@ -439,7 +445,7 @@ int main(int argc, char* argv[])
 
         // 1 background
         if(is_run_screen){
-            bkgn_x -= 2;
+            bkgn_x -= speed_run_screen;
             if(bkgn_x <= - (WIDTH_BACKGROUND - SCREEN_WIDTH)){
                 bkgn_x = 0 ;
             } // den man hinh cuoi cung thi dung lai de danh boss
@@ -467,21 +473,25 @@ int main(int argc, char* argv[])
                 if(crashing){
                     mark_value_game += 5;
                     ob_sp->Remove_support_Object(SCREEN_WIDTH);
+                    Subtr_Mark_game.SetText("+5");
+                    Subtr_Mark_game.loadFromRenderedText(Subtr_mark,renderer);
+                    Subtr_Mark_game.RenderText(renderer, g_mainobject.GetRect().x + 35 , g_mainobject.GetRect().y - 35);
                 }
             }
             if(list_object_support[Amount_Support_Object - 1].GetRect().x  < 0){
                     Init_Support_Object(list_object_support);
-                }
-            // toc do threat tang len theo tung muc
-            if(time >= 10){
-                for(int t = 0 ; t < Amount_Threat ; t++){
-                    ThreatObject* p_threat = (p_threat_list + t);
-                    p_threat->Set_x_val(6 + time/10); /// cai tien toc do cho threat , threat tang nhanh
-                    p_threat->Upgrade_speed_Bullet();
-                }
-                
             }
-           
+        }
+            // toc do threat tang len theo tung muc
+        if(time >= 10){
+            for(int t = 0 ; t < Amount_Threat ; t++){
+                ThreatObject* p_threat = (p_threat_list + t);
+                p_threat->Set_x_val(Speed_Threat_default + time/20); /// cai tien toc do cho threat , threat tang nhanh
+                p_threat->Upgrade_speed_Bullet();
+            }
+            
+        }
+        if(time >= 5){
             life_object_support.Hand_Support_Move(SCREEN_WIDTH,SCREEN_HEIGHT);
             life_object_support.Render(renderer,NULL);
             bool check_collid_life_main = life_object_support.CheckCollision(life_object_support.GetRect(), g_mainobject.GetRect());
@@ -489,9 +499,10 @@ int main(int argc, char* argv[])
                 die_nums--;
                 life_player.Increase();
                 life_player.DisplayLife(renderer);
-                Init_life_Support_Object(life_object_support);
+                Init_life_Support_Object(life_object_support, 0);
                 SDL_RenderPresent(renderer);
             }
+            if(time == 20) Init_life_Support_Object(life_object_support, speed_life_support_default);
         }
 
 
@@ -515,12 +526,12 @@ int main(int argc, char* argv[])
                     EXP_main.SetRect(x_pos,y_pos);
                     EXP_main.RenderEx(renderer,NULL);
                     Subtr_Mark_game.SetText("-5");
-                    Subtr_Mark_game.loadFromRenderedText(g_font_text,renderer);
-                    Subtr_Mark_game.RenderText(renderer, g_mainobject.GetRect().x + 30 , g_mainobject.GetRect().y - 30);
+                    Subtr_Mark_game.loadFromRenderedText(Subtr_mark,renderer);
+                    Subtr_Mark_game.RenderText(renderer, g_mainobject.GetRect().x + 35 , g_mainobject.GetRect().y - 35);
                     SDL_Delay(100);
                     SDL_RenderPresent(renderer);
                 }
-                if(mark_value_game > 5) mark_value_game -=5;
+                if(mark_value_game > 5) mark_value_game -= 5;
 
                 Mix_PlayChannel(0,g_sound_explosion,0);
                 p_threat->ResetThreat(SCREEN_WIDTH + t * 400); // sau khi va cham thi threats bien mat
@@ -552,8 +563,8 @@ int main(int argc, char* argv[])
                         p_threat->Removebullet_Threat(k);
                         
                         Subtr_Mark_game.SetText("-1");
-                        Subtr_Mark_game.loadFromRenderedText(g_font_text,renderer);
-                        Subtr_Mark_game.RenderText(renderer, g_mainobject.GetRect().x + 30 , g_mainobject.GetRect().y - 30);
+                        Subtr_Mark_game.loadFromRenderedText(Subtr_mark,renderer);
+                        Subtr_Mark_game.RenderText(renderer, g_mainobject.GetRect().x + 35 , g_mainobject.GetRect().y - 35);
             
                         if(mark_value_game > 0 ) mark_value_game--; //va cham dan thi -1 diem 
                                                                         
@@ -583,14 +594,14 @@ int main(int argc, char* argv[])
         std::string val_str_mark = text + std::to_string(mark_value_game);
         mark_game.SetText(val_str_mark);
         mark_game.loadFromRenderedText(g_font_text,renderer);
-        mark_game.RenderText(renderer,500,10);
+        mark_game.RenderText(renderer, x_pos_render_mark_text, y_pos_render_mark_text);
 
         // Render time_text
         time = SDL_GetTicks()/1000 - step_time_menu;
         std::string Time_present = val_time + std::to_string(time);
         Time_game.SetText(Time_present);
         Time_game.loadFromRenderedText(g_font_text,renderer);
-        Time_game.RenderText(renderer,SCREEN_WIDTH-200,10);
+        Time_game.RenderText(renderer, x_pos_render_time_text, y_pos_render_time_text);
 
         SDL_RenderPresent(renderer);
     }
