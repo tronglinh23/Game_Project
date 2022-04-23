@@ -75,9 +75,9 @@ bool LoadMainObject(MainObject &p_mainobject){
 }
 // de sau cai tien len 
 std::string random_pics(){
-    const std::string pics_threats[] = {"res/file anh/threats1.png", "res/file anh/threats2.png",
-                                        "res/file anh/threats3.png", "res/file anh/threats4.png",
-                                        "res/file anh/threats5.png", "res/file anh/threats6.png"};
+    const std::string pics_threats[] = {"res/file anh/ship_enemy/Ship1.png", "res/file anh/ship_enemy/Ship2.png",
+                                        "res/file anh/ship_enemy/Ship3.png", "res/file anh/ship_enemy/Ship4.png",
+                                        "res/file anh/ship_enemy/Ship5.png", "res/file anh/ship_enemy/Ship6.png"};
     int ran = rand() % 6;
     return pics_threats[ran];
 }
@@ -356,7 +356,7 @@ int main(int argc, char* argv[])
     SDL_RenderClear(renderer);
     // Init ExplosionObject
     ExplosionObject EXP_main;
-    EXP_main.LoadIMG("res/pics/exp.png",renderer);
+    EXP_main.LoadIMG("res/file anh/merge_from_ofoct.png",renderer);
     // EXP_main.SetRect(165,165);
     EXP_main.set_clip();
 
@@ -520,7 +520,7 @@ int main(int argc, char* argv[])
             // kiem tra va cham Threat voi Object
             bool check_col = p_threat->CheckCollision(g_mainobject.GetRect(),p_threat->GetRect());
             if(check_col){
-                for(int ex = 0 ; ex < 4 ; ex++){
+                for(int ex = 0 ; ex < number_frame_ ; ex++){
                     int x_pos = g_mainobject.GetRect().x + g_mainobject.GetRect().w*0.5 - 0.5*EXP_WIDTH;
                     int y_pos = g_mainobject.GetRect().y + g_mainobject.GetRect().w*0.5 - 0.5*EXP_HEIGHT;
                     EXP_main.set_frame(ex);
@@ -529,12 +529,13 @@ int main(int argc, char* argv[])
                     Subtr_Mark_game.SetText("-5");
                     Subtr_Mark_game.loadFromRenderedText(Subtr_mark,renderer);
                     Subtr_Mark_game.RenderText(renderer, g_mainobject.GetRect().x + 35 , g_mainobject.GetRect().y - 35);
-                    SDL_Delay(100);
+                    SDL_Delay(75);
                     SDL_RenderPresent(renderer);
                 }
                 if(mark_value_game > 5) mark_value_game -= 5;
 
                 Mix_PlayChannel(0,g_sound_explosion,0);
+                
                 p_threat->ResetThreat(SCREEN_WIDTH + t * 400); // sau khi va cham thi threats bien mat
                 die_nums ++;
                 if(die_nums <= 2){
@@ -582,6 +583,8 @@ int main(int argc, char* argv[])
                         bool ret_col = p_bullet->CheckCollision(p_bullet->GetRect(),p_threat->GetRect());
                         if(ret_col){
                             mark_value_game++; // ha guc dc 1 thi diem ++
+                            p_threat->LoadIMG(random_pics(),renderer);
+                            p_threat->setSize(WIDTH_THREAT,HEIGHT_THREAT);
                             p_threat->ResetThreat(SCREEN_WIDTH + t * 400);
                             g_mainobject.Removebullet(stt,k); // xoa vien dan cua mainobject
                             Mix_PlayChannel(0,g_sound_explosion,0);

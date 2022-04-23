@@ -3,8 +3,8 @@
 #include "BaseObject.hpp"
 #include "BulletObject.hpp"
 #include <vector>
-#define WIDTH_THREAT 80
-#define HEIGHT_THREAT 70
+#define WIDTH_THREAT 100
+#define HEIGHT_THREAT 100
 class ThreatObject : public BaseObject
 {
 public:

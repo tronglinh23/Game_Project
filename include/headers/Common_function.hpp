@@ -45,7 +45,7 @@
     static TTF_Font* g_font_text = NULL;
     const std::string font_mark_game = "res/font/V5PRC___.TTF";
     const std::string text("Mark: ");
-    const int size_mark = 40;
+    const int size_mark = 30;
     const int x_pos_render_mark_text = 500;
     const int y_pos_render_mark_text = 10;
 
@@ -66,7 +66,7 @@
     const int mainobject_Pos_Y_Start = 200;
 
 // Explosion
-
+    const int number_frame_ = 11;
 // background
     
     const std::string pics_background = "res/file anh/6569652.png";

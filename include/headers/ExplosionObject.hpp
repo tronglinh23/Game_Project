@@ -2,8 +2,8 @@
 #include "BaseObject.hpp"
 #include "Common_function.hpp"
 
-const int EXP_WIDTH = 165;
-const int EXP_HEIGHT = 165;
+const int EXP_WIDTH = 256;
+const int EXP_HEIGHT = 256;
 
 class ExplosionObject:public BaseObject
 {
@@ -16,5 +16,5 @@ public:
 
 private:
     int frame_;
-    SDL_Rect Clip_[4];
+    SDL_Rect Clip_[number_frame_];
 };
