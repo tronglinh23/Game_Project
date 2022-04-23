@@ -153,17 +153,17 @@ int Show_Menu(SDL_Renderer* des,BaseObject& Menu_show,TTF_Font* font_game_menu)
 
     const int MenuItems = 2;
     SDL_Rect pos_items[MenuItems];
-    pos_items[0].x = 150;
+    pos_items[0].x = SCREEN_WIDTH/4;
     pos_items[0].y = 300;
-    pos_items[1].x = 150;
-    pos_items[1].y = 375;
+    pos_items[1].x = SCREEN_WIDTH/4;
+    pos_items[1].y = 400;
     
     TextObject text_menu[MenuItems];
-    text_menu[0].SetText("PLAY");
+    text_menu[0].SetText("Play game");
     text_menu[0].SetColor(color_ItemText_R,color_ItemText_G,color_ItemText_B);
     text_menu[0].SetRect(pos_items[0].x, pos_items[0].y);
 
-    text_menu[1].SetText("QUIT");
+    text_menu[1].SetText("Quit game");
     text_menu[1].SetColor(color_ItemText_R,color_ItemText_G,color_ItemText_B);
     text_menu[1].SetRect(pos_items[1].x, pos_items[1].y);
 
@@ -174,6 +174,7 @@ int Show_Menu(SDL_Renderer* des,BaseObject& Menu_show,TTF_Font* font_game_menu)
         Menu_show.Render(des,NULL);
         for(int i = 0 ; i < MenuItems ; i++){
             text_menu[i].loadFromRenderedText(font_game_menu,des);
+
             text_menu[i].RenderText(des,pos_items[i].x,pos_items[i].y);
 
         }
@@ -221,6 +222,7 @@ int Show_Menu(SDL_Renderer* des,BaseObject& Menu_show,TTF_Font* font_game_menu)
             }
         }
         title_menu_game.loadFromRenderedText(font_game_menu,des);
+        title_menu_game.setSize(title_menu_game.GetRect().w ,title_menu_game.GetRect().h + 25);
         title_menu_game.RenderText(des,pos_title_x,pos_title_y);
         SDL_RenderPresent(des);
     }
@@ -229,12 +231,11 @@ int Show_Menu(SDL_Renderer* des,BaseObject& Menu_show,TTF_Font* font_game_menu)
 // Init Support Object
 
 void Init_Support_Object(SupportObject * list_object){
-
     int ran_num;
     for(int sp_ob = 0 ; sp_ob < Amount_Support_Object; sp_ob++){
         SupportObject* list_spp = list_object + sp_ob;
-        list_spp->LoadIMG("res/Planets/Baren.png",renderer);
-        list_spp->setSize(30,25);
+        list_spp->LoadIMG(file_pics_support_object[rand() % amount_pics_path].c_str(), renderer);
+        list_spp->setSize(size_x_pics_sp, size_y_pics_sp);
         ran_num = rand() % (SCREEN_HEIGHT + 400);
         if(ran_num >= SCREEN_HEIGHT - 50) ran_num *= 5.0/10;
         list_spp->SetRect(SCREEN_WIDTH + sp_ob*50, ran_num);
@@ -472,14 +473,13 @@ int main(int argc, char* argv[])
                 bool crashing = ob_sp->CheckCollision(ob_sp->GetRect(),g_mainobject.GetRect());
                 if(crashing){
                     mark_value_game += 5;
+                    ob_sp->LoadIMG(file_pics_support_object[rand() % amount_pics_path].c_str(), renderer);
+                    ob_sp->setSize(size_x_pics_sp, size_y_pics_sp);
                     ob_sp->Remove_support_Object(SCREEN_WIDTH);
                     Subtr_Mark_game.SetText("+5");
                     Subtr_Mark_game.loadFromRenderedText(Subtr_mark,renderer);
                     Subtr_Mark_game.RenderText(renderer, g_mainobject.GetRect().x + 35 , g_mainobject.GetRect().y - 35);
                 }
-            }
-            if(list_object_support[Amount_Support_Object - 1].GetRect().x  < 0){
-                    Init_Support_Object(list_object_support);
             }
         }
             // toc do threat tang len theo tung muc
@@ -491,8 +491,8 @@ int main(int argc, char* argv[])
             }
             
         }
-        if(time >= 5){
-            life_object_support.Hand_Support_Move(SCREEN_WIDTH,SCREEN_HEIGHT);
+        if(time >= 10){
+            life_object_support.Handle_life_support_Move();
             life_object_support.Render(renderer,NULL);
             bool check_collid_life_main = life_object_support.CheckCollision(life_object_support.GetRect(), g_mainobject.GetRect());
             if(check_collid_life_main && die_nums > 0){
@@ -502,7 +502,8 @@ int main(int argc, char* argv[])
                 Init_life_Support_Object(life_object_support, 0);
                 SDL_RenderPresent(renderer);
             }
-            if(time == 20) Init_life_Support_Object(life_object_support, speed_life_support_default);
+
+            if(time % 30 == 0) Init_life_Support_Object(life_object_support, speed_life_support_default);
         }
 
 

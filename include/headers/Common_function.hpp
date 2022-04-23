@@ -18,13 +18,13 @@
 
 // Font text - title
     // MenuText
-    const int size_menu_text = 50;
+    const int size_menu_text = 55;
         // title game
         
         static TTF_Font* menu_font_text = NULL;
         const std::string font_menu_game = "res/font/xeros_theorem.ttf";
-        const std::string title = "Space Game";
-        const int pos_title_x = SCREEN_WIDTH/3;
+        const std::string title = "Save The Earth";
+        const int pos_title_x = SCREEN_WIDTH/5;
         const int pos_title_y = 30;
         const int color_title_R = 0;
         const int color_title_G = 255;
@@ -45,7 +45,7 @@
     static TTF_Font* g_font_text = NULL;
     const std::string font_mark_game = "res/font/V5PRC___.TTF";
     const std::string text("Mark: ");
-    const int size_mark = 30;
+    const int size_mark = 40;
     const int x_pos_render_mark_text = 500;
     const int y_pos_render_mark_text = 10;
 
@@ -56,11 +56,11 @@
     const int y_pos_render_time_text = 10;
     // Subtract mark text - collid
     static TTF_Font *Subtr_mark = NULL;
-    const std::string subtr_mark_text = "res/font/Tabaquera.ttf";
+    const std::string subtr_mark_text = "res/font/Rabanera-outline-shadow.ttf";
     const int size_subtr_mark_text = 35;
-    const int color_SubtrText_R = 255;
-    const int color_SubtrText_G = 0;
-    const int color_SubtrText_B = 0;
+    const int color_SubtrText_R = 0;
+    const int color_SubtrText_G = 255;
+    const int color_SubtrText_B = 30;
 // Main Object
     const int mainobject_Pos_X_Start = 100;
     const int mainobject_Pos_Y_Start = 200;
@@ -93,7 +93,15 @@
 
 // Support Object
     const int Amount_Support_Object = 4;
-
+    const std::string file_pics_support_object[] = {"res/Planets/planet1.png","res/Planets/planet2.png","res/Planets/planet3.png",
+                                                    "res/Planets/planet4.png","res/Planets/planet5.png","res/Planets/planet6.png",
+                                                    "res/Planets/planet7.png","res/Planets/planet10.png","res/Planets/planet11.png",
+                                                    "res/Planets/planet12.png","res/Planets/planet13.png","res/Planets/planet14.png",
+                                                    "res/Planets/planet15.png","res/Planets/planet16.png","res/Planets/planet17.png",
+                                                    "res/Planets/planet18_0.png","res/Planets/planet19.png","res/Planets/planet20.png"};
+    const int amount_pics_path = 18;    
+    const int size_x_pics_sp = 45;
+    const int size_y_pics_sp = 45;                
     // life_support_object
     const int speed_life_support_default = 10;
 
