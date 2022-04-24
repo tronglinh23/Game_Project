@@ -4,8 +4,8 @@
 #include "BulletObject.hpp"
 #include <vector>
 #include <time.h>
-#define WIDTH_MAIN_OBJECT 70
-#define HEIGHT_MAIN_OBJECT 60
+#define WIDTH_MAIN_OBJECT 110
+#define HEIGHT_MAIN_OBJECT 50
 
 const int x_step = WIDTH_MAIN_OBJECT/7;
 const int y_step = HEIGHT_MAIN_OBJECT/6;

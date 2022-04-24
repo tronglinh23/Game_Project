@@ -15,7 +15,7 @@
 #include "PlayerPower.hpp"
 #include "Text_Object.hpp"
 #include "SupportObject.hpp"
-
+#include "LTimer.hpp"
 
 void logSDLError(std::ostream& os, const std::string &msg, bool fatal){
     os << msg << " Error: " << SDL_GetError() << std::endl;
@@ -67,7 +67,7 @@ bool LoadBackground(BaseObject &background){
 }
 
 bool LoadMainObject(MainObject &p_mainobject){
-    bool ret = p_mainobject.LoadIMG("res/file anh/mainobject.png",renderer);
+    bool ret = p_mainobject.LoadIMG("res/file anh/spaceship02_fix.png",renderer);
     p_mainobject.SetRect(mainobject_Pos_X_Start,mainobject_Pos_Y_Start); // vi tri xuat hien
     p_mainobject.setSize(WIDTH_MAIN_OBJECT,HEIGHT_MAIN_OBJECT);
     if(ret == false) return false;
@@ -326,6 +326,7 @@ int Show_Menu_Options(){
 
 int main(int argc, char* argv[])
 {
+    Ltimer timer;
     srand(time(NULL));
     initSDL(window, renderer);
     Init();
@@ -405,6 +406,7 @@ int main(int argc, char* argv[])
     unsigned int step_time_menu = SDL_GetTicks()/1000;
     // Path flow
     while(!is_quit){
+        timer.start();
         while(SDL_PollEvent(&event)){
             if(event.type == SDL_QUIT){
                 is_quit = true;
@@ -423,6 +425,20 @@ int main(int argc, char* argv[])
                             if(ret_menu == 1) is_quit = true;
                         }
                         step_time_menu = SDL_GetTicks()/1000 - time_menu_stop;
+                        break;
+                    }
+                    case SDLK_RIGHT:{
+                        g_mainobject.LoadIMG("res/file anh/spaceship02_fix_2.png",renderer);
+                        break;
+                    }
+
+                    default: break;
+                }
+            }
+            else if(event.type == SDL_KEYUP){
+                switch(event.key.keysym.sym){
+                    case SDLK_RIGHT: {
+                        g_mainobject.LoadIMG("res/file anh/spaceship02_fix.png",renderer);
                         break;
                     }
                     default: break;
@@ -519,18 +535,19 @@ int main(int argc, char* argv[])
             p_threat->Makebullet(renderer,SCREEN_WIDTH,SCREEN_HEIGHT);
             // kiem tra va cham Threat voi Object
             bool check_col = p_threat->CheckCollision(g_mainobject.GetRect(),p_threat->GetRect());
+            // CAN DC FIX explosion
             if(check_col){
                 for(int ex = 0 ; ex < number_frame_ ; ex++){
                     int x_pos = g_mainobject.GetRect().x + g_mainobject.GetRect().w*0.5 - 0.5*EXP_WIDTH;
                     int y_pos = g_mainobject.GetRect().y + g_mainobject.GetRect().w*0.5 - 0.5*EXP_HEIGHT;
+                    SDL_Delay(75);
                     EXP_main.set_frame(ex);
                     EXP_main.SetRect(x_pos,y_pos);
                     EXP_main.RenderEx(renderer,NULL);
+                    SDL_RenderPresent(renderer);
                     Subtr_Mark_game.SetText("-5");
                     Subtr_Mark_game.loadFromRenderedText(Subtr_mark,renderer);
                     Subtr_Mark_game.RenderText(renderer, g_mainobject.GetRect().x + 35 , g_mainobject.GetRect().y - 35);
-                    SDL_Delay(75);
-                    SDL_RenderPresent(renderer);
                 }
                 if(mark_value_game > 5) mark_value_game -= 5;
 
@@ -608,6 +625,13 @@ int main(int argc, char* argv[])
         Time_game.RenderText(renderer, x_pos_render_time_text, y_pos_render_time_text);
 
         SDL_RenderPresent(renderer);
+
+        int real_time_game = timer.get_tick();
+        int time_one_frame = 1000/frame_per_second;
+        if(real_time_game < time_one_frame){
+            int deday_time = time_one_frame - real_time_game;
+            SDL_Delay(deday_time);
+        }
     }
     Time_game.Free();
     mark_game.Free();
