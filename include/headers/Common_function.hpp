@@ -92,8 +92,9 @@
     static Mix_Chunk* g_sound_bullet[2];
     static Mix_Chunk* g_sound_explosion = NULL;
     static Mix_Chunk* g_sound_ex_main = NULL;
+    static Mix_Chunk* g_sound_eat_sp_object = NULL;
+    static Mix_Chunk* g_sound_options_choose = NULL;
     static Mix_Music *gMusic = NULL; // Sound game
-
 // Support Object
     const int Amount_Support_Object = 4;
     const std::string file_pics_support_object[] = {"res/Planets/planet1.png","res/Planets/planet2.png","res/Planets/planet3.png",
@@ -114,7 +115,7 @@ static TTF_Font *menu_options_text_2 = NULL;
 const std::string font_menu_text = "res/font/V5PRC___.TTF";
 const int size_text_menu_2 = 30;
 const int x_pos_menu_options = SCREEN_WIDTH/4 + 80;
-const int y_pos_menu_options = SCREEN_HEIGHT/4;
+const int y_pos_menu_options = SCREEN_HEIGHT/4 + 30;
 const int color_items_menu_2_R= 2;
 const int color_items_menu_2_G = 25;
 const int color_items_menu_2_B = 61;

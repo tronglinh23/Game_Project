@@ -105,12 +105,18 @@ void Init()
 void InitSound(){
     // Sound effect
     g_sound_bullet[0] = Mix_LoadWAV("res/sound/Gun+Silencer.wav");
-    g_sound_bullet[1] = Mix_LoadWAV("res/sound/Gun+1.wav");
+    g_sound_bullet[1] = Mix_LoadWAV("res/sound/ES_Laser Gun Fire 11 - SFX Producer.mp3");
     g_sound_explosion = Mix_LoadWAV("res/sound/ES_Explosion Space 2 - SFX Producer.mp3");
+    g_sound_options_choose = Mix_LoadWAV("res/sound/key.ogg");
+    g_sound_eat_sp_object = Mix_LoadWAV("res/sound/potpickup.ogg");
     // Sound Game
     gMusic = Mix_LoadMUS("res/sound/ES_Letting Go of the Day - Hanna Lindgren.mp3");
+    //Volume
+    Mix_Volume(-1,40);
     // Check Excute
-    if(g_sound_bullet[0] == NULL || g_sound_bullet[1] == NULL || g_sound_explosion == NULL || gMusic == NULL){
+    if(g_sound_bullet[0] == NULL || g_sound_bullet[1] == NULL || 
+       g_sound_explosion == NULL || gMusic == NULL || 
+       g_sound_eat_sp_object == NULL || g_sound_options_choose == NULL){
         logSDLError(std::cout,"MIX_LOADWAV SOUND could not initialize",true);
     }
     if( Mix_PlayingMusic() == 0 )
@@ -143,7 +149,7 @@ bool checkfocuswithrect(const int& x, const int& y, const SDL_Rect& rect){
 // can sua
 int Show_Menu(SDL_Renderer* des,BaseObject& Menu_show,TTF_Font* font_game_menu)
 {
-    bool ret = Menu_show.LoadIMG("res/file anh/menu_pics.png",des);
+    bool ret = Menu_show.LoadIMG("res/file anh/background_4k.jpg",des);
     if(ret){
         Menu_show.setSize(SCREEN_WIDTH,SCREEN_HEIGHT);
     }
@@ -155,10 +161,10 @@ int Show_Menu(SDL_Renderer* des,BaseObject& Menu_show,TTF_Font* font_game_menu)
 
     const int MenuItems = 2;
     SDL_Rect pos_items[MenuItems];
-    pos_items[0].x = SCREEN_WIDTH/4;
-    pos_items[0].y = 300;
-    pos_items[1].x = SCREEN_WIDTH/4;
-    pos_items[1].y = 400;
+    pos_items[0].x = SCREEN_WIDTH/3.5;
+    pos_items[0].y = 310;
+    pos_items[1].x = SCREEN_WIDTH/3.5;
+    pos_items[1].y = 385;
     
     TextObject text_menu[MenuItems];
     text_menu[0].SetText("Play game");
@@ -214,6 +220,7 @@ int Show_Menu(SDL_Renderer* des,BaseObject& Menu_show,TTF_Font* font_game_menu)
                     ym = menu_event.button.y;
                     for(int i = 0 ; i < MenuItems; i++){
                         if(checkfocuswithrect(xm,ym,text_menu[i].GetRect())){
+                            Mix_PlayChannel(0,g_sound_options_choose,0);
                             return i;
                         }
                     }
@@ -257,15 +264,15 @@ int Show_Menu_Options(){
     
     bool time_pause = true;
     BaseObject Options_menu_background;
-    Options_menu_background.LoadIMG("res/file anh/support.png",renderer);
-    Options_menu_background.setSize(400,400);
+    Options_menu_background.LoadIMG("res/file anh/panel-5.png",renderer);
+    Options_menu_background.setSize(400,200);
     Options_menu_background.SetRect(x_pos_menu_options, y_pos_menu_options);
     const int MenuItems = 2;
     SDL_Rect pos_items[MenuItems];
     pos_items[0].x = x_pos_menu_options + 80;
-    pos_items[0].y = 300;
+    pos_items[0].y = y_pos_menu_options + 50;
     pos_items[1].x = x_pos_menu_options + 80;
-    pos_items[1].y = 375;
+    pos_items[1].y = y_pos_menu_options + 100;
     TextObject text_menu[MenuItems];
     text_menu[0].SetText("CONTINUE");
     text_menu[0].SetColor(color_items_menu_2_R,color_items_menu_2_G,color_items_menu_2_B);
@@ -310,6 +317,7 @@ int Show_Menu_Options(){
                     y = event_options.button.y;
                     for(int i = 0 ; i < MenuItems; i++){
                         if(checkfocuswithrect(x,y,text_menu[i].GetRect())){
+                            Mix_PlayChannel(0,g_sound_options_choose,0);
                             return i;
                         }
                     }
@@ -406,7 +414,6 @@ int main(int argc, char* argv[])
     unsigned int amount_bullet_main_object = 3;
     unsigned int time_menu_stop = 0;
     unsigned int step_time_menu = SDL_GetTicks()/1000;
-
     // Path flow
     while(!is_quit){
         timer.start();
@@ -505,6 +512,7 @@ int main(int argc, char* argv[])
                     Subtr_Mark_game.SetText("+5");
                     Subtr_Mark_game.loadFromRenderedText(Subtr_mark,renderer);
                     Subtr_Mark_game.RenderText(renderer, g_mainobject.GetRect().x + 35 , g_mainobject.GetRect().y - 35);
+                    Mix_PlayChannel(0,g_sound_eat_sp_object,0);
                 }
             }
         }
@@ -525,7 +533,9 @@ int main(int argc, char* argv[])
                 life_player.Increase();
                 life_player.DisplayLife(renderer);
                 Init_life_Support_Object(life_object_support, 0);
+                Mix_PlayChannel(0,g_sound_eat_sp_object,0);
                 SDL_RenderPresent(renderer);
+                
             }
 
             if(time % 30 == 0) Init_life_Support_Object(life_object_support, speed_life_support_default);

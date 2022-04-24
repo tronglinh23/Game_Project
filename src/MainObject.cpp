@@ -121,12 +121,14 @@ void MainObject::HandleInputAction(SDL_Event events, SDL_Renderer* screen, Mix_C
                 p_bullet->LoadIMG("res/file anh/bullet/Bullet6.png",screen);
                 p_bullet->set_type(BulletObject::LASER);
                 Mix_PlayChannel(-1,bullet[0],0);
+                Mix_VolumeChunk(bullet[0],30);
             }
             else if(events.button.button == SDL_BUTTON_RIGHT){
                 p_bullet->SetWidthHeight(WIDTH_BULLET_THREAT,HEIGHT_BULLET_THREAT);
                 p_bullet->LoadIMG("res/file anh/bullet/Bullet2.png",screen);
                 p_bullet->set_type(BulletObject::LASER_2);
                 Mix_PlayChannel(-1,bullet[1],0);
+                Mix_VolumeChunk(bullet[1],30);
             }
             p_bullet->SetRect(this->rect_.x + this->rect_.w  - 20 , this->rect_.y + this->rect_.h * 0.5 + i*10); // de lai de sua vi tri dan ban ra
             p_bullet->set_is_move_(true);
