@@ -112,6 +112,7 @@ void MainObject::HandleInputAction(SDL_Event events, SDL_Renderer* screen, Mix_C
     }
     else if(events.type == SDL_MOUSEBUTTONDOWN)
     {
+        // Init bullet mainobject
         for(int i  = 0 ; i < amount_bullet_; i++){
 
             BulletObject* p_bullet = new BulletObject();
@@ -147,7 +148,7 @@ void MainObject::Display_bullet(SDL_Renderer* des){
             BulletObject* p_bullet = p_bullet_list_[stt].at(i); // xét từ vị trí viên đầu tiên
             if(p_bullet != NULL){
                 if(p_bullet->get_is_move_()){
-                    p_bullet->HandleMove(SCREEN_WIDTH,SCREEN_HEIGHT); // KHi gap vat can thi xoa vien dan
+                    p_bullet->HandleMove(SCREEN_WIDTH,SCREEN_HEIGHT); // Khi gap vat can thi xoa vien dan
                     p_bullet->Render(des,NULL);
                 }
                 // khi gap vat can thi get_is_move = false -> lệnh else thực hiện và xóa đi viên đạn đấy, 
@@ -163,7 +164,7 @@ void MainObject::Display_bullet(SDL_Renderer* des){
         }
     }
 }
-
+// kiểm soát tầm di chuyển của mainobject
 void MainObject::HandMove(){
     if(x_val_ > x_step || x_val_ < -x_step) x_val_/=2;
      if(y_val_ > y_step || y_val_ < -y_step) y_val_/=2;

@@ -19,8 +19,8 @@
 // Font text - title
     // MenuText
     const int size_menu_text = 55;
-        // title game
-        
+
+        // title game    
         static TTF_Font* menu_font_text = NULL;
         const std::string font_menu_game = "res/font/xeros_theorem.ttf";
         const std::string title = "Save The Earth";
@@ -61,21 +61,24 @@
     const int color_SubtrText_R = 0;
     const int color_SubtrText_G = 255;
     const int color_SubtrText_B = 30;
+
 // Main Object
     const int mainobject_Pos_X_Start = 100;
     const int mainobject_Pos_Y_Start = 200;
 
 // Explosion
     const int number_frame_ = 11;
+
 // background
-    
     const std::string pics_background = "res/file anh/6569652.png";
     const int WIDTH_BACKGROUND = 4800;
     const int HEIGHT_BACKGROUND = 600;
+
 // Init default
     static SDL_Window* window = NULL;
     static SDL_Renderer* renderer = NULL;
     static SDL_Event event;
+
 //Amount of THREAT_OBJECT
     const int Amount_Threat = 4;
     const int Speed_Threat_default = 6;

@@ -120,6 +120,7 @@ void InitSound(){
     }
 }
 
+// Load Text
 void InitText(){
     if( TTF_Init() == -1 ) logSDLError(std::cout,"SDL_ttf could not initialize! SDL_ttf ",true);
     g_font_text = TTF_OpenFont(font_mark_game.c_str(),size_mark);
@@ -138,6 +139,7 @@ bool checkfocuswithrect(const int& x, const int& y, const SDL_Rect& rect){
     }
     return false;
 }
+
 // can sua
 int Show_Menu(SDL_Renderer* des,BaseObject& Menu_show,TTF_Font* font_game_menu)
 {
@@ -228,8 +230,8 @@ int Show_Menu(SDL_Renderer* des,BaseObject& Menu_show,TTF_Font* font_game_menu)
     }
     return 1;
 }
-// Init Support Object
 
+// Init Support Object
 void Init_Support_Object(SupportObject * list_object){
     int ran_num;
     for(int sp_ob = 0 ; sp_ob < Amount_Support_Object; sp_ob++){
@@ -323,20 +325,21 @@ int Show_Menu_Options(){
 }
 
 // Main
-
 int main(int argc, char* argv[])
 {
-    Ltimer timer;
+    Ltimer timer; // timer 
     srand(time(NULL));
     initSDL(window, renderer);
     Init();
     InitSound();
-    // Init MainObject
+    // Init MainObject, Background
     BaseObject g_background;
     MainObject g_mainobject;
     if(LoadBackground(g_background) == false) return -1;
     if(LoadMainObject(g_mainobject) == false) return -1;
     SDL_Rect mainobject = g_mainobject.GetRect();
+
+    // Init ThreatObject
     ThreatObject * p_threat_list = new ThreatObject[Amount_Threat];
 
     for(int i = 0 ; i < Amount_Threat ; i++)
@@ -358,15 +361,14 @@ int main(int argc, char* argv[])
     // Init ExplosionObject
     ExplosionObject EXP_main;
     EXP_main.LoadIMG("res/file anh/merge_from_ofoct.png",renderer);
-    // EXP_main.SetRect(165,165);
     EXP_main.set_clip();
 
-    //Make main life power
+    //Init mainobject's life power
     PlayerPower life_player;
     life_player.LoadIMG("res/file anh/star.png",renderer);
     life_player.setSize(45,45);
     life_player.Init();
-    // Init TextoBJECT
+    // Init TextObject
     InitText();
     TextObject mark_game;
     mark_game.SetColor(color_title_R,color_title_G,color_title_B);
@@ -377,7 +379,6 @@ int main(int argc, char* argv[])
     TextObject Subtr_Mark_game;
     Subtr_Mark_game.SetColor(color_SubtrText_R,color_SubtrText_G,color_SubtrText_B);
 
-    //
 
     // Support Object
     SupportObject* list_object_support = new SupportObject[Amount_Support_Object];
@@ -387,6 +388,7 @@ int main(int argc, char* argv[])
     life_object_support.LoadIMG("res/file anh/star.png",renderer);
     life_object_support.setSize(50,50);
     Init_life_Support_Object(life_object_support, speed_life_support_default);
+
     //Path run
     int bkgn_x = 0;
     bool is_run_screen = true;
@@ -397,13 +399,14 @@ int main(int argc, char* argv[])
     int ret_menu = Show_Menu(renderer,menu_show, menu_font_text);
     if(ret_menu == 1) is_quit = true;
 
-    // numbers of life ---- mark: kill threats
+    // Numbers of life ---- mark: kill threats
     unsigned int die_nums = 0;
     unsigned int mark_value_game = 0;
     unsigned int time = 0;
     unsigned int amount_bullet_main_object = 3;
     unsigned int time_menu_stop = 0;
     unsigned int step_time_menu = SDL_GetTicks()/1000;
+
     // Path flow
     while(!is_quit){
         timer.start();
@@ -427,17 +430,25 @@ int main(int argc, char* argv[])
                         step_time_menu = SDL_GetTicks()/1000 - time_menu_stop;
                         break;
                     }
+                    // mainobject moves right , load new image
                     case SDLK_RIGHT:{
                         g_mainobject.LoadIMG("res/file anh/spaceship02_fix_2.png",renderer);
                         break;
                     }
-
+                    case SDLK_d:{
+                        g_mainobject.LoadIMG("res/file anh/spaceship02_fix_2.png",renderer);
+                        break;
+                    }    
                     default: break;
                 }
             }
             else if(event.type == SDL_KEYUP){
                 switch(event.key.keysym.sym){
-                    case SDLK_RIGHT: {
+                    case SDLK_RIGHT:{
+                        g_mainobject.LoadIMG("res/file anh/spaceship02_fix.png",renderer);
+                        break;
+                    }
+                    case SDLK_d:{
                         g_mainobject.LoadIMG("res/file anh/spaceship02_fix.png",renderer);
                         break;
                     }
@@ -447,7 +458,7 @@ int main(int argc, char* argv[])
             g_mainobject.HandleInputAction(event,renderer,g_sound_bullet,gMusic);
 
         }
-        // Load 2 tam anh lien tiep de cho cam tuong dang chay
+        // Render many backgrounds
         // bkgn_x -= 2;
         // g_background[0].SetRect(bkgn_x,0);
         // g_background[0].Render(renderer,NULL);
@@ -459,13 +470,12 @@ int main(int argc, char* argv[])
         // g_background[3].Render(renderer,NULL);
         // if(bkgn_x <= -(amount_pics_background - 1)  * SCREEN_WIDTH) bkgn_x = 0;
 
-
-        // 1 background
+        // Render 1 background
         if(is_run_screen){
             bkgn_x -= speed_run_screen;
             if(bkgn_x <= - (WIDTH_BACKGROUND - SCREEN_WIDTH)){
                 bkgn_x = 0 ;
-            } // den man hinh cuoi cung thi dung lai de danh boss
+            }
             g_background.SetRect(bkgn_x,0);
             g_background.Render(renderer,NULL);
         }
@@ -477,7 +487,7 @@ int main(int argc, char* argv[])
         //render player life
         life_player.DisplayLife(renderer);
 
-        //
+        //Handling game timelines
         if(time > 5)
         {
             for(int list_ob = 0 ; list_ob < Amount_Support_Object ; list_ob++) 
@@ -485,7 +495,7 @@ int main(int argc, char* argv[])
                 SupportObject* ob_sp = list_object_support + list_ob;
                 ob_sp->Hand_Support_Move(SCREEN_WIDTH,SCREEN_HEIGHT);
                 ob_sp->Render(renderer,NULL);
-                // check collision support_ob and mainob
+                // Check collision support_ob and mainob
                 bool crashing = ob_sp->CheckCollision(ob_sp->GetRect(),g_mainobject.GetRect());
                 if(crashing){
                     mark_value_game += 5;
@@ -498,16 +508,15 @@ int main(int argc, char* argv[])
                 }
             }
         }
-            // toc do threat tang len theo tung muc
+        
         if(time >= 10){
+            // increase speed's threats, speed threat bullet
             for(int t = 0 ; t < Amount_Threat ; t++){
                 ThreatObject* p_threat = (p_threat_list + t);
-                p_threat->Set_x_val(Speed_Threat_default + time/20); /// cai tien toc do cho threat , threat tang nhanh
+                p_threat->Set_x_val(Speed_Threat_default + time/20); 
                 p_threat->Upgrade_speed_Bullet();
             }
-            
-        }
-        if(time >= 10){
+            // Star - increase life 
             life_object_support.Handle_life_support_Move();
             life_object_support.Render(renderer,NULL);
             bool check_collid_life_main = life_object_support.CheckCollision(life_object_support.GetRect(), g_mainobject.GetRect());
@@ -521,19 +530,20 @@ int main(int argc, char* argv[])
 
             if(time % 30 == 0) Init_life_Support_Object(life_object_support, speed_life_support_default);
         }
-
-
+        
+        // Handle mainobject
         g_mainobject.HandMove();
         g_mainobject.Render(renderer,NULL);
         g_mainobject.Set_Amount_Bullet(amount_bullet_main_object);
         g_mainobject.Display_bullet(renderer);
-        // run Threat
+
+        // Run Threat
         for(int t = 0 ; t < Amount_Threat ; t++){
             ThreatObject* p_threat = (p_threat_list + t);
             p_threat->HandleMove(SCREEN_WIDTH,SCREEN_HEIGHT);
             p_threat->Render(renderer,NULL);
             p_threat->Makebullet(renderer,SCREEN_WIDTH,SCREEN_HEIGHT);
-            // kiem tra va cham Threat voi Object
+            // Check Collision mainobject - threats
             bool check_col = p_threat->CheckCollision(g_mainobject.GetRect(),p_threat->GetRect());
             // CAN DC FIX explosion
             if(check_col){
@@ -549,11 +559,11 @@ int main(int argc, char* argv[])
                     Subtr_Mark_game.loadFromRenderedText(Subtr_mark,renderer);
                     Subtr_Mark_game.RenderText(renderer, g_mainobject.GetRect().x + 35 , g_mainobject.GetRect().y - 35);
                 }
-                if(mark_value_game > 5) mark_value_game -= 5;
+                if(mark_value_game > 5) mark_value_game -= 5; // Collision - decrease points
 
                 Mix_PlayChannel(0,g_sound_explosion,0);
                 
-                p_threat->ResetThreat(SCREEN_WIDTH + t * 400); // sau khi va cham thi threats bien mat
+                p_threat->ResetThreat(SCREEN_WIDTH + t * 400); // After the collision, threat reset
                 die_nums ++;
                 if(die_nums <= 2){
                     SDL_Delay(500);
@@ -562,6 +572,7 @@ int main(int argc, char* argv[])
                     life_player.DisplayLife(renderer);
                     SDL_RenderPresent(renderer);
                 }
+                // Check game over
                 else{
                     if(MessageBox(NULL,"GAME OVER","INFO",MB_OK) == IDOK){
                         delete [] p_threat_list;
@@ -572,7 +583,7 @@ int main(int argc, char* argv[])
                     }
                 }
             }
-            // xu li dan cua threats ban vao mainobject
+            // Handling threat's bullets on mainobject
             std::vector<BulletObject*> threat_bullet_list = p_threat->Get_bullet_list();
             for(int k = 0 ; k < threat_bullet_list.size(); k++){
                 BulletObject* p_bullet = threat_bullet_list.at(k);
@@ -585,13 +596,13 @@ int main(int argc, char* argv[])
                         Subtr_Mark_game.loadFromRenderedText(Subtr_mark,renderer);
                         Subtr_Mark_game.RenderText(renderer, g_mainobject.GetRect().x + 35 , g_mainobject.GetRect().y - 35);
             
-                        if(mark_value_game > 0 ) mark_value_game--; //va cham dan thi -1 diem 
+                        if(mark_value_game > 0 ) mark_value_game--; // bullet collsion - decrease points
                                                                         
                     }
 
                 }
             }
-            // xu li va cham vien dan cua mainobject voi Threats
+            // Handling mainobject's bullets on threats
             for(int stt = 0 ; stt < amount_bullet_main_object ; stt++){
                 std::vector<BulletObject*> bullet_list = g_mainobject.GetbulletList(stt);
                 for(int k = 0 ; k < bullet_list.size(); k++){
@@ -599,11 +610,11 @@ int main(int argc, char* argv[])
                     if(p_bullet){
                         bool ret_col = p_bullet->CheckCollision(p_bullet->GetRect(),p_threat->GetRect());
                         if(ret_col){
-                            mark_value_game++; // ha guc dc 1 thi diem ++
+                            mark_value_game++; // Kill enemies - earn point
                             p_threat->LoadIMG(random_pics(),renderer);
                             p_threat->setSize(WIDTH_THREAT,HEIGHT_THREAT);
                             p_threat->ResetThreat(SCREEN_WIDTH + t * 400);
-                            g_mainobject.Removebullet(stt,k); // xoa vien dan cua mainobject
+                            g_mainobject.Removebullet(stt,k); // delete mainobject's bullets
                             Mix_PlayChannel(0,g_sound_explosion,0);
                         }
                     }
