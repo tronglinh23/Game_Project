@@ -53,6 +53,7 @@ void MainObject::HandleInputAction(SDL_Event events, SDL_Renderer* screen, Mix_C
                 if( Mix_PlayingMusic() == 0 )
                 {
                     //Play the music
+                    Mix_VolumeMusic(30);
                     Mix_PlayMusic(gMusic, -1 );
                 }
                 //If music is being played

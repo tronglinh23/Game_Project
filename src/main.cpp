@@ -15,7 +15,6 @@
 #include "PlayerPower.hpp"
 #include "Text_Object.hpp"
 #include "SupportObject.hpp"
-#include "LTimer.hpp"
 
 void logSDLError(std::ostream& os, const std::string &msg, bool fatal){
     os << msg << " Error: " << SDL_GetError() << std::endl;
@@ -335,7 +334,6 @@ int Show_Menu_Options(){
 // Main
 int main(int argc, char* argv[])
 {
-    Ltimer timer; // timer 
     srand(time(NULL));
     initSDL(window, renderer);
     Init();
@@ -411,12 +409,11 @@ int main(int argc, char* argv[])
     unsigned int die_nums = 0;
     unsigned int mark_value_game = 0;
     unsigned int time = 0;
-    unsigned int amount_bullet_main_object = 3;
+    unsigned int amount_bullet_main_object = 1;
     unsigned int time_menu_stop = 0;
     unsigned int step_time_menu = SDL_GetTicks()/1000;
     // Path flow
     while(!is_quit){
-        timer.start();
         while(SDL_PollEvent(&event)){
             if(event.type == SDL_QUIT){
                 is_quit = true;
@@ -647,12 +644,6 @@ int main(int argc, char* argv[])
 
         SDL_RenderPresent(renderer);
 
-        int real_time_game = timer.get_tick();
-        int time_one_frame = 1000/frame_per_second;
-        if(real_time_game < time_one_frame){
-            int deday_time = time_one_frame - real_time_game;
-            SDL_Delay(deday_time);
-        }
     }
     Time_game.Free();
     mark_game.Free();

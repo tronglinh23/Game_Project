@@ -9,7 +9,6 @@
 #include <SDL2/SDL_ttf.h>
 // Window title
     const std::string WINDOW_TITLE = "SDL2 _ SpaceGame";
-    const int frame_per_second = 55;
 //Screen
     const int SCREEN_WIDTH = 1200;
     const int SCREEN_HEIGHT = 600;
