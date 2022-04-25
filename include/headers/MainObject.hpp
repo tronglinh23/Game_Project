@@ -6,10 +6,6 @@
 #include <time.h>
 #define WIDTH_MAIN_OBJECT 110
 #define HEIGHT_MAIN_OBJECT 50
-
-const int x_step = WIDTH_MAIN_OBJECT/7;
-const int y_step = HEIGHT_MAIN_OBJECT/6;
-const int Under_Limit_Threat = 100;
 class MainObject : public BaseObject
 {
 public:
@@ -23,9 +19,12 @@ public:
     void Display_bullet(SDL_Renderer* des);
     void Removebullet(const int& stt,const int& x);
     void Set_Amount_Bullet(const int& amount_bullet){amount_bullet_ = amount_bullet;}
+    void Upgrade_speed_mainobject(const int& x){x_step += x , y_step += x;}
 private:
+    int x_step;
+    int y_step;
     float x_val_;
     float y_val_;
     int amount_bullet_;
-    std::vector<BulletObject*> p_bullet_list_[3];
+    std::vector<BulletObject*> p_bullet_list_[max_bullet_main];
 };

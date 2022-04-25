@@ -53,24 +53,17 @@ void quitSDL(SDL_Window* window, SDL_Renderer* renderer)
 }
 
 
-bool LoadBackground(BaseObject &background){
+void InitBackground(BaseObject &background){
     bool ret = background.LoadIMG(pics_background.c_str(),renderer);
-    // for(int i = 0 ; i < n ; i++){
-    //     ret = background[i].LoadIMG(pics_background[i].c_str(),renderer);
-    //     if(ret == false) return false;
-    //     background[i].setSize(WIDTH_BACKGROUND,HEIGHT_BACKGROUND);
-    // }
-    if(ret == false) return false;
+    if(ret == false) logSDLError(std::cout, "Create Background", true);
     background.setSize(WIDTH_BACKGROUND,HEIGHT_BACKGROUND);
-    return true;
 }
 
-bool LoadMainObject(MainObject &p_mainobject){
+void InitMainObject(MainObject &p_mainobject){
     bool ret = p_mainobject.LoadIMG("res/file anh/spaceship02_fix.png",renderer);
     p_mainobject.SetRect(mainobject_Pos_X_Start,mainobject_Pos_Y_Start); // vi tri xuat hien
     p_mainobject.setSize(WIDTH_MAIN_OBJECT,HEIGHT_MAIN_OBJECT);
-    if(ret == false) return false;
-    return true;
+    if(ret == false) logSDLError(std::cout, "Create Mainobject", true);
 }
 // de sau cai tien len 
 std::string random_pics(){
@@ -251,7 +244,7 @@ void Init_Support_Object(SupportObject * list_object){
     }
 }
 
-void Init_life_Support_Object(SupportObject &life_suport, int speed_life){
+void Init_Items_Support_Object(SupportObject &life_suport, int speed_life){
     life_suport.SetRect(SCREEN_WIDTH , rand() % (SCREEN_HEIGHT - 100));
     life_suport.Set_x_pos(speed_life);
 }
@@ -331,6 +324,70 @@ int Show_Menu_Options(){
     return 1;
 }
 
+//Init ThreatObject
+void Init_ThreatObject(ThreatObject *llist_threat, int amount_threats){
+    for(int i = 0 ; i < amount_threats ; i++)
+    {
+        ThreatObject* p_threat = llist_threat + i;
+        if(i == amount_threats - 1){
+            p_threat->LoadIMG("res/file anh/ship_enemy/boss_ship_1.png", renderer);
+            p_threat->setSize(WIDTH_THREAT_TANK, HEIGHT_THREAT_TANK);
+            p_threat->Setlife_(life_tank_threat_object);
+        }
+        else{
+            p_threat->LoadIMG(random_pics(),renderer);
+            p_threat->setSize(WIDTH_THREAT,HEIGHT_THREAT);
+            p_threat->Setlife_(life_threat_object);
+        }
+        int ran_num = rand() % (SCREEN_HEIGHT + 400);
+        if(ran_num > SCREEN_HEIGHT - p_threat->GetRect().h) ran_num *= 5.0/10;
+        p_threat->SetRect(SCREEN_WIDTH + i * 400,ran_num);
+        p_threat->Set_x_val(Speed_Threat_default);
+
+        BulletObject* threat_bullet = new BulletObject();
+        p_threat->init(threat_bullet,renderer);
+    }
+
+}
+
+bool GameOver(const int& mark, const int& time){
+    BaseObject Gameover_menu;
+    Gameover_menu.LoadIMG("res/file anh/panel-1.png",renderer);
+    Gameover_menu.SetRect(x_pos_gameover, y_pos_gameover);
+    const int MenuItems = 3;
+    SDL_Rect pos_items[MenuItems];
+    pos_items[0].x = x_pos_gameover + 80;
+    pos_items[0].y = y_pos_gameover + 70;
+    pos_items[1].x = x_pos_gameover + 80;
+    pos_items[1].y = y_pos_gameover + 120;
+    pos_items[2].x = x_pos_gameover + 80;
+    pos_items[2].y = y_pos_gameover + 170;
+    TextObject text_menu[MenuItems];
+    text_menu[0].SetText("Game Over");
+    text_menu[0].SetColor(color_title_R,color_title_G,color_title_B);
+    text_menu[0].SetRect(pos_items[0].x, pos_items[0].y);
+
+    text_menu[1].SetText("Your Score : " + std::to_string(mark));
+    text_menu[1].SetColor(color_title_R,color_title_G,color_title_B);
+    text_menu[1].SetRect(pos_items[1].x, pos_items[1].y);
+
+    text_menu[2].SetText("Your Time : " + std::to_string(time));
+    text_menu[2].SetColor(color_title_R,color_title_G,color_title_B);
+    text_menu[2].SetRect(pos_items[2].x, pos_items[2].y);
+    SDL_Event event_options;
+    while(true){
+        while(SDL_PollEvent(&event_options)){
+                if(event_options.type == SDL_QUIT) return true;
+        }
+        Gameover_menu.Render(renderer, NULL);
+        for(int i = 0 ; i < MenuItems ; i++){
+            text_menu[i].loadFromRenderedText(g_font_text,renderer);
+            text_menu[i].RenderText(renderer,pos_items[i].x,pos_items[i].y);
+        }
+        SDL_RenderPresent(renderer);  
+    }
+    return false;     
+}
 // Main
 int main(int argc, char* argv[])
 {
@@ -340,28 +397,15 @@ int main(int argc, char* argv[])
     InitSound();
     // Init MainObject, Background
     BaseObject g_background;
+    InitBackground(g_background);
     MainObject g_mainobject;
-    if(LoadBackground(g_background) == false) return -1;
-    if(LoadMainObject(g_mainobject) == false) return -1;
+    InitMainObject(g_mainobject);
     SDL_Rect mainobject = g_mainobject.GetRect();
 
     // Init ThreatObject
     ThreatObject * p_threat_list = new ThreatObject[Amount_Threat];
-
-    for(int i = 0 ; i < Amount_Threat ; i++)
-    {
-        ThreatObject* p_threat = p_threat_list + i;
-        p_threat->LoadIMG(random_pics(),renderer);
-        p_threat->setSize(WIDTH_THREAT,HEIGHT_THREAT);
-        int ran_num = rand() % (SCREEN_HEIGHT + 400);
-        if(ran_num >= SCREEN_HEIGHT - 50) ran_num *= 5.0/10;
-        p_threat->SetRect(SCREEN_WIDTH + i * 400,ran_num);
-        p_threat->Set_x_val(Speed_Threat_default);
-
-        BulletObject* threat_bullet = new BulletObject();
-        p_threat->init(threat_bullet,renderer);
-    }
-
+    Init_ThreatObject(p_threat_list,Amount_Threat);
+    
     SDL_SetRenderDrawColor(renderer, 255,255,255,255);
     SDL_RenderClear(renderer);
     // Init ExplosionObject
@@ -374,6 +418,7 @@ int main(int argc, char* argv[])
     life_player.LoadIMG("res/file anh/star.png",renderer);
     life_player.setSize(45,45);
     life_player.Init();
+
     // Init TextObject
     InitText();
     TextObject mark_game;
@@ -385,15 +430,24 @@ int main(int argc, char* argv[])
     TextObject Subtr_Mark_game;
     Subtr_Mark_game.SetColor(color_SubtrText_R,color_SubtrText_G,color_SubtrText_B);
 
-
     // Support Object
     SupportObject* list_object_support = new SupportObject[Amount_Support_Object];
     Init_Support_Object(list_object_support);
     
     SupportObject life_object_support;
-    life_object_support.LoadIMG("res/file anh/star.png",renderer);
-    life_object_support.setSize(50,50);
-    Init_life_Support_Object(life_object_support, speed_life_support_default);
+    life_object_support.LoadIMG("res/file anh/star_2.png", renderer);
+    life_object_support.setSize(70,70);
+    Init_Items_Support_Object(life_object_support, speed_life_support_default);
+
+    SupportObject Speed_increase_support;
+    Speed_increase_support.LoadIMG("res/file anh/speed_sp.png", renderer);
+    Speed_increase_support.setSize(70,70);
+    Init_Items_Support_Object(Speed_increase_support, speed_life_support_default);
+
+    SupportObject Bullet_increase_support;
+    Bullet_increase_support.LoadIMG("res/file anh/bullet_sp.png", renderer);
+    Bullet_increase_support.setSize(70,70);
+    Init_Items_Support_Object(Bullet_increase_support, speed_life_support_default);
 
     //Path run
     int bkgn_x = 0;
@@ -462,17 +516,6 @@ int main(int argc, char* argv[])
             g_mainobject.HandleInputAction(event,renderer,g_sound_bullet,gMusic);
 
         }
-        // Render many backgrounds
-        // bkgn_x -= 2;
-        // g_background[0].SetRect(bkgn_x,0);
-        // g_background[0].Render(renderer,NULL);
-        // g_background[1].SetRect(bkgn_x + SCREEN_WIDTH,0);
-        // g_background[1].Render(renderer,NULL);
-        // g_background[2].SetRect(bkgn_x + 2 * SCREEN_WIDTH,0);
-        // g_background[2].Render(renderer,NULL);
-        // g_background[3].SetRect(bkgn_x + 3 * SCREEN_WIDTH,0);
-        // g_background[3].Render(renderer,NULL);
-        // if(bkgn_x <= -(amount_pics_background - 1)  * SCREEN_WIDTH) bkgn_x = 0;
 
         // Render 1 background
         if(is_run_screen){
@@ -512,30 +555,49 @@ int main(int argc, char* argv[])
                     Mix_PlayChannel(0,g_sound_eat_sp_object,0);
                 }
             }
-        }
-        
-        if(time >= 10){
-            // increase speed's threats, speed threat bullet
-            for(int t = 0 ; t < Amount_Threat ; t++){
-                ThreatObject* p_threat = (p_threat_list + t);
-                p_threat->Set_x_val(Speed_Threat_default + time/20); 
-                p_threat->Upgrade_speed_Bullet();
-            }
-            // Star - increase life 
-            life_object_support.Handle_life_support_Move();
-            life_object_support.Render(renderer,NULL);
-            bool check_collid_life_main = life_object_support.CheckCollision(life_object_support.GetRect(), g_mainobject.GetRect());
-            if(check_collid_life_main && die_nums > 0){
-                die_nums--;
-                life_player.Increase();
-                life_player.DisplayLife(renderer);
-                Init_life_Support_Object(life_object_support, 0);
+            // Speed - support      
+            if(time % 29 == 0) Init_Items_Support_Object(Speed_increase_support, speed_life_support_default);
+            Speed_increase_support.Handle_life_support_Move();
+            Speed_increase_support.Render(renderer, NULL);
+            if(Speed_increase_support.CheckCollision(Speed_increase_support.GetRect(), g_mainobject.GetRect()) ){
+                Init_Items_Support_Object(Speed_increase_support, 0);
+                g_mainobject.Upgrade_speed_mainobject(1);
                 Mix_PlayChannel(0,g_sound_eat_sp_object,0);
-                SDL_RenderPresent(renderer);
-                
             }
 
-            if(time % 30 == 0) Init_life_Support_Object(life_object_support, speed_life_support_default);
+            if(time >= 10){
+                // increase speed's threats, speed threat bullet
+                for(int t = 0 ; t < Amount_Threat ; t++){
+                    ThreatObject* p_threat = (p_threat_list + t);
+                    p_threat->Set_x_val(Speed_Threat_default + time/20); 
+                    p_threat->Upgrade_speed_Bullet();
+                }
+                // Star - increase life 
+                if(time % 35 == 0) Init_Items_Support_Object(life_object_support, speed_life_support_default);
+                life_object_support.Handle_life_support_Move();
+                life_object_support.Render(renderer,NULL);
+                bool check_collid_life_main = life_object_support.CheckCollision(life_object_support.GetRect(), g_mainobject.GetRect());
+                if(check_collid_life_main && die_nums > 0){
+                    die_nums--;
+                    life_player.Increase();
+                    life_player.DisplayLife(renderer);
+                    Init_Items_Support_Object(life_object_support, 0);
+                    Mix_PlayChannel(0,g_sound_eat_sp_object,0);
+                    SDL_RenderPresent(renderer);
+                }
+            }
+
+            // Bullet - support
+            if(time >= 15){
+                if(time % 51 == 0) Init_Items_Support_Object(Bullet_increase_support, speed_life_support_default);
+                Bullet_increase_support.Handle_life_support_Move();
+                Bullet_increase_support.Render(renderer, NULL);
+                if(Bullet_increase_support.CheckCollision(Bullet_increase_support.GetRect(), g_mainobject.GetRect()) && amount_bullet_main_object < max_bullet_main){
+                    Init_Items_Support_Object(Bullet_increase_support, 0);
+                    amount_bullet_main_object++;
+                    Mix_PlayChannel(0,g_sound_eat_sp_object,0);
+                }
+            }
         }
         
         // Handle mainobject
@@ -562,15 +624,16 @@ int main(int argc, char* argv[])
                     EXP_main.SetRect(x_pos,y_pos);
                     EXP_main.RenderEx(renderer,NULL);
                     SDL_RenderPresent(renderer);
-                    Subtr_Mark_game.SetText("-5");
+                    Subtr_Mark_game.SetText("-10");
                     Subtr_Mark_game.loadFromRenderedText(Subtr_mark,renderer);
                     Subtr_Mark_game.RenderText(renderer, g_mainobject.GetRect().x + 35 , g_mainobject.GetRect().y - 35);
                 }
-                if(mark_value_game > 5) mark_value_game -= 5; // Collision - decrease points
+                if(mark_value_game > 10) mark_value_game -= 10; // Collision - decrease points
 
                 Mix_PlayChannel(0,g_sound_explosion,0);
-                
-                p_threat->ResetThreat(SCREEN_WIDTH + t * 400); // After the collision, threat reset
+                // After the collision, threat reset
+                if(t == Amount_Threat - 1) p_threat->ResetThreat(SCREEN_WIDTH + t * 400, life_tank_threat_object); 
+                else p_threat->ResetThreat(SCREEN_WIDTH + t * 400, life_threat_object);
                 die_nums ++;
                 if(die_nums <= 2){
                     SDL_Delay(500);
@@ -581,7 +644,7 @@ int main(int argc, char* argv[])
                 }
                 // Check game over
                 else{
-                    if(MessageBox(NULL,"GAME OVER","INFO",MB_OK) == IDOK){
+                    if(GameOver(mark_value_game,time)){
                         delete [] p_threat_list;
                         quitSDL(window, renderer);
                         Time_game.Free();
@@ -599,11 +662,11 @@ int main(int argc, char* argv[])
                     if(check_col == true){
                         p_threat->Removebullet_Threat(k);
                         
-                        Subtr_Mark_game.SetText("-1");
+                        Subtr_Mark_game.SetText("-5");
                         Subtr_Mark_game.loadFromRenderedText(Subtr_mark,renderer);
                         Subtr_Mark_game.RenderText(renderer, g_mainobject.GetRect().x + 35 , g_mainobject.GetRect().y - 35);
             
-                        if(mark_value_game > 0 ) mark_value_game--; // bullet collsion - decrease points
+                        if(mark_value_game > 5 ) mark_value_game-= 5; // bullet collsion - decrease points
                                                                         
                     }
 
@@ -617,12 +680,22 @@ int main(int argc, char* argv[])
                     if(p_bullet){
                         bool ret_col = p_bullet->CheckCollision(p_bullet->GetRect(),p_threat->GetRect());
                         if(ret_col){
-                            mark_value_game++; // Kill enemies - earn point
-                            p_threat->LoadIMG(random_pics(),renderer);
-                            p_threat->setSize(WIDTH_THREAT,HEIGHT_THREAT);
-                            p_threat->ResetThreat(SCREEN_WIDTH + t * 400);
+                            p_threat->Decrease_Life();
                             g_mainobject.Removebullet(stt,k); // delete mainobject's bullets
-                            Mix_PlayChannel(0,g_sound_explosion,0);
+                            if(p_threat->Getlife_() == 0){
+                                mark_value_game++; // Kill enemies - earn point
+                                if(t == Amount_Threat - 1){
+                                    p_threat->LoadIMG("res/file anh/ship_enemy/boss_ship_1.png", renderer);
+                                    p_threat->setSize(WIDTH_THREAT_TANK, HEIGHT_THREAT_TANK);
+                                    p_threat->ResetThreat(SCREEN_WIDTH + t * 400, life_tank_threat_object);
+                                }
+                                else{
+                                    p_threat->LoadIMG(random_pics(),renderer);
+                                    p_threat->setSize(WIDTH_THREAT,HEIGHT_THREAT);
+                                    p_threat->ResetThreat(SCREEN_WIDTH + t * 400, life_threat_object);
+                                }
+                                Mix_PlayChannel(0,g_sound_explosion,0);
+                            }
                         }
                     }
                 }

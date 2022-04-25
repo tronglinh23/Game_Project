@@ -9,6 +9,8 @@ MainObject::MainObject(){
     x_val_ = 0;
     y_val_ = 0;
     amount_bullet_ = 1;
+    x_step = WIDTH_MAIN_OBJECT/15;
+    y_step = HEIGHT_MAIN_OBJECT/7;
 }
 MainObject::~MainObject(){
     
@@ -133,7 +135,7 @@ void MainObject::HandleInputAction(SDL_Event events, SDL_Renderer* screen, Mix_C
             }
             p_bullet->SetRect(this->rect_.x + this->rect_.w  - 20 , this->rect_.y + this->rect_.h * 0.5 + i*10); // de lai de sua vi tri dan ban ra
             p_bullet->set_is_move_(true);
-            p_bullet->Set_x_val(20); // xet toc do vien dan cua mainobject
+            p_bullet->Set_x_val(x_step + 12); // xet toc do vien dan cua mainobject
             p_bullet_list_[i].push_back(p_bullet); // mot loat cac vien dan k phai ban rieng le
         }
     }
@@ -170,7 +172,7 @@ void MainObject::Display_bullet(SDL_Renderer* des){
 // kiểm soát tầm di chuyển của mainobject
 void MainObject::HandMove(){
     if(x_val_ > x_step || x_val_ < -x_step) x_val_/=2;
-     if(y_val_ > y_step || y_val_ < -y_step) y_val_/=2;
+    if(y_val_ > y_step || y_val_ < -y_step) y_val_/=2;
     rect_.x += x_val_;
     if(rect_.x < 0 || rect_.x + WIDTH_MAIN_OBJECT > SCREEN_WIDTH) rect_.x -= x_val_;
     rect_.y += y_val_;

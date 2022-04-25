@@ -7,6 +7,7 @@ ThreatObject::ThreatObject(){
     rect_.y = SCREEN_HEIGHT* 0.5;
     rect_.w = WIDTH_THREAT;
     rect_.h = HEIGHT_THREAT;
+    life_ = 1;
 }
 
 ThreatObject::~ThreatObject(){
@@ -78,17 +79,17 @@ void ThreatObject::HandleMove(const int& x_border, const int& y_boder){
     }
 }
 
-void ThreatObject::ResetThreat(const int& xborder){
+void ThreatObject::ResetThreat(const int& xborder, const int& life){
     rect_.x = xborder;
     rect_.y = rand() % (SCREEN_HEIGHT + 400);
-    if(rect_.y >= SCREEN_HEIGHT - 50){
+    if(rect_.y >= SCREEN_HEIGHT - rect_.h){
         rect_.y *= 5.0/10;
     }
     for(int i = 0 ; i < p_bullet_list_.size();i++){
         BulletObject* p_bullet = p_bullet_list_.at(i);
         if(p_bullet) Resetbullet(p_bullet);
     }
-
+    Setlife_(life);
 }
 
 void ThreatObject::Resetbullet(BulletObject* p_bullet){
@@ -100,4 +101,8 @@ void ThreatObject::Removebullet_Threat(const int& k){
         BulletObject* p_bullet = p_bullet_list_.at(k);
         Resetbullet(p_bullet);
     }
+}
+
+void ThreatObject::Decrease_Life(){
+    life_--;
 }

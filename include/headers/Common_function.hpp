@@ -64,6 +64,9 @@
 // Main Object
     const int mainobject_Pos_X_Start = 100;
     const int mainobject_Pos_Y_Start = 200;
+    const int speed_main_object = 8;
+    const int speed_main_object_bullet = 20;
+    const int max_bullet_main = 3;
 
 // Explosion
     const int number_frame_ = 11;
@@ -81,6 +84,8 @@
 //Amount of THREAT_OBJECT
     const int Amount_Threat = 4;
     const int Speed_Threat_default = 6;
+    const int life_tank_threat_object = 3;
+    const int life_threat_object = 1;
 
 // transparent background
     const int COLOR_KEY_R = 0;
@@ -119,6 +124,6 @@ const int color_items_menu_2_R= 2;
 const int color_items_menu_2_G = 25;
 const int color_items_menu_2_B = 61;
 
-
-
-// 
+// GameOver
+const int x_pos_gameover = SCREEN_WIDTH/4;
+const int y_pos_gameover = 82;

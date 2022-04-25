@@ -5,6 +5,8 @@
 #include <vector>
 #define WIDTH_THREAT 100
 #define HEIGHT_THREAT 50
+#define WIDTH_THREAT_TANK 125
+#define HEIGHT_THREAT_TANK 170
 class ThreatObject : public BaseObject
 {
 public:
@@ -20,11 +22,15 @@ public:
     void Set_y_val(const int& val) {y_val_ = val;}
     int Get_y_val(){return y_val_;}
     std::vector<BulletObject*> Get_bullet_list() {return p_bullet_list_;}
-    void ResetThreat(const int& xborder);
+    void ResetThreat(const int& xborder, const int& life);
     void Resetbullet(BulletObject* p_bullet);
     void Removebullet_Threat(const int& k);
+    void Setlife_(const int& amount_life) {life_ = amount_life;}
+    int Getlife_(){return life_;}
+    void Decrease_Life();
 private:
     int x_val_;
     int y_val_;
     std::vector <BulletObject*> p_bullet_list_;
+    int life_;
 };
