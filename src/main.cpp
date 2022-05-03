@@ -5,12 +5,12 @@
 #include <stdio.h>
 #include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_ttf.h>
+#include "time.h"
 #include "Common_function.hpp"
 #include "BaseObject.hpp"
 #include "MainObject.hpp"
 #include "ThreatObject.hpp"
 #include "BulletObject.hpp"
-#include "time.h"
 #include "ExplosionObject.hpp"
 #include "PlayerPower.hpp"
 #include "Text_Object.hpp"
@@ -42,7 +42,6 @@ void initSDL(SDL_Window* &window, SDL_Renderer* &renderer)
     SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
-
 void quitSDL(SDL_Window* window, SDL_Renderer* renderer)
 {
 	SDL_DestroyRenderer(renderer);
@@ -51,7 +50,6 @@ void quitSDL(SDL_Window* window, SDL_Renderer* renderer)
     IMG_Quit();
 	SDL_Quit();
 }
-
 
 void InitBackground(BaseObject &background){
     bool ret = background.LoadIMG(pics_background.c_str(),renderer);
@@ -478,10 +476,8 @@ int main(int argc, char* argv[])
                     case SDLK_ESCAPE:{
                         time_menu_stop = time;
                         int result_path = Show_Menu_Options();
-                        if(result_path == 0){
-                        }
-                        else if(result_path == 2) is_quit = true;
-                        else{
+                        if(result_path == 2) is_quit = true;
+                        else if(result_path == 1){
                             ret_menu = Show_Menu(renderer,menu_show, menu_font_text);
                             if(ret_menu == 1) is_quit = true;
                         }
@@ -526,12 +522,8 @@ int main(int argc, char* argv[])
             g_background.SetRect(bkgn_x,0);
             g_background.Render(renderer,NULL);
         }
-        else{
-            g_background.SetRect(bkgn_x,0);
-            g_background.Render(renderer,NULL);
-        }
-
-        //render player life
+        
+        //Render player life
         life_player.DisplayLife(renderer);
 
         //Handling game timelines
@@ -616,6 +608,7 @@ int main(int argc, char* argv[])
             bool check_col = p_threat->CheckCollision(g_mainobject.GetRect(),p_threat->GetRect());
             // CAN DC FIX explosion
             if(check_col){
+                die_nums ++;
                 for(int ex = 0 ; ex < number_frame_ ; ex++){
                     int x_pos = g_mainobject.GetRect().x + g_mainobject.GetRect().w*0.5 - 0.5*EXP_WIDTH;
                     int y_pos = g_mainobject.GetRect().y + g_mainobject.GetRect().w*0.5 - 0.5*EXP_HEIGHT;
@@ -629,12 +622,10 @@ int main(int argc, char* argv[])
                     Subtr_Mark_game.RenderText(renderer, g_mainobject.GetRect().x + 35 , g_mainobject.GetRect().y - 35);
                 }
                 if(mark_value_game > 10) mark_value_game -= 10; // Collision - decrease points
-
                 Mix_PlayChannel(0,g_sound_explosion,0);
                 // After the collision, threat reset
                 if(t == Amount_Threat - 1) p_threat->ResetThreat(SCREEN_WIDTH + t * 400, life_tank_threat_object); 
                 else p_threat->ResetThreat(SCREEN_WIDTH + t * 400, life_threat_object);
-                die_nums ++;
                 if(die_nums <= 2){
                     SDL_Delay(500);
                     g_mainobject.SetRect(mainobject_Pos_X_Start,mainobject_Pos_Y_Start);
@@ -659,15 +650,12 @@ int main(int argc, char* argv[])
                 BulletObject* p_bullet = threat_bullet_list.at(k);
                 if(p_bullet){
                     bool check_col = p_bullet->CheckCollision(p_bullet->GetRect(),g_mainobject.GetRect());
-                    if(check_col == true){
+                    if(check_col){
                         p_threat->Removebullet_Threat(k);
-                        
                         Subtr_Mark_game.SetText("-5");
                         Subtr_Mark_game.loadFromRenderedText(Subtr_mark,renderer);
                         Subtr_Mark_game.RenderText(renderer, g_mainobject.GetRect().x + 35 , g_mainobject.GetRect().y - 35);
-            
-                        if(mark_value_game > 5 ) mark_value_game-= 5; // bullet collsion - decrease points
-                                                                        
+                        if(mark_value_game > 5) mark_value_game -= 5; // bullet collsion - decrease points                                          
                     }
 
                 }
@@ -716,7 +704,6 @@ int main(int argc, char* argv[])
         Time_game.RenderText(renderer, x_pos_render_time_text, y_pos_render_time_text);
 
         SDL_RenderPresent(renderer);
-
     }
     Time_game.Free();
     mark_game.Free();
