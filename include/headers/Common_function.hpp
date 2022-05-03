@@ -84,7 +84,7 @@
 //Amount of THREAT_OBJECT
     const int Amount_Threat = 4;
     const int Speed_Threat_default = 6;
-    const int life_tank_threat_object = 3;
+    const int life_tank_threat_object = 5;
     const int life_threat_object = 1;
 
 // transparent background
