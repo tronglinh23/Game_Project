@@ -69,5 +69,9 @@ void ExplosionObject::set_clip()
 }
 void ExplosionObject::RenderEx(SDL_Renderer* des,const SDL_Rect* CLIP){
     SDL_Rect renderquad = {rect_.x, rect_.y, EXP_WIDTH, EXP_HEIGHT};
+    if(CLIP != NULL){
+        renderquad.w = CLIP->w;
+        renderquad.h = CLIP->h;
+    }
     SDL_RenderCopy(des, p_object_,&Clip_[frame_], &renderquad);
 }

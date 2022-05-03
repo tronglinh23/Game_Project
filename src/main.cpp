@@ -369,9 +369,10 @@ void ShowFrame_CheckGameOver(MainObject &main_, ExplosionObject &explod, TextObj
                             unsigned int time, bool &is_quit){
     Mix_PlayChannel(0,g_sound_explosion,0);
     for(int ex = 0 ; ex < number_frame_ ; ex++){
+        SDL_RenderClear(renderer);
         int x_pos = main_.GetRect().x + main_.GetRect().w*0.5 - 0.5*EXP_WIDTH;
         int y_pos = main_.GetRect().y + main_.GetRect().w*0.5 - 0.5*EXP_HEIGHT;
-        SDL_Delay(75);
+        SDL_Delay(100);
         explod.set_frame(ex);
         explod.SetRect(x_pos,y_pos);
         explod.RenderEx(renderer,NULL);
