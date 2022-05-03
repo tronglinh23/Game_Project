@@ -690,8 +690,7 @@ int main(int argc, char* argv[])
     Time_game.Free();
     mark_game.Free();
     delete [] p_threat_list;
+    delete [] list_object_support;
     quitSDL(window, renderer);
     return 0;
 }
-
-
