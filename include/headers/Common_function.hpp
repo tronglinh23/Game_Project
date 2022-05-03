@@ -62,8 +62,8 @@
     const int color_SubtrText_B = 30;
 
 // Main Object
-    const int mainobject_Pos_X_Start = 100;
-    const int mainobject_Pos_Y_Start = 200;
+    const int mainobject_Pos_X_Start = 50;
+    const int mainobject_Pos_Y_Start = 250;
     const int speed_main_object = 8;
     const int speed_main_object_bullet = 20;
     const int max_bullet_main = 3;
