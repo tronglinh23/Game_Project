@@ -2,7 +2,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
-#include <stdio.h>
 #include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_ttf.h>
 #include "Common_function.hpp"
@@ -26,8 +25,7 @@ void logSDLError(std::ostream& os, const std::string &msg, bool fatal){
 
 void initSDL(SDL_Window* &window, SDL_Renderer* &renderer) 
 {
-    if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
-        logSDLError(std::cout, "SDL_Init", true);
+    if (SDL_Init(SDL_INIT_EVERYTHING) != 0) logSDLError(std::cout, "SDL_Init", true);
 
     window = SDL_CreateWindow(WINDOW_TITLE.c_str(), SDL_WINDOWPOS_CENTERED,
        SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
@@ -42,7 +40,6 @@ void initSDL(SDL_Window* &window, SDL_Renderer* &renderer)
     SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
-
 void quitSDL(SDL_Window* window, SDL_Renderer* renderer)
 {
 	SDL_DestroyRenderer(renderer);
@@ -51,7 +48,6 @@ void quitSDL(SDL_Window* window, SDL_Renderer* renderer)
     IMG_Quit();
 	SDL_Quit();
 }
-
 
 void InitBackground(BaseObject &background){
     bool ret = background.LoadIMG(pics_background.c_str(),renderer);
@@ -76,23 +72,14 @@ std::string random_pics(){
 // INIT AUDIO
 void Init()
 {
-    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0){
-        logSDLError(std::cout,"CREATE AUDIO",true);
-    }
+    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) logSDLError(std::cout,"CREATE AUDIO",true);
     // Initialize img
     int imgFlags = IMG_INIT_PNG;
-    if( !( IMG_Init( imgFlags ) & imgFlags ) )
-    {
-        logSDLError(std::cout,"SDL_image could not initialize",true);
-    }
-
+    if(!(IMG_Init( imgFlags ) & imgFlags) ) logSDLError(std::cout,"SDL_image could not initialize",true);
         //Initialize SDL_mixer
-    if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 )
-    {
-        logSDLError(std::cout,"SDL_mixer could not initialize",true);
-    }
+    if(Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0) logSDLError(std::cout,"SDL_mixer could not initialize",true);
+    
 }
-
 // Load Sound
 void InitSound(){
     // Sound effect
@@ -117,7 +104,6 @@ void InitSound(){
         Mix_PlayMusic(gMusic, -1 );
     }
 }
-
 // Load Text
 void InitText(){
     if( TTF_Init() == -1 ) logSDLError(std::cout,"SDL_ttf could not initialize! SDL_ttf ",true);
@@ -127,8 +113,7 @@ void InitText(){
     Subtr_mark = TTF_OpenFont(subtr_mark_text.c_str(),size_subtr_mark_text);
     if(!g_font_text && !menu_font_text && !menu_options_text_2 && !Subtr_mark) logSDLError(std::cout,"Failed to load lazy font! SDL_ttf ",true);
 }
-
-// ShowMenu
+// Check focus
 bool checkfocuswithrect(const int& x, const int& y, const SDL_Rect& rect){
     if( x >= rect.x && x < rect.x + rect.w &&
         y >= rect.y && y <= rect.y + rect.h)
@@ -137,8 +122,7 @@ bool checkfocuswithrect(const int& x, const int& y, const SDL_Rect& rect){
     }
     return false;
 }
-
-// can sua
+// ShowMenu
 int Show_Menu(SDL_Renderer* des,BaseObject& Menu_show,TTF_Font* font_game_menu)
 {
     bool ret = Menu_show.LoadIMG("res/file anh/background_4k.jpg",des);
@@ -174,13 +158,10 @@ int Show_Menu(SDL_Renderer* des,BaseObject& Menu_show,TTF_Font* font_game_menu)
         Menu_show.Render(des,NULL);
         for(int i = 0 ; i < MenuItems ; i++){
             text_menu[i].loadFromRenderedText(font_game_menu,des);
-
             text_menu[i].RenderText(des,pos_items[i].x,pos_items[i].y);
-
         }
         while(SDL_PollEvent(&menu_event)){
             switch(menu_event.type){
-
                 case SDL_QUIT:
                     return 1;
                 case SDL_MOUSEMOTION:
@@ -229,15 +210,13 @@ int Show_Menu(SDL_Renderer* des,BaseObject& Menu_show,TTF_Font* font_game_menu)
     }
     return 1;
 }
-
 // Init Support Object
 void Init_Support_Object(SupportObject * list_object){
-    int ran_num;
     for(int sp_ob = 0 ; sp_ob < Amount_Support_Object; sp_ob++){
         SupportObject* list_spp = list_object + sp_ob;
         list_spp->LoadIMG(file_pics_support_object[rand() % amount_pics_path].c_str(), renderer);
         list_spp->setSize(size_x_pics_sp, size_y_pics_sp);
-        ran_num = rand() % (SCREEN_HEIGHT + 400);
+        int ran_num = rand() % (SCREEN_HEIGHT + 400);
         if(ran_num >= SCREEN_HEIGHT - 50) ran_num *= 5.0/10;
         list_spp->SetRect(SCREEN_WIDTH + sp_ob*50, ran_num);
         list_spp->Set_x_pos(3);
@@ -323,7 +302,6 @@ int Show_Menu_Options(){
     }
     return 1;
 }
-
 //Init ThreatObject
 void Init_ThreatObject(ThreatObject *llist_threat, int amount_threats){
     for(int i = 0 ; i < amount_threats ; i++)
@@ -343,7 +321,6 @@ void Init_ThreatObject(ThreatObject *llist_threat, int amount_threats){
         if(ran_num > SCREEN_HEIGHT - p_threat->GetRect().h) ran_num *= 5.0/10;
         p_threat->SetRect(SCREEN_WIDTH + i * 400,ran_num);
         p_threat->Set_x_val(Speed_Threat_default);
-
         BulletObject* threat_bullet = new BulletObject();
         p_threat->init(threat_bullet,renderer);
     }
@@ -366,11 +343,9 @@ bool GameOver(const int& mark, const int& time){
     text_menu[0].SetText("Game Over");
     text_menu[0].SetColor(color_title_R,color_title_G,color_title_B);
     text_menu[0].SetRect(pos_items[0].x, pos_items[0].y);
-
     text_menu[1].SetText("Your Score : " + std::to_string(mark));
     text_menu[1].SetColor(color_title_R,color_title_G,color_title_B);
     text_menu[1].SetRect(pos_items[1].x, pos_items[1].y);
-
     text_menu[2].SetText("Your Time : " + std::to_string(time));
     text_menu[2].SetColor(color_title_R,color_title_G,color_title_B);
     text_menu[2].SetRect(pos_items[2].x, pos_items[2].y);
@@ -387,6 +362,34 @@ bool GameOver(const int& mark, const int& time){
         SDL_RenderPresent(renderer);  
     }
     return false;     
+}
+
+void ShowFrame_CheckGameOver(MainObject &main_, ExplosionObject &explod, TextObject &Subtr_mark_game,
+                            PlayerPower &life_player, unsigned int &die_nums, unsigned int mark_value_game, 
+                            unsigned int time, bool &is_quit){
+    Mix_PlayChannel(0,g_sound_explosion,0);
+    for(int ex = 0 ; ex < number_frame_ ; ex++){
+        int x_pos = main_.GetRect().x + main_.GetRect().w*0.5 - 0.5*EXP_WIDTH;
+        int y_pos = main_.GetRect().y + main_.GetRect().w*0.5 - 0.5*EXP_HEIGHT;
+        SDL_Delay(75);
+        explod.set_frame(ex);
+        explod.SetRect(x_pos,y_pos);
+        explod.RenderEx(renderer,NULL);
+        Subtr_mark_game.SetText("-10");
+        Subtr_mark_game.loadFromRenderedText(Subtr_mark,renderer);
+        Subtr_mark_game.RenderText(renderer, main_.GetRect().x + 35 , main_.GetRect().y - 35);
+        SDL_RenderPresent(renderer);
+    }
+    if(die_nums <= 2){
+        SDL_Delay(500);
+        main_.SetRect(mainobject_Pos_X_Start,mainobject_Pos_Y_Start);
+        life_player.Decrease();
+        life_player.DisplayLife(renderer);
+        SDL_RenderPresent(renderer);
+    }
+    // Check game over
+    else 
+        if(GameOver(mark_value_game,time)) is_quit = true;         
 }
 // Main
 int main(int argc, char* argv[])
@@ -616,42 +619,13 @@ int main(int argc, char* argv[])
             bool check_col = p_threat->CheckCollision(g_mainobject.GetRect(),p_threat->GetRect());
             // CAN DC FIX explosion
             if(check_col){
-                for(int ex = 0 ; ex < number_frame_ ; ex++){
-                    int x_pos = g_mainobject.GetRect().x + g_mainobject.GetRect().w*0.5 - 0.5*EXP_WIDTH;
-                    int y_pos = g_mainobject.GetRect().y + g_mainobject.GetRect().w*0.5 - 0.5*EXP_HEIGHT;
-                    SDL_Delay(75);
-                    EXP_main.set_frame(ex);
-                    EXP_main.SetRect(x_pos,y_pos);
-                    EXP_main.RenderEx(renderer,NULL);
-                    SDL_RenderPresent(renderer);
-                    Subtr_Mark_game.SetText("-10");
-                    Subtr_Mark_game.loadFromRenderedText(Subtr_mark,renderer);
-                    Subtr_Mark_game.RenderText(renderer, g_mainobject.GetRect().x + 35 , g_mainobject.GetRect().y - 35);
-                }
-                if(mark_value_game > 10) mark_value_game -= 10; // Collision - decrease points
-
-                Mix_PlayChannel(0,g_sound_explosion,0);
                 // After the collision, threat reset
                 if(t == Amount_Threat - 1) p_threat->ResetThreat(SCREEN_WIDTH + t * 400, life_tank_threat_object); 
                 else p_threat->ResetThreat(SCREEN_WIDTH + t * 400, life_threat_object);
+                if(mark_value_game > 10) mark_value_game -= 10; // Collision - decrease points
                 die_nums ++;
-                if(die_nums <= 2){
-                    SDL_Delay(500);
-                    g_mainobject.SetRect(mainobject_Pos_X_Start,mainobject_Pos_Y_Start);
-                    life_player.Decrease();
-                    life_player.DisplayLife(renderer);
-                    SDL_RenderPresent(renderer);
-                }
-                // Check game over
-                else{
-                    if(GameOver(mark_value_game,time)){
-                        delete [] p_threat_list;
-                        quitSDL(window, renderer);
-                        Time_game.Free();
-                        mark_game.Free();
-                        return 0;
-                    }
-                }
+                ShowFrame_CheckGameOver(g_mainobject, EXP_main, Subtr_Mark_game,
+                                        life_player, die_nums, mark_value_game, time, is_quit);
             }
             // Handling threat's bullets on mainobject
             std::vector<BulletObject*> threat_bullet_list = p_threat->Get_bullet_list();
@@ -660,16 +634,12 @@ int main(int argc, char* argv[])
                 if(p_bullet){
                     bool check_col = p_bullet->CheckCollision(p_bullet->GetRect(),g_mainobject.GetRect());
                     if(check_col == true){
+                        if(mark_value_game > 10) mark_value_game -= 10;
                         p_threat->Removebullet_Threat(k);
-                        
-                        Subtr_Mark_game.SetText("-5");
-                        Subtr_Mark_game.loadFromRenderedText(Subtr_mark,renderer);
-                        Subtr_Mark_game.RenderText(renderer, g_mainobject.GetRect().x + 35 , g_mainobject.GetRect().y - 35);
-            
-                        if(mark_value_game > 5 ) mark_value_game-= 5; // bullet collsion - decrease points
-                                                                        
-                    }
-
+                        die_nums++;
+                        ShowFrame_CheckGameOver(g_mainobject, EXP_main, Subtr_Mark_game,
+                                                life_player, die_nums, mark_value_game, time, is_quit);
+                    } 
                 }
             }
             // Handling mainobject's bullets on threats
@@ -716,7 +686,6 @@ int main(int argc, char* argv[])
         Time_game.RenderText(renderer, x_pos_render_time_text, y_pos_render_time_text);
 
         SDL_RenderPresent(renderer);
-
     }
     Time_game.Free();
     mark_game.Free();
