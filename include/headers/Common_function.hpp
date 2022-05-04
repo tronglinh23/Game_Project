@@ -82,8 +82,8 @@
     static SDL_Event event;
 
 //Amount of THREAT_OBJECT
-    const int Amount_Threat = 4;
-    const int Speed_Threat_default = 6;
+    const int Amount_Threat = 3;
+    const int Speed_Threat_default = 4;
     const int life_tank_threat_object = 5;
     const int life_threat_object = 1;
 

@@ -25,12 +25,12 @@ ThreatObject::~ThreatObject(){
 }
 void ThreatObject::init(BulletObject* P_bullet,SDL_Renderer* screen){
     if(P_bullet != NULL){
-        bool ret = P_bullet->LoadIMG("res/file anh/bullet/Bullet1.png",screen);
+        bool ret = P_bullet->LoadIMG("res/file anh/bullet/Bullet1 (2).png",screen);
         if(ret){
             P_bullet->set_is_move_(true);
             P_bullet->SetWidthHeight(WIDTH_BULLET_THREAT,HEIGHT_BULLET_THREAT);
-            P_bullet->SetRect(rect_.x - 5, rect_.y + rect_.h * 0.5);
-            P_bullet->Set_x_val(x_val_ + 3); // toc do dan ban cua threat
+            P_bullet->SetRect(rect_.x - 5, rect_.y + rect_.h * 0.4);
+            P_bullet->Set_x_val(x_val_ + 2); // toc do dan ban cua threat
             p_bullet_list_.push_back(P_bullet);
         }
     }
@@ -38,7 +38,7 @@ void ThreatObject::init(BulletObject* P_bullet,SDL_Renderer* screen){
 void ThreatObject::Upgrade_speed_Bullet(){
     for(int i = 0 ; i < p_bullet_list_.size(); i++){
         BulletObject* P_bullet = p_bullet_list_.at(i);
-        P_bullet->Set_x_val(x_val_ + 3);
+        P_bullet->Set_x_val(x_val_ + 2);
     }
     
 }
@@ -105,4 +105,15 @@ void ThreatObject::Removebullet_Threat(const int& k){
 
 void ThreatObject::Decrease_Life(){
     life_--;
+}
+
+void ThreatObject::Remove_Bullet_(const int& k){
+    if(p_bullet_list_.size() > 0){
+        BulletObject* p_bullet = p_bullet_list_.at(k);
+        p_bullet_list_.erase(p_bullet_list_.begin() + k);
+        if(p_bullet != NULL){
+            delete p_bullet;
+            p_bullet = NULL;
+        }
+    }  
 }

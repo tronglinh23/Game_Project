@@ -9,13 +9,24 @@ MainObject::MainObject(){
     x_val_ = 0;
     y_val_ = 0;
     amount_bullet_ = 1;
-    x_step = WIDTH_MAIN_OBJECT/15;
-    y_step = HEIGHT_MAIN_OBJECT/7;
+    x_step = 0;
+    y_step = 0;
 }
 MainObject::~MainObject(){
-    
+    for(int i  = 0 ; i < amount_bullet_; i++){
+        if(p_bullet_list_[i].size() > 0){
+            for (int k = 0; k < p_bullet_list_[i].size(); k++)
+            {
+                BulletObject* p_bullet = p_bullet_list_[i].at(k);
+                if(p_bullet != NULL){
+                    delete p_bullet;
+                    p_bullet = NULL;
+                }
+            }
+            p_bullet_list_[i].clear();
+        }
+    }
 }
-
 // xu li cac thao tac ban phim va chuot
 void MainObject::HandleInputAction(SDL_Event events, SDL_Renderer* screen, Mix_Chunk* bullet[2], Mix_Music* gMusic){
     if(events.type == SDL_KEYDOWN){
@@ -50,7 +61,7 @@ void MainObject::HandleInputAction(SDL_Event events, SDL_Renderer* screen, Mix_C
                 x_val_ = -x_step;
                 break;
             // turn on Music
-            case SDLK_9:
+            case SDLK_1:
             //If there is no music playing
                 if( Mix_PlayingMusic() == 0 )
                 {
@@ -120,8 +131,7 @@ void MainObject::HandleInputAction(SDL_Event events, SDL_Renderer* screen, Mix_C
 
             BulletObject* p_bullet = new BulletObject();
             if(events.button.button == SDL_BUTTON_LEFT){
-                p_bullet->SetWidthHeight(WIDTH_LASER,HEIGHT_LASER);
-                p_bullet->LoadIMG("res/file anh/bullet/Bullet6.png",screen);
+                p_bullet->LoadIMG("res/file anh/bullet/shot5_4.png",screen);
                 p_bullet->set_type(BulletObject::LASER);
                 Mix_PlayChannel(-1,bullet[0],0);
                 Mix_VolumeChunk(bullet[0],30);
@@ -135,15 +145,9 @@ void MainObject::HandleInputAction(SDL_Event events, SDL_Renderer* screen, Mix_C
             }
             p_bullet->SetRect(this->rect_.x + this->rect_.w  - 20 , this->rect_.y + this->rect_.h * 0.5 + i*10); // de lai de sua vi tri dan ban ra
             p_bullet->set_is_move_(true);
-            p_bullet->Set_x_val(x_step + 12); // xet toc do vien dan cua mainobject
+            p_bullet->Set_x_val(x_step + 7); // xet toc do vien dan cua mainobject
             p_bullet_list_[i].push_back(p_bullet); // mot loat cac vien dan k phai ban rieng le
         }
-    }
-    else if(events.type == SDL_MOUSEBUTTONUP){
-
-    }
-    else{
-        ;
     }
 }
 void MainObject::Display_bullet(SDL_Renderer* des){

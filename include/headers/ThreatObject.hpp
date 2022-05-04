@@ -28,6 +28,7 @@ public:
     void Setlife_(const int& amount_life) {life_ = amount_life;}
     int Getlife_(){return life_;}
     void Decrease_Life();
+    void Remove_Bullet_(const int& k);
 private:
     int x_val_;
     int y_val_;

@@ -1,12 +1,12 @@
 #pragma once
 
 #include "BaseObject.hpp"
-#define WIDTH_LASER 25
+#define WIDTH_LASER 35
 #define HEIGHT_LASER 5
 
 
-#define WIDTH_BULLET_THREAT 25
-#define HEIGHT_BULLET_THREAT 5
+#define WIDTH_BULLET_THREAT 40
+#define HEIGHT_BULLET_THREAT 11
 class BulletObject : public BaseObject
 {
 public:
