@@ -484,7 +484,7 @@ int main(int argc, char* argv[])
     BaseObject menu_show;
     int ret_menu = Show_Menu(renderer,menu_show, menu_font_text);
     if(ret_menu == 1) is_quit = true;
-
+    unsigned int step_time_menu = SDL_GetTicks()/1000;
     // Path flow
     while(!is_quit){   
         while(SDL_PollEvent(&event)){

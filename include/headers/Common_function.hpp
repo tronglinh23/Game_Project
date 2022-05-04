@@ -140,5 +140,4 @@ const int y_pos_gameover = 82;
     static unsigned int time_game = 0;
     static unsigned int amount_bullet_main_object = 1;
     static unsigned int time_menu_stop = 0;
-    static unsigned int step_time_menu = SDL_GetTicks()/1000;
     static int highest_score = 0;
