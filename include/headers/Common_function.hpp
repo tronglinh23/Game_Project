@@ -82,7 +82,7 @@
     static SDL_Event event;
 
 //Amount of THREAT_OBJECT
-    const int Amount_Threat = 3;
+    const int Amount_Threat = 5;
     const int Speed_Threat_default = 4;
     const int life_tank_threat_object = 5;
     const int life_threat_object = 1;
@@ -108,8 +108,8 @@
                                                     "res/Planets/planet15.png","res/Planets/planet16.png","res/Planets/planet17.png",
                                                     "res/Planets/planet18_0.png","res/Planets/planet19.png","res/Planets/planet20.png"};
     const int amount_pics_path = 18;    
-    const int size_x_pics_sp = 45;
-    const int size_y_pics_sp = 45;                
+    const int size_x_pics_sp = 55;
+    const int size_y_pics_sp = 55;                
     // life_support_object
     const int speed_life_support_default = 10;
 
@@ -127,3 +127,18 @@ const int color_items_menu_2_B = 61;
 // GameOver
 const int x_pos_gameover = SCREEN_WIDTH/4;
 const int y_pos_gameover = 82;
+
+//Path run
+    static int bkgn_x = 0;
+    static bool is_run_screen = true;
+    static bool is_quit = false;
+    static bool is_playagain = false;
+
+// Numbers of life ---- mark: kill threats
+    static unsigned int die_nums = 0;
+    static unsigned int mark_value_game = 0;
+    static unsigned int time_game = 0;
+    static unsigned int amount_bullet_main_object = 1;
+    static unsigned int time_menu_stop = 0;
+    static unsigned int step_time_menu = SDL_GetTicks()/1000;
+    static int highest_score = 0;

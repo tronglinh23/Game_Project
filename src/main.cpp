@@ -163,10 +163,8 @@ int Show_Menu(SDL_Renderer* des,BaseObject& Menu_show,TTF_Font* font_game_menu)
         }
         while(SDL_PollEvent(&menu_event)){
             switch(menu_event.type){
-                case SDL_QUIT:
-                    return 1;
-                case SDL_MOUSEMOTION:
-                {
+                case SDL_QUIT: return 1;
+                case SDL_MOUSEMOTION:{
                     // lay vi tri cua con chuot
                     xm = menu_event.motion.x;
                     ym = menu_event.motion.y;
@@ -179,17 +177,10 @@ int Show_Menu(SDL_Renderer* des,BaseObject& Menu_show,TTF_Font* font_game_menu)
                             text_menu[i].SetColor(color_ItemText_R,color_ItemText_G,color_ItemText_B);
                         }
                     }
-
-                    if(checkfocuswithrect(xm,ym,title_menu_game.GetRect())) 
-                        title_menu_game.SetColor(color_title_change_R,color_title_change_G,color_title_change_B);
-                    else 
-                        title_menu_game.SetColor(color_title_R,color_title_G,color_title_B);
-
                     break;
                 }
                 // if button down
-                case SDL_MOUSEBUTTONDOWN:
-                {
+                case SDL_MOUSEBUTTONDOWN:{
                     xm = menu_event.button.x;
                     ym = menu_event.button.y;
                     for(int i = 0 ; i < MenuItems; i++){
@@ -328,11 +319,12 @@ void Init_ThreatObject(ThreatObject *llist_threat, int amount_threats){
     }
 }
 
-bool GameOver(const int& mark, const int& time){
+bool GameOver(const int& mark, int &highest_score ,const int& time){
+    if(mark >= highest_score) highest_score = mark;
     BaseObject Gameover_menu;
     Gameover_menu.LoadIMG("res/file anh/panel-1.png",renderer);
     Gameover_menu.SetRect(x_pos_gameover, y_pos_gameover);
-    const int MenuItems = 4;
+    const int MenuItems = 5;
     SDL_Rect pos_items[MenuItems];
     pos_items[0].x = x_pos_gameover + 80;
     pos_items[0].y = y_pos_gameover + 70;
@@ -341,7 +333,9 @@ bool GameOver(const int& mark, const int& time){
     pos_items[2].x = x_pos_gameover + 80;
     pos_items[2].y = y_pos_gameover + 170;
     pos_items[3].x = x_pos_gameover + 175;
-    pos_items[3].y = y_pos_gameover + 275;
+    pos_items[3].y = y_pos_gameover + 300;
+    pos_items[4].x = x_pos_gameover + 80;
+    pos_items[4].y = y_pos_gameover + 220;
     TextObject text_menu[MenuItems];
     text_menu[0].SetText("Game Over");
     text_menu[0].SetColor(color_title_R,color_title_G,color_title_B);
@@ -355,6 +349,9 @@ bool GameOver(const int& mark, const int& time){
     text_menu[3].SetText("PLAY AGAIN");
     text_menu[3].SetColor(color_items_menu_2_R,color_items_menu_2_G,color_items_menu_2_B);
     text_menu[3].SetRect(pos_items[3].x, pos_items[3].y);
+    text_menu[4].SetText("Highest Score : " + std::to_string(highest_score));
+    text_menu[4].SetColor(color_title_R,color_title_G,color_title_B);
+    text_menu[4].SetRect(pos_items[4].x, pos_items[4].y);
 
     SDL_Event event_options;
     int x, y;
@@ -419,7 +416,7 @@ void ShowFrame_CheckGameOver(MainObject &main_, ExplosionObject &explod, TextObj
     }
     // Check game over
     else 
-        if(GameOver(mark_value_game,time)) is_quit = true;     
+        if(GameOver(mark_value_game,highest_score,time)) is_quit = true;     
         else is_playagain = true;
   
 }
@@ -483,23 +480,11 @@ int main(int argc, char* argv[])
     Bullet_increase_support.setSize(70,70);
     Init_Items_Support_Object(Bullet_increase_support, speed_life_support_default);
 
-    //Path run
-    int bkgn_x = 0;
-    bool is_run_screen = true;
-    bool is_quit = false;
-    bool is_playagain = false;
     //Show Menu
     BaseObject menu_show;
     int ret_menu = Show_Menu(renderer,menu_show, menu_font_text);
     if(ret_menu == 1) is_quit = true;
 
-    // Numbers of life ---- mark: kill threats
-    unsigned int die_nums = 0;
-    unsigned int mark_value_game = 0;
-    unsigned int time = 0;
-    unsigned int amount_bullet_main_object = 1;
-    unsigned int time_menu_stop = 0;
-    unsigned int step_time_menu = SDL_GetTicks()/1000;
     // Path flow
     while(!is_quit){   
         while(SDL_PollEvent(&event)){
@@ -510,7 +495,7 @@ int main(int argc, char* argv[])
             if(event.type == SDL_KEYDOWN){
                 switch(event.key.keysym.sym){
                     case SDLK_ESCAPE:{
-                        time_menu_stop = time;
+                        time_menu_stop = time_game;
                         int result_path = Show_Menu_Options();
                         if(result_path == 2) is_quit = true;
                         else if(result_path == 1){
@@ -566,10 +551,10 @@ int main(int argc, char* argv[])
         // increase speed's threats, speed threat bullet
         for(int t = 0 ; t < Amount_Threat ; t++){
             ThreatObject* p_threat = (p_threat_list + t);
-            p_threat->Set_x_val(Speed_Threat_default + time/15); 
+            p_threat->Set_x_val(Speed_Threat_default + time_game/15); 
             p_threat->Upgrade_speed_Bullet();
         }
-        if(time > 5)
+        if(time_game > 5)
         {
             for(int list_ob = 0 ; list_ob < Amount_Support_Object ; list_ob++) 
             {
@@ -590,7 +575,7 @@ int main(int argc, char* argv[])
                 }
             }
             // Speed - support      
-            if(time % 29 == 0) Init_Items_Support_Object(Speed_increase_support, speed_life_support_default);
+            if(time_game % 29 == 0) Init_Items_Support_Object(Speed_increase_support, speed_life_support_default);
             Speed_increase_support.Handle_life_support_Move();
             Speed_increase_support.Render(renderer, NULL);
             if(Speed_increase_support.CheckCollision(Speed_increase_support.GetRect(), g_mainobject.GetRect()) ){
@@ -599,9 +584,9 @@ int main(int argc, char* argv[])
                 Mix_PlayChannel(0,g_sound_eat_sp_object,0);
             }
 
-            if(time >= 10){
+            if(time_game >= 10){
                 // Star - increase life 
-                if(time % 35 == 0) Init_Items_Support_Object(life_object_support, speed_life_support_default);
+                if(time_game % 35 == 0) Init_Items_Support_Object(life_object_support, speed_life_support_default);
                 life_object_support.Handle_life_support_Move();
                 life_object_support.Render(renderer,NULL);
                 bool check_collid_life_main = life_object_support.CheckCollision(life_object_support.GetRect(), g_mainobject.GetRect());
@@ -616,8 +601,8 @@ int main(int argc, char* argv[])
             }
 
             // Bullet - support
-            if(time >= 15){
-                if(time % 51 == 0) Init_Items_Support_Object(Bullet_increase_support, speed_life_support_default);
+            if(time_game >= 15){
+                if(time_game % 51 == 0) Init_Items_Support_Object(Bullet_increase_support, speed_life_support_default);
                 Bullet_increase_support.Handle_life_support_Move();
                 Bullet_increase_support.Render(renderer, NULL);
                 if(Bullet_increase_support.CheckCollision(Bullet_increase_support.GetRect(), g_mainobject.GetRect()) && amount_bullet_main_object < max_bullet_main){
@@ -651,7 +636,7 @@ int main(int argc, char* argv[])
                 die_nums ++;
                 ShowFrame_CheckGameOver(g_mainobject, EXP_main, Subtr_Mark_game,
                                         life_player, die_nums, mark_value_game, 
-                                        time, is_quit, is_playagain);
+                                        time_game, is_quit, is_playagain);
             }
             // Handling threat's bullets on mainobject
             std::vector<BulletObject*> threat_bullet_list = p_threat->Get_bullet_list();
@@ -665,7 +650,7 @@ int main(int argc, char* argv[])
                         die_nums++;
                         ShowFrame_CheckGameOver(g_mainobject, EXP_main, Subtr_Mark_game,
                                                 life_player, die_nums, mark_value_game, 
-                                                time, is_quit, is_playagain);
+                                                time_game, is_quit, is_playagain);
                     } 
                 }
             }
@@ -706,8 +691,8 @@ int main(int argc, char* argv[])
         mark_game.RenderText(renderer, x_pos_render_mark_text, y_pos_render_mark_text);
 
         // Render time_text
-        time = SDL_GetTicks()/1000 - step_time_menu;
-        std::string Time_present = val_time + std::to_string(time);
+        time_game = SDL_GetTicks()/1000 - step_time_menu;
+        std::string Time_present = val_time + std::to_string(time_game);
         Time_game.SetText(Time_present);
         Time_game.loadFromRenderedText(g_font_text,renderer);
         Time_game.RenderText(renderer, x_pos_render_time_text, y_pos_render_time_text);
