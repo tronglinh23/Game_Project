@@ -62,7 +62,7 @@ void InitMainObject(MainObject &p_mainobject){
     p_mainobject.Set_x_step_y_step(Speed_deafault_mainobject_x, Speed_deafault_mainobject_Y);
     if(ret == false) logSDLError(std::cout, "Create Mainobject", true);
 }
-// de sau cai tien len 
+//random pics threats
 std::string random_pics(){
     const std::string pics_threats[] = {"res/file anh/ship_enemy/Ship1.png", "res/file anh/ship_enemy/Ship2.png",
                                         "res/file anh/ship_enemy/Ship3.png", "res/file anh/ship_enemy/Ship4.png",
@@ -114,7 +114,7 @@ void InitText(){
     Subtr_mark = TTF_OpenFont(subtr_mark_text.c_str(),size_subtr_mark_text);
     if(!g_font_text && !menu_font_text && !menu_options_text_2 && !Subtr_mark) logSDLError(std::cout,"Failed to load lazy font! SDL_ttf ",true);
 }
-// Check focus
+// Check focus button 
 bool checkfocuswithrect(const int& x, const int& y, const SDL_Rect& rect){
     if( x >= rect.x && x < rect.x + rect.w &&
         y >= rect.y && y <= rect.y + rect.h)
@@ -202,7 +202,7 @@ int Show_Menu(SDL_Renderer* des,BaseObject& Menu_show,TTF_Font* font_game_menu)
     }
     return 1;
 }
-// Init Support Object
+// Init Support Object - planets
 void Init_Support_Object(SupportObject * list_object){
     for(int sp_ob = 0 ; sp_ob < Amount_Support_Object; sp_ob++){
         SupportObject* list_spp = list_object + sp_ob;
@@ -214,12 +214,12 @@ void Init_Support_Object(SupportObject * list_object){
         list_spp->Set_x_pos(3);
     }
 }
-
+// Init Items Support - speed , bullet, star
 void Init_Items_Support_Object(SupportObject &life_suport, int speed_life){
     life_suport.SetRect(SCREEN_WIDTH , rand() % (SCREEN_HEIGHT - 100));
     life_suport.Set_x_pos(speed_life);
 }
-
+// Show Menu 2 - when playing game
 int Show_Menu_Options(){
     // return 0 : Continue
     // return 1 : Show menu
@@ -318,7 +318,7 @@ void Init_ThreatObject(ThreatObject *llist_threat, int amount_threats){
         p_threat->init(threat_bullet,renderer);
     }
 }
-
+// Gameover
 bool GameOver(const int& mark, int &highest_score ,const int& time){
     if(mark >= highest_score) highest_score = mark;
     BaseObject Gameover_menu;
@@ -395,6 +395,8 @@ void ShowFrame_CheckGameOver(MainObject &main_, ExplosionObject &explod, TextObj
                             PlayerPower &life_player, unsigned int &die_nums, unsigned int mark_value_game, 
                             unsigned int time, bool &is_quit, bool &is_playagain){
     Mix_PlayChannel(0,g_sound_explosion,0);
+    main_.Set_x_step_y_step(Speed_deafault_mainobject_x, Speed_deafault_mainobject_Y); // set default speed
+    amount_bullet_main_object = 1; // set default bullet
     for(int ex = 0 ; ex < number_frame_ ; ex++){
         int x_pos = main_.GetRect().x + main_.GetRect().w*0.5 - 0.5*EXP_WIDTH;
         int y_pos = main_.GetRect().y + main_.GetRect().w*0.5 - 0.5*EXP_HEIGHT;
@@ -461,7 +463,7 @@ int main(int argc, char* argv[])
     TextObject Subtr_Mark_game;
     Subtr_Mark_game.SetColor(color_SubtrText_R,color_SubtrText_G,color_SubtrText_B);
 
-    // Support Object
+    // Init support Object
     SupportObject* list_object_support = new SupportObject[Amount_Support_Object];
     Init_Support_Object(list_object_support);
     
@@ -496,10 +498,10 @@ int main(int argc, char* argv[])
                 switch(event.key.keysym.sym){
                     case SDLK_ESCAPE:{
                         time_menu_stop = time_game;
-                        int result_path = Show_Menu_Options();
+                        int result_path = Show_Menu_Options(); // Show menu 2
                         if(result_path == 2) is_quit = true;
                         else if(result_path == 1){
-                            ret_menu = Show_Menu(renderer,menu_show, menu_font_text);
+                            ret_menu = Show_Menu(renderer,menu_show, menu_font_text); // Show menu 1
                             if(ret_menu == 1) is_quit = true;
                         }
                         step_time_menu = SDL_GetTicks()/1000 - time_menu_stop;
@@ -534,7 +536,7 @@ int main(int argc, char* argv[])
 
         }
 
-        // Render 1 background
+        // Render 1 background, run screen
         if(is_run_screen){
             bkgn_x -= speed_run_screen;
             if(bkgn_x <= - (WIDTH_BACKGROUND - SCREEN_WIDTH)){
