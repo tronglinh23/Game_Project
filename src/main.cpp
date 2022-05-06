@@ -359,18 +359,17 @@ bool GameOver(const int& mark, int &highest_score ,const int& time){
         while(SDL_PollEvent(&event_options)){
                 switch(event_options.type){
                     case SDL_QUIT: return true; break;
-                    case SDL_MOUSEMOTION:
-                    {
-                    // lay vi tri cua con chuot
-                    x = event_options.motion.x;
-                    y = event_options.motion.y;
-                    // change colors
+                    case SDL_MOUSEMOTION:{
+                        // lay vi tri cua con chuot
+                        x = event_options.motion.x;
+                        y = event_options.motion.y;
+                        // change colors
                         if(checkfocuswithrect(x,y,text_menu[3].GetRect()))
                             text_menu[3].SetColor(color_Change_ItemText_R, color_Change_ItemText_G, color_Change_ItemText_B); 
                         else
                             text_menu[3].SetColor(color_items_menu_2_R,color_items_menu_2_G,color_items_menu_2_B);
-                    break;
-                }
+                        break;
+                    }
                     case SDL_MOUSEBUTTONDOWN:{
                         x = event_options.button.x;
                         y = event_options.button.y;
@@ -698,7 +697,7 @@ int main(int argc, char* argv[])
         Time_game.SetText(Time_present);
         Time_game.loadFromRenderedText(g_font_text,renderer);
         Time_game.RenderText(renderer, x_pos_render_time_text, y_pos_render_time_text);
-
+        // Play again
         if(is_playagain){
             for(int threats = 0 ; threats < Amount_Threat; threats++){
                 ThreatObject* p_threat = (p_threat_list + threats);
