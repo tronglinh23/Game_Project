@@ -390,7 +390,7 @@ bool GameOver(const int& mark, int &highest_score ,const int& time){
     }
     return false;     
 }
-void ShowFrame_CheckGameOver(MainObject &main_, ExplosionObject &explod, TextObject &Subtr_mark_game,
+void ShowFrame_CheckGameOver(MainObject &main_, ExplosionObject* explod, TextObject &Subtr_mark_game,
                             PlayerPower &life_player, unsigned int &die_nums, unsigned int mark_value_game, 
                             unsigned int time, bool &is_quit, bool &is_playagain){
     Mix_PlayChannel(0,g_sound_explosion,0);
@@ -400,9 +400,9 @@ void ShowFrame_CheckGameOver(MainObject &main_, ExplosionObject &explod, TextObj
         int x_pos = main_.GetRect().x + main_.GetRect().w*0.5 - 0.5*EXP_WIDTH;
         int y_pos = main_.GetRect().y + main_.GetRect().w*0.5 - 0.5*EXP_HEIGHT;
         SDL_Delay(100);
-        explod.set_frame(ex);
-        explod.SetRect(x_pos,y_pos);
-        explod.RenderEx(renderer,NULL);
+        explod->set_frame(ex);
+        explod->SetRect(x_pos,y_pos);
+        explod->RenderEx(renderer,NULL);
         Subtr_mark_game.SetText("-10");
         Subtr_mark_game.loadFromRenderedText(Subtr_mark,renderer);
         Subtr_mark_game.RenderText(renderer, main_.GetRect().x + 35 , main_.GetRect().y - 35);
@@ -441,9 +441,9 @@ int main(int argc, char* argv[])
     SDL_SetRenderDrawColor(renderer, 255,255,255,255);
     SDL_RenderClear(renderer);
     // Init ExplosionObject
-    ExplosionObject EXP_main;
-    EXP_main.LoadIMG("res/file anh/merge_from_ofoct.png",renderer);
-    EXP_main.set_clip();
+    ExplosionObject* EXP_main = new ExplosionObject;
+    EXP_main->LoadIMG("res/file anh/merge_from_ofoct.png",renderer);
+    EXP_main->set_clip();
 
     //Init mainobject's life power
     PlayerPower life_player;

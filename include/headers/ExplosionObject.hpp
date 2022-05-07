@@ -12,7 +12,7 @@ public:
     ~ExplosionObject();
     void set_clip();
     void set_frame(const int& fr) {frame_ = fr;}
-    void RenderEx(SDL_Renderer* des,const SDL_Rect* CLIP);
+    void RenderEx(SDL_Renderer* des, SDL_Rect* CLIP);
 
 private:
     int frame_;

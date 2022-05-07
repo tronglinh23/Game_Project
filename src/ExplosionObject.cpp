@@ -2,7 +2,7 @@
 
 ExplosionObject::ExplosionObject()
 {
-
+    frame_ = 0;
 }
 ExplosionObject::~ExplosionObject()
 {
@@ -67,11 +67,8 @@ void ExplosionObject::set_clip()
     Clip_[10].h = EXP_HEIGHT;
 
 }
-void ExplosionObject::RenderEx(SDL_Renderer* des,const SDL_Rect* CLIP){
+void ExplosionObject::RenderEx(SDL_Renderer* des, SDL_Rect* current_clip){
+    current_clip = &Clip_[frame_];
     SDL_Rect renderquad = {rect_.x, rect_.y, EXP_WIDTH, EXP_HEIGHT};
-    if(CLIP != NULL){
-        renderquad.w = CLIP->w;
-        renderquad.h = CLIP->h;
-    }
-    SDL_RenderCopy(des, p_object_,&Clip_[frame_], &renderquad);
+    SDL_RenderCopy(des, this->p_object_,current_clip, &renderquad);
 }
