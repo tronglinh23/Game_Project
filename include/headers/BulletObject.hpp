@@ -21,13 +21,13 @@ public:
     ~BulletObject();
     void HandleInputAction(SDL_Event event); // xu li cac buoc di chuyen
     // gioi han cua vien dan khi ban ra , them x_border voi y_border de tien xu li cac vat can khac => lam dan bien mat
-    void HandleMove(const int& x_border, const int& y_border);  // LEFT TO RIGHT
+    void HandleMove(const int& x_border, const int& y_border, const int& k);  // LEFT TO RIGHT
 
     void HandleMoveFromRighttoLeft(const int& x_border, const int& y_border);
     
     int get_type() const {return bullet_type_;}
     void set_type(const int &type) {bullet_type_ = type;}
-
+    void set_type_bullet(const int &type_bullet){bullet_type_game_ = type_bullet;}
     bool get_is_move_() const {return is_move_;}
     void set_is_move_(bool move) {is_move_ = move;}
     // tuy loai dan ma kich co khac nhau phai goi them ham nay
@@ -41,4 +41,5 @@ private:
     int y_val_;
     bool is_move_;
     int bullet_type_;
+    int bullet_type_game_;
 };

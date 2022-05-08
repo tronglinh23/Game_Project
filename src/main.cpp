@@ -552,7 +552,7 @@ int main(int argc, char* argv[])
         // increase speed's threats, speed threat bullet
         for(int t = 0 ; t < Amount_Threat ; t++){
             ThreatObject* p_threat = (p_threat_list + t);
-            p_threat->Set_x_val(Speed_Threat_default + time_game/15); 
+            p_threat->Set_x_val(Speed_Threat_default + time_game/12); 
             p_threat->Upgrade_speed_Bullet();
         }
         if(time_game > 5)
@@ -603,7 +603,7 @@ int main(int argc, char* argv[])
 
             // Bullet - support
             if(time_game >= 15){
-                if(time_game % 51 == 0) Init_Items_Support_Object(Bullet_increase_support, speed_life_support_default);
+                if(time_game % 39 == 0) Init_Items_Support_Object(Bullet_increase_support, speed_life_support_default);
                 Bullet_increase_support.Handle_life_support_Move();
                 Bullet_increase_support.Render(renderer, NULL);
                 if(Bullet_increase_support.CheckCollision(Bullet_increase_support.GetRect(), g_mainobject.GetRect()) && amount_bullet_main_object < max_bullet_main){

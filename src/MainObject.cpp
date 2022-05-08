@@ -157,7 +157,8 @@ void MainObject::Display_bullet(SDL_Renderer* des){
             BulletObject* p_bullet = p_bullet_list_[stt].at(i); // xét từ vị trí viên đầu tiên
             if(p_bullet != NULL){
                 if(p_bullet->get_is_move_()){
-                    p_bullet->HandleMove(SCREEN_WIDTH,SCREEN_HEIGHT); // Khi gap vat can thi xoa vien dan
+                    if(amount_bullet_ > 1 && p_bullet->get_type() == BulletObject::LASER_2) p_bullet->set_type_bullet(1); // dan laser 2 se ban toe ra
+                    p_bullet->HandleMove(SCREEN_WIDTH,SCREEN_HEIGHT,stt); // Khi gap vat can thi xoa vien dan
                     p_bullet->Render(des,NULL);
                 }
                 // khi gap vat can thi get_is_move = false -> lệnh else thực hiện và xóa đi viên đạn đấy, 
