@@ -22,12 +22,12 @@ void BulletObject::HandleMoveFromRighttoLeft(const int& x_border, const int& y_b
 
 void BulletObject::HandleMove(const int& x_border, const int& y_border, const int& k){
     if(bullet_type_game_ == 1 && bullet_type_ == LASER_2){
-        if(k == 1) {
+        if(k == 2) {
             rect_.x += x_val_;
             rect_.y += x_val_/8;
             if(rect_.x > x_border || rect_.y > y_border) is_move_ = false;
         }
-        else if(k == 0){
+        else if(k == 1){
             rect_.x += x_val_;
             if(rect_.x > x_border)
             {
@@ -35,7 +35,7 @@ void BulletObject::HandleMove(const int& x_border, const int& y_border, const in
             }
             if(rect_.x > x_border || rect_.y  < 0 ) is_move_ = false;   
         }
-        else if(k == 2){
+        else if(k == 0){
             rect_.x += x_val_;
             rect_.y -= x_val_/8;
         }
