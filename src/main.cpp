@@ -56,9 +56,10 @@ void InitSound(){
        g_sound_eat_sp_object == NULL || g_sound_options_choose == NULL){
         logSDLError(std::cout,"MIX_LOADWAV SOUND could not initialize",true);
     }
-    if( Mix_PlayingMusic() == 0 )
+    if( Mix_PlayingMusic() == 0)
     {
         //Play the music
+        Mix_VolumeMusic(30);
         Mix_PlayMusic(gMusic, -1 );
     }
 }
@@ -386,35 +387,47 @@ int main(int argc, char* argv[])
             }
             if(event.type == SDL_KEYDOWN){
                 switch(event.key.keysym.sym){
-                    case SDLK_ESCAPE:{
+                    case SDLK_ESCAPE:
                         time_menu_stop = time_game; // Time - Stop
                         ret_menu = Show_Menu(renderer,menu_show, menu_font_text);
                         if(ret_menu == 1) is_quit = true;
                         step_time_menu = SDL_GetTicks()/1000 - time_menu_stop;
                         break;
-                    }
                     // Mainobject moves right , load new image
-                    case SDLK_RIGHT:{
-                        g_mainobject.LoadIMG("res/file anh/spaceship02_fix_2.png",renderer);
+                    case SDLK_RIGHT: g_mainobject.LoadIMG("res/file anh/spaceship02_fix_2.png",renderer); break;
+                    case SDLK_d: g_mainobject.LoadIMG("res/file anh/spaceship02_fix_2.png",renderer); break;
+                    case SDLK_1:
+                        //If there is no music playing
+                        if( Mix_PlayingMusic() == 0 )
+                        {
+                            //Play the music
+                            Mix_VolumeMusic(30);
+                            Mix_PlayMusic(gMusic, -1 );
+                        }
+                        //If music is being played
+                        else
+                        {
+                            //If the music is paused
+                            if( Mix_PausedMusic() == 1 )
+                            {
+                                //Resume the music
+                                Mix_ResumeMusic();
+                            }
+                            //If the music is playing
+                            else
+                            {
+                                //Pause the music
+                                Mix_PauseMusic();
+                            }
+                        }
                         break;
-                    }
-                    case SDLK_d:{
-                        g_mainobject.LoadIMG("res/file anh/spaceship02_fix_2.png",renderer);
-                        break;
-                    }
                     default: break;
                 }
             }
             else if(event.type == SDL_KEYUP){
                 switch(event.key.keysym.sym){
-                    case SDLK_RIGHT:{
-                        g_mainobject.LoadIMG("res/file anh/spaceship02_fix.png",renderer);
-                        break;
-                    }
-                    case SDLK_d:{
-                        g_mainobject.LoadIMG("res/file anh/spaceship02_fix.png",renderer);
-                        break;
-                    }
+                    case SDLK_RIGHT: g_mainobject.LoadIMG("res/file anh/spaceship02_fix.png",renderer); break;
+                    case SDLK_d: g_mainobject.LoadIMG("res/file anh/spaceship02_fix.png",renderer); break;
                     default: break;
                 }
             }

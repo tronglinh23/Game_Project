@@ -60,36 +60,6 @@ void MainObject::HandleInputAction(SDL_Event events, SDL_Renderer* screen, Mix_C
             case SDLK_a:
                 x_val_ = -x_step;
                 break;
-            // turn on Music
-            case SDLK_1:
-            //If there is no music playing
-                if( Mix_PlayingMusic() == 0 )
-                {
-                    //Play the music
-                    Mix_VolumeMusic(30);
-                    Mix_PlayMusic(gMusic, -1 );
-                }
-                //If music is being played
-                else
-                {
-                    //If the music is paused
-                    if( Mix_PausedMusic() == 1 )
-                    {
-                        //Resume the music
-                        Mix_ResumeMusic();
-                    }
-                    //If the music is playing
-                    else
-                    {
-                        //Pause the music
-                        Mix_PauseMusic();
-                    }
-                }
-                break;
-            case SDLK_0:
-            //Stop the music
-            Mix_HaltMusic();
-            break;
         }
     }
     else if(events.type == SDL_KEYUP){
