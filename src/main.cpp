@@ -2,7 +2,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
-#include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_ttf.h>
 #include "time.h"
 #include "Common_function.hpp"
@@ -14,47 +13,13 @@
 #include "PlayerPower.hpp"
 #include "Text_Object.hpp"
 #include "SupportObject.hpp"
-
-void logSDLError(std::ostream& os, const std::string &msg, bool fatal){
-    os << msg << " Error: " << SDL_GetError() << std::endl;
-    if (fatal) {
-        SDL_Quit();
-        exit(1);
-    }
-}
-
-void initSDL(SDL_Window* &window, SDL_Renderer* &renderer) 
-{
-    if (SDL_Init(SDL_INIT_EVERYTHING) != 0) logSDLError(std::cout, "SDL_Init", true);
-
-    window = SDL_CreateWindow(WINDOW_TITLE.c_str(), SDL_WINDOWPOS_CENTERED,
-       SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-
-    if (!window) logSDLError(std::cout, "CreateWindow", true); // window == nullptr
-
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-
-    if (!renderer) logSDLError(std::cout, "CreateRenderer", true);  // renderer == nullptr
-
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
-    SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
-}
-
-void quitSDL(SDL_Window* window, SDL_Renderer* renderer)
-{
-	SDL_DestroyRenderer(renderer);
-	SDL_DestroyWindow(window);
-    Mix_Quit();
-    IMG_Quit();
-	SDL_Quit();
-}
-
+// Init Background
 void InitBackground(BaseObject &background){
     bool ret = background.LoadIMG(pics_background.c_str(),renderer);
     if(ret == false) logSDLError(std::cout, "Create Background", true);
     background.setSize(WIDTH_BACKGROUND,HEIGHT_BACKGROUND);
 }
-
+// Init MainObject
 void InitMainObject(MainObject &p_mainobject){
     bool ret = p_mainobject.LoadIMG("res/file anh/spaceship02_fix.png",renderer);
     p_mainobject.SetRect(mainobject_Pos_X_Start,mainobject_Pos_Y_Start); // vi tri xuat hien
@@ -62,16 +27,8 @@ void InitMainObject(MainObject &p_mainobject){
     p_mainobject.Set_x_step_y_step(Speed_deafault_mainobject_x, Speed_deafault_mainobject_Y);
     if(ret == false) logSDLError(std::cout, "Create Mainobject", true);
 }
-//random pics threats
-std::string random_pics(){
-    const std::string pics_threats[] = {"res/file anh/ship_enemy/Ship1.png", "res/file anh/ship_enemy/Ship2.png",
-                                        "res/file anh/ship_enemy/Ship3.png", "res/file anh/ship_enemy/Ship4.png",
-                                        "res/file anh/ship_enemy/Ship5.png", "res/file anh/ship_enemy/Ship6.png"};
-    int ran = rand() % 6;
-    return pics_threats[ran];
-}
 // INIT AUDIO
-void Init()
+void Init_Audio()
 {
     if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) logSDLError(std::cout,"CREATE AUDIO",true);
     // Initialize img
@@ -114,6 +71,55 @@ void InitText(){
     Subtr_mark = TTF_OpenFont(subtr_mark_text.c_str(),size_subtr_mark_text);
     if(!g_font_text && !menu_font_text && !menu_options_text_2 && !Subtr_mark) logSDLError(std::cout,"Failed to load lazy font! SDL_ttf ",true);
 }
+// Init Support Object - planets
+void Init_Support_Object(SupportObject * list_object){
+    for(int sp_ob = 0 ; sp_ob < Amount_Support_Object; sp_ob++){
+        SupportObject* list_spp = list_object + sp_ob;
+        list_spp->LoadIMG(file_pics_support_object[rand() % amount_pics_path].c_str(), renderer);
+        list_spp->setSize(size_x_pics_sp, size_y_pics_sp);
+        int ran_num = rand() % (SCREEN_HEIGHT + 400);
+        if(ran_num >= SCREEN_HEIGHT - 50) ran_num *= 5.0/10;
+        list_spp->SetRect(SCREEN_WIDTH + sp_ob*50, ran_num);
+        list_spp->Set_x_pos(3);
+    }
+}
+// Init Items Support - speed , bullet, star
+void Init_Items_Support_Object(SupportObject &life_suport, int speed_life){
+    life_suport.SetRect(SCREEN_WIDTH , rand() % (SCREEN_HEIGHT - 100));
+    life_suport.Set_x_pos(speed_life);
+}
+// Random pics threats
+std::string random_pics(){
+    const std::string pics_threats[] = {"res/file anh/ship_enemy/Ship1.png", "res/file anh/ship_enemy/Ship2.png",
+                                        "res/file anh/ship_enemy/Ship3.png", "res/file anh/ship_enemy/Ship4.png",
+                                        "res/file anh/ship_enemy/Ship5.png", "res/file anh/ship_enemy/Ship6.png"};
+    int ran = rand() % 6;
+    return pics_threats[ran];
+}
+// Init ThreatObject
+void Init_ThreatObject(ThreatObject *llist_threat, int amount_threats){
+    for(int i = 0 ; i < amount_threats ; i++)
+    {
+        ThreatObject* p_threat = llist_threat + i;
+        if(i == amount_threats - 1){
+            p_threat->LoadIMG("res/file anh/ship_enemy/boss_ship_1.png", renderer);
+            p_threat->setSize(WIDTH_THREAT_TANK, HEIGHT_THREAT_TANK);
+            p_threat->Setlife_(life_tank_threat_object);
+        }
+        else{
+            p_threat->LoadIMG(random_pics(),renderer);
+            p_threat->setSize(WIDTH_THREAT,HEIGHT_THREAT);
+            p_threat->Setlife_(life_threat_object);
+        }
+        int ran_num = rand() % (SCREEN_HEIGHT + 400);
+        if(ran_num > SCREEN_HEIGHT - p_threat->GetRect().h) ran_num *= 5.0/10;
+        p_threat->SetRect(SCREEN_WIDTH + i * 400,ran_num);
+        p_threat->Set_x_val(Speed_Threat_default);
+        p_threat->Upgrade_speed_Bullet();
+        BulletObject* threat_bullet = new BulletObject();
+        p_threat->init(threat_bullet,renderer);
+    }
+}
 // Check focus button 
 bool checkfocuswithrect(const int& x, const int& y, const SDL_Rect& rect){
     if( x >= rect.x && x < rect.x + rect.w &&
@@ -123,7 +129,7 @@ bool checkfocuswithrect(const int& x, const int& y, const SDL_Rect& rect){
     }
     return false;
 }
-// ShowMenu
+// Show Menu
 int Show_Menu(SDL_Renderer* des,BaseObject& Menu_show,TTF_Font* font_game_menu)
 {
     bool ret = Menu_show.LoadIMG("res/file anh/background_4k.jpg",des);
@@ -202,122 +208,6 @@ int Show_Menu(SDL_Renderer* des,BaseObject& Menu_show,TTF_Font* font_game_menu)
     }
     return 1;
 }
-// Init Support Object - planets
-void Init_Support_Object(SupportObject * list_object){
-    for(int sp_ob = 0 ; sp_ob < Amount_Support_Object; sp_ob++){
-        SupportObject* list_spp = list_object + sp_ob;
-        list_spp->LoadIMG(file_pics_support_object[rand() % amount_pics_path].c_str(), renderer);
-        list_spp->setSize(size_x_pics_sp, size_y_pics_sp);
-        int ran_num = rand() % (SCREEN_HEIGHT + 400);
-        if(ran_num >= SCREEN_HEIGHT - 50) ran_num *= 5.0/10;
-        list_spp->SetRect(SCREEN_WIDTH + sp_ob*50, ran_num);
-        list_spp->Set_x_pos(3);
-    }
-}
-// Init Items Support - speed , bullet, star
-void Init_Items_Support_Object(SupportObject &life_suport, int speed_life){
-    life_suport.SetRect(SCREEN_WIDTH , rand() % (SCREEN_HEIGHT - 100));
-    life_suport.Set_x_pos(speed_life);
-}
-// Show Menu 2 - when playing game
-int Show_Menu_Options(){
-    // return 0 : Continue
-    // return 1 : Show menu
-    // return 2 : Quit game
-    
-    bool time_pause = true;
-    BaseObject Options_menu_background;
-    Options_menu_background.LoadIMG("res/file anh/panel-5.png",renderer);
-    Options_menu_background.setSize(400,200);
-    Options_menu_background.SetRect(x_pos_menu_options, y_pos_menu_options);
-    const int MenuItems = 2;
-    SDL_Rect pos_items[MenuItems];
-    pos_items[0].x = x_pos_menu_options + 80;
-    pos_items[0].y = y_pos_menu_options + 50;
-    pos_items[1].x = x_pos_menu_options + 80;
-    pos_items[1].y = y_pos_menu_options + 100;
-    TextObject text_menu[MenuItems];
-    text_menu[0].SetText("CONTINUE");
-    text_menu[0].SetColor(color_items_menu_2_R,color_items_menu_2_G,color_items_menu_2_B);
-    text_menu[0].SetRect(pos_items[0].x, pos_items[0].y);
-
-    text_menu[1].SetText("MENU");
-    text_menu[1].SetColor(color_items_menu_2_R,color_items_menu_2_G,color_items_menu_2_B);
-    text_menu[1].SetRect(pos_items[1].x, pos_items[1].y);
-    int x = 0, y = 0;
-    SDL_Event event_options;
-    while(time_pause){
-        Options_menu_background.Render(renderer,NULL);
-        for(int i = 0 ; i < MenuItems ; i++){
-            text_menu[i].loadFromRenderedText(menu_options_text_2,renderer);
-            text_menu[i].RenderText(renderer,pos_items[i].x,pos_items[i].y);
-
-        }    
-        while(SDL_PollEvent(&event_options)){
-            switch(event_options.type){
-                case SDL_QUIT: return 2;
-                case SDL_KEYDOWN:
-                    if(event.key.keysym.sym == SDLK_ESCAPE) return 0;
-                case SDL_MOUSEMOTION:
-                {
-                    // lay vi tri cua con chuot
-                    x = event_options.motion.x;
-                    y = event_options.motion.y;
-                    // change colors
-                    for(int i = 0 ; i < MenuItems; i++){
-                        if(checkfocuswithrect(x,y,text_menu[i].GetRect())){
-                            text_menu[i].SetColor(color_Change_ItemText_R, color_Change_ItemText_G, color_Change_ItemText_B);
-                        }
-                        else
-                            text_menu[i].SetColor(color_items_menu_2_R,color_items_menu_2_G,color_items_menu_2_B);
-                    }
-                    break;
-                }
-                // if button down
-                case SDL_MOUSEBUTTONDOWN:
-                {
-                    x = event_options.button.x;
-                    y = event_options.button.y;
-                    for(int i = 0 ; i < MenuItems; i++){
-                        if(checkfocuswithrect(x,y,text_menu[i].GetRect())){
-                            Mix_PlayChannel(0,g_sound_options_choose,0);
-                            return i;
-                        }
-                    }
-                    break;
-                }
-                default:
-                    break;
-            }
-        }
-        SDL_RenderPresent(renderer);   
-    }
-    return 1;
-}
-//Init ThreatObject
-void Init_ThreatObject(ThreatObject *llist_threat, int amount_threats){
-    for(int i = 0 ; i < amount_threats ; i++)
-    {
-        ThreatObject* p_threat = llist_threat + i;
-        if(i == amount_threats - 1){
-            p_threat->LoadIMG("res/file anh/ship_enemy/boss_ship_1.png", renderer);
-            p_threat->setSize(WIDTH_THREAT_TANK, HEIGHT_THREAT_TANK);
-            p_threat->Setlife_(life_tank_threat_object);
-        }
-        else{
-            p_threat->LoadIMG(random_pics(),renderer);
-            p_threat->setSize(WIDTH_THREAT,HEIGHT_THREAT);
-            p_threat->Setlife_(life_threat_object);
-        }
-        int ran_num = rand() % (SCREEN_HEIGHT + 400);
-        if(ran_num > SCREEN_HEIGHT - p_threat->GetRect().h) ran_num *= 5.0/10;
-        p_threat->SetRect(SCREEN_WIDTH + i * 400,ran_num);
-        p_threat->Set_x_val(Speed_Threat_default);
-        p_threat->Upgrade_speed_Bullet();
-        BulletObject* threat_bullet = new BulletObject();
-        p_threat->init(threat_bullet,renderer);
-    }
-}
 // Gameover
 bool GameOver(const int& mark, int &highest_score ,const int& time){
     if(mark >= highest_score) highest_score = mark;
@@ -390,6 +280,7 @@ bool GameOver(const int& mark, int &highest_score ,const int& time){
     }
     return false;     
 }
+// Show frames animation - Check Game Over
 void ShowFrame_CheckGameOver(MainObject &main_, ExplosionObject* explod, TextObject &Subtr_mark_game,
                             PlayerPower &life_player, unsigned int &die_nums, unsigned int mark_value_game, 
                             unsigned int time, bool &is_quit, bool &is_playagain){
@@ -426,7 +317,7 @@ int main(int argc, char* argv[])
 {
     srand(time(NULL));
     initSDL(window, renderer);
-    Init();
+    Init_Audio();
     InitSound();
     // Init MainObject, Background
     BaseObject g_background;
@@ -496,17 +387,13 @@ int main(int argc, char* argv[])
             if(event.type == SDL_KEYDOWN){
                 switch(event.key.keysym.sym){
                     case SDLK_ESCAPE:{
-                        time_menu_stop = time_game;
-                        int result_path = Show_Menu_Options(); // Show menu 2
-                        if(result_path == 2) is_quit = true;
-                        else if(result_path == 1){
-                            ret_menu = Show_Menu(renderer,menu_show, menu_font_text); // Show menu 1
-                            if(ret_menu == 1) is_quit = true;
-                        }
+                        time_menu_stop = time_game; // Time - Stop
+                        ret_menu = Show_Menu(renderer,menu_show, menu_font_text);
+                        if(ret_menu == 1) is_quit = true;
                         step_time_menu = SDL_GetTicks()/1000 - time_menu_stop;
                         break;
                     }
-                    // mainobject moves right , load new image
+                    // Mainobject moves right , load new image
                     case SDLK_RIGHT:{
                         g_mainobject.LoadIMG("res/file anh/spaceship02_fix_2.png",renderer);
                         break;
@@ -532,9 +419,7 @@ int main(int argc, char* argv[])
                 }
             }
             g_mainobject.HandleInputAction(event,renderer,g_sound_bullet,gMusic);
-
         }
-
         // Render 1 background, run screen
         if(is_run_screen){
             bkgn_x -= speed_run_screen;
@@ -544,8 +429,7 @@ int main(int argc, char* argv[])
             g_background.SetRect(bkgn_x,0);
             g_background.Render(renderer,NULL);
         }
-        
-        //Render player life
+        // Render player life
         life_player.DisplayLife(renderer);
 
     //Handling game timelines
@@ -555,10 +439,8 @@ int main(int argc, char* argv[])
             p_threat->Set_x_val(Speed_Threat_default + time_game/12); 
             p_threat->Upgrade_speed_Bullet();
         }
-        if(time_game > 5)
-        {
-            for(int list_ob = 0 ; list_ob < Amount_Support_Object ; list_ob++) 
-            {
+        if(time_game > 5){
+            for(int list_ob = 0 ; list_ob < Amount_Support_Object ; list_ob++){
                 SupportObject* ob_sp = list_object_support + list_ob;
                 ob_sp->Hand_Support_Move(SCREEN_WIDTH,SCREEN_HEIGHT);
                 ob_sp->Render(renderer,NULL);
@@ -584,7 +466,6 @@ int main(int argc, char* argv[])
                 g_mainobject.Upgrade_speed_mainobject(1);
                 Mix_PlayChannel(0,g_sound_eat_sp_object,0);
             }
-
             if(time_game >= 10){
                 // Star - increase life 
                 if(time_game % 35 == 0) Init_Items_Support_Object(life_object_support, speed_life_support_default);
@@ -600,7 +481,6 @@ int main(int argc, char* argv[])
                     SDL_RenderPresent(renderer);
                 }
             }
-
             // Bullet - support
             if(time_game >= 15){
                 if(time_game % 39 == 0) Init_Items_Support_Object(Bullet_increase_support, speed_life_support_default);
@@ -613,13 +493,11 @@ int main(int argc, char* argv[])
                 }
             }
         }
-        
         // Handle mainobject
         g_mainobject.HandMove();
         g_mainobject.Render(renderer,NULL);
         g_mainobject.Set_Amount_Bullet(amount_bullet_main_object);
         g_mainobject.Display_bullet(renderer);
-
         // Run Threat
         for(int t = 0 ; t < Amount_Threat ; t++){
             ThreatObject* p_threat = (p_threat_list + t);
@@ -628,9 +506,8 @@ int main(int argc, char* argv[])
             p_threat->Makebullet(renderer,SCREEN_WIDTH,SCREEN_HEIGHT);
             // Check Collision mainobject - threats
             bool check_col = p_threat->CheckCollision(g_mainobject.GetRect(),p_threat->GetRect());
-            // CAN DC FIX explosion
             if(check_col){
-                // After the collision, threat reset
+                // After the collision, threats reset
                 if(t == Amount_Threat - 1) p_threat->ResetThreat(SCREEN_WIDTH + t * 400, life_tank_threat_object); 
                 else p_threat->ResetThreat(SCREEN_WIDTH + t * 400, life_threat_object);
                 if(mark_value_game > 10) mark_value_game -= 10; // Collision - decrease points
@@ -682,22 +559,20 @@ int main(int argc, char* argv[])
                         }
                     }
                 }
-            }
-            
+            } 
         }
         // Render mark_Text 
         std::string val_str_mark = text + std::to_string(mark_value_game);
         mark_game.SetText(val_str_mark);
         mark_game.loadFromRenderedText(g_font_text,renderer);
         mark_game.RenderText(renderer, x_pos_render_mark_text, y_pos_render_mark_text);
-
         // Render time_text
         time_game = SDL_GetTicks()/1000 - step_time_menu;
         std::string Time_present = val_time + std::to_string(time_game);
         Time_game.SetText(Time_present);
         Time_game.loadFromRenderedText(g_font_text,renderer);
         Time_game.RenderText(renderer, x_pos_render_time_text, y_pos_render_time_text);
-        // Play again
+        // Play Again
         if(is_playagain){
             for(int threats = 0 ; threats < Amount_Threat; threats++){
                 ThreatObject* p_threat = (p_threat_list + threats);
@@ -732,6 +607,7 @@ int main(int argc, char* argv[])
     mark_game.Free();
     delete [] p_threat_list;
     delete [] list_object_support;
+    delete [] EXP_main;
     quitSDL(window, renderer);
     return 0;
 }

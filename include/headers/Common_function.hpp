@@ -141,3 +141,8 @@ const int y_pos_gameover = 82;
     static unsigned int amount_bullet_main_object = 1;
     static unsigned int time_menu_stop = 0;
     static int highest_score = 999;
+
+// Common functions
+void logSDLError(std::ostream& os, const std::string &msg, bool fatal); // cout Errors
+void initSDL(SDL_Window* &window, SDL_Renderer* &renderer); // Init window renderer
+void quitSDL(SDL_Window* window, SDL_Renderer* renderer); // Quit all 
