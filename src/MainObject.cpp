@@ -6,11 +6,7 @@ MainObject::MainObject(){
     rect_.y = 0;
     rect_.w = WIDTH_MAIN_OBJECT;
     rect_.h = HEIGHT_MAIN_OBJECT;
-    x_val_ = 0;
-    y_val_ = 0;
     amount_bullet_ = 1;
-    x_step = 0;
-    y_step = 0;
 }
 MainObject::~MainObject(){
     for(int i  = 0 ; i < amount_bullet_; i++){

@@ -23,6 +23,7 @@ public:
     void Set_Amount_Bullet(const int& amount_bullet){amount_bullet_ = amount_bullet;}
     void Upgrade_speed_mainobject(const int& x){x_step += x , y_step += x;}
     void Set_x_step_y_step(const int& x_st, const int& y_st){x_step = x_st, y_step = y_st;}
+    void Set_x_val_y_val_default(){x_val_ = 0, y_val_ = 0;}
 private:
     int x_step;
     int y_step;

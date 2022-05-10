@@ -25,6 +25,7 @@ void InitMainObject(MainObject &p_mainobject){
     p_mainobject.SetRect(mainobject_Pos_X_Start,mainobject_Pos_Y_Start); // vi tri xuat hien
     p_mainobject.setSize(WIDTH_MAIN_OBJECT,HEIGHT_MAIN_OBJECT);
     p_mainobject.Set_x_step_y_step(Speed_deafault_mainobject_x, Speed_deafault_mainobject_Y);
+    p_mainobject.Set_x_val_y_val_default();
     if(ret == false) logSDLError(std::cout, "Create Mainobject", true);
 }
 // INIT AUDIO
@@ -68,9 +69,8 @@ void InitText(){
     if( TTF_Init() == -1 ) logSDLError(std::cout,"SDL_ttf could not initialize! SDL_ttf ",true);
     g_font_text = TTF_OpenFont(font_mark_game.c_str(),size_mark);
     menu_font_text = TTF_OpenFont(font_menu_game.c_str(),size_menu_text);
-    menu_options_text_2 = TTF_OpenFont(font_menu_game.c_str(),size_text_menu_2);
     Subtr_mark = TTF_OpenFont(subtr_mark_text.c_str(),size_subtr_mark_text);
-    if(!g_font_text && !menu_font_text && !menu_options_text_2 && !Subtr_mark) logSDLError(std::cout,"Failed to load lazy font! SDL_ttf ",true);
+    if(!g_font_text && !menu_font_text && !Subtr_mark) logSDLError(std::cout,"Failed to load lazy font! SDL_ttf ",true);
 }
 // Init Support Object - planets
 void Init_Support_Object(SupportObject * list_object){
@@ -87,6 +87,7 @@ void Init_Support_Object(SupportObject * list_object){
 // Init Items Support - speed , bullet, star
 void Init_Items_Support_Object(SupportObject &life_suport, int speed_life){
     life_suport.SetRect(SCREEN_WIDTH , rand() % (SCREEN_HEIGHT - 100));
+    life_suport.setSize(size_x_pics_increase_ability_sp, size_y_pics_increase_ability_sp);
     life_suport.Set_x_pos(speed_life);
 }
 // Random pics threats
@@ -229,22 +230,23 @@ bool GameOver(const int& mark, int &highest_score ,const int& time){
     pos_items[4].y = y_pos_gameover + 220;
     TextObject text_menu[MenuItems];
     text_menu[0].SetText("Game Over");
-    text_menu[0].SetColor(color_title_R,color_title_G,color_title_B);
+    text_menu[0].SetColor(color_gameover_R,color_gameover_G,color_gameover_B);
     text_menu[0].SetRect(pos_items[0].x, pos_items[0].y);
     text_menu[1].SetText("Your Score : " + std::to_string(mark));
-    text_menu[1].SetColor(color_title_R,color_title_G,color_title_B);
+    text_menu[1].SetColor(color_gameover_R,color_gameover_G,color_gameover_B);
     text_menu[1].SetRect(pos_items[1].x, pos_items[1].y);
     text_menu[2].SetText("Your Time : " + std::to_string(time));
-    text_menu[2].SetColor(color_title_R,color_title_G,color_title_B);
+    text_menu[2].SetColor(color_gameover_R,color_gameover_G,color_gameover_B);
     text_menu[2].SetRect(pos_items[2].x, pos_items[2].y);
     text_menu[3].SetText("PLAY AGAIN");
-    text_menu[3].SetColor(color_items_menu_2_R,color_items_menu_2_G,color_items_menu_2_B);
+    text_menu[3].SetColor(color_gameover_R,color_gameover_G,color_gameover_B);
     text_menu[3].SetRect(pos_items[3].x, pos_items[3].y);
     text_menu[4].SetText("Highest Score : " + std::to_string(highest_score));
-    text_menu[4].SetColor(color_title_R,color_title_G,color_title_B);
+    text_menu[4].SetColor(color_gameover_R,color_gameover_G,color_gameover_B);
     text_menu[4].SetRect(pos_items[4].x, pos_items[4].y);
 
     SDL_Event event_options;
+    event_options.key.keysym.sym = SDLK_a;
     int x, y;
     while(true){
         while(SDL_PollEvent(&event_options)){
@@ -258,7 +260,7 @@ bool GameOver(const int& mark, int &highest_score ,const int& time){
                         if(checkfocuswithrect(x,y,text_menu[3].GetRect()))
                             text_menu[3].SetColor(color_Change_ItemText_R, color_Change_ItemText_G, color_Change_ItemText_B); 
                         else
-                            text_menu[3].SetColor(color_items_menu_2_R,color_items_menu_2_G,color_items_menu_2_B);
+                            text_menu[3].SetColor(color_gameover_R,color_gameover_G,color_gameover_B);
                         break;
                     }
                     case SDL_MOUSEBUTTONDOWN:{
@@ -291,7 +293,7 @@ void ShowFrame_CheckGameOver(MainObject &main_, ExplosionObject* explod, TextObj
     for(int ex = 0 ; ex < number_frame_ ; ex++){
         int x_pos = main_.GetRect().x + main_.GetRect().w*0.5 - 0.5*EXP_WIDTH;
         int y_pos = main_.GetRect().y + main_.GetRect().w*0.5 - 0.5*EXP_HEIGHT;
-        SDL_Delay(100);
+        SDL_Delay(175);
         explod->set_frame(ex);
         explod->SetRect(x_pos,y_pos);
         explod->RenderEx(renderer,NULL);
@@ -300,18 +302,17 @@ void ShowFrame_CheckGameOver(MainObject &main_, ExplosionObject* explod, TextObj
         Subtr_mark_game.RenderText(renderer, main_.GetRect().x + 35 , main_.GetRect().y - 35);
         SDL_RenderPresent(renderer);
     }
+    SDL_Delay(500);
     if(die_nums <= 2){
-        SDL_Delay(500);
         main_.SetRect(mainobject_Pos_X_Start,mainobject_Pos_Y_Start);
         life_player.Decrease();
         life_player.DisplayLife(renderer);
-        SDL_RenderPresent(renderer);
     }
     // Check game over
     else 
         if(GameOver(mark_value_game,highest_score,time)) is_quit = true;     
         else is_playagain = true;
-  
+    SDL_RenderPresent(renderer);
 }
 // Main
 int main(int argc, char* argv[])
@@ -360,17 +361,14 @@ int main(int argc, char* argv[])
     
     SupportObject life_object_support;
     life_object_support.LoadIMG("res/file anh/star_2.png", renderer);
-    life_object_support.setSize(70,70);
     Init_Items_Support_Object(life_object_support, speed_life_support_default);
 
     SupportObject Speed_increase_support;
     Speed_increase_support.LoadIMG("res/file anh/speed_sp.png", renderer);
-    Speed_increase_support.setSize(70,70);
     Init_Items_Support_Object(Speed_increase_support, speed_life_support_default);
 
     SupportObject Bullet_increase_support;
     Bullet_increase_support.LoadIMG("res/file anh/bullet_sp.png", renderer);
-    Bullet_increase_support.setSize(70,70);
     Init_Items_Support_Object(Bullet_increase_support, speed_life_support_default);
 
     //Show Menu
@@ -379,7 +377,8 @@ int main(int argc, char* argv[])
     if(ret_menu == 1) is_quit = true;
     unsigned int step_time_menu = SDL_GetTicks()/1000;
     // Path flow
-    while(!is_quit){   
+    while(!is_quit){
+        SDL_RenderClear(renderer);   
         while(SDL_PollEvent(&event)){
             if(event.type == SDL_QUIT){
                 is_quit = true;
@@ -442,6 +441,11 @@ int main(int argc, char* argv[])
             g_background.SetRect(bkgn_x,0);
             g_background.Render(renderer,NULL);
         }
+        // Handle mainobject
+        g_mainobject.HandMove();
+        g_mainobject.Render(renderer,NULL);
+        g_mainobject.Set_Amount_Bullet(amount_bullet_main_object);
+        g_mainobject.Display_bullet(renderer);
         // Render player life
         life_player.DisplayLife(renderer);
 
@@ -506,11 +510,6 @@ int main(int argc, char* argv[])
                 }
             }
         }
-        // Handle mainobject
-        g_mainobject.HandMove();
-        g_mainobject.Render(renderer,NULL);
-        g_mainobject.Set_Amount_Bullet(amount_bullet_main_object);
-        g_mainobject.Display_bullet(renderer);
         // Run Threat
         for(int t = 0 ; t < Amount_Threat ; t++){
             ThreatObject* p_threat = (p_threat_list + t);
@@ -587,6 +586,7 @@ int main(int argc, char* argv[])
         Time_game.RenderText(renderer, x_pos_render_time_text, y_pos_render_time_text);
         // Play Again
         if(is_playagain){
+            // Delete All Bullets 
             for(int threats = 0 ; threats < Amount_Threat; threats++){
                 ThreatObject* p_threat = (p_threat_list + threats);
                 std::vector<BulletObject*> threat_bullet_list = p_threat->Get_bullet_list();
@@ -599,6 +599,7 @@ int main(int argc, char* argv[])
                     for(int k = 0 ; k < bullet_list.size(); k++) g_mainobject.Removebullet(i,k);
                 }
             }
+            //Init All Objects And Values
             Init_ThreatObject(p_threat_list,Amount_Threat);
             InitMainObject(g_mainobject);
             InitBackground(g_background);

@@ -1,12 +1,10 @@
-
 #pragma once
-#include <windows.h>
-#include <string>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include <iostream>
 #include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_ttf.h>
+#include <iostream>
+#include <string>
 // Window title
     const std::string WINDOW_TITLE = "SDL2 _ SpaceGame";
 //Screen
@@ -14,6 +12,11 @@
     const int SCREEN_HEIGHT = 600;
     const int SCREEN_BPP = 32;
     const int speed_run_screen = 2;
+
+// Init default
+    static SDL_Window* window = NULL;
+    static SDL_Renderer* renderer = NULL;
+    static SDL_Event event;
 
 // Font text - title
     // MenuText
@@ -69,17 +72,12 @@
     const int max_bullet_main = 3;
 
 // Explosion
-    const int number_frame_ = 11;
+    const int number_frame_ = 6;
 
 // background
     const std::string pics_background = "res/file anh/6569652.png";
     const int WIDTH_BACKGROUND = 4800;
     const int HEIGHT_BACKGROUND = 600;
-
-// Init default
-    static SDL_Window* window = NULL;
-    static SDL_Renderer* renderer = NULL;
-    static SDL_Event event;
 
 //Amount of THREAT_OBJECT
     const int Amount_Threat = 5;
@@ -87,7 +85,7 @@
     const int life_tank_threat_object = 5;
     const int life_threat_object = 1;
 
-// transparent background
+// Transparent background
     const int COLOR_KEY_R = 0;
     const int COLOR_KEY_G = 255;
     const int COLOR_KEY_B = 255;
@@ -109,24 +107,19 @@
                                                     "res/Planets/planet18_0.png","res/Planets/planet19.png","res/Planets/planet20.png"};
     const int amount_pics_path = 18;    
     const int size_x_pics_sp = 55;
-    const int size_y_pics_sp = 55;                
+    const int size_y_pics_sp = 55;
+    const int size_x_pics_increase_ability_sp = 70;                
+    const int size_y_pics_increase_ability_sp = 70;                
     // life_support_object
     const int speed_life_support_default = 10;
-
-
-// Menu option 2
-static TTF_Font *menu_options_text_2 = NULL;
-const std::string font_menu_text = "res/font/V5PRC___.TTF";
-const int size_text_menu_2 = 30;
-const int x_pos_menu_options = SCREEN_WIDTH/4 + 80;
-const int y_pos_menu_options = SCREEN_HEIGHT/4 + 30;
-const int color_items_menu_2_R= 2;
-const int color_items_menu_2_G = 25;
-const int color_items_menu_2_B = 61;
 
 // GameOver
 const int x_pos_gameover = SCREEN_WIDTH/4;
 const int y_pos_gameover = 82;
+const int color_gameover_R = 0;
+const int color_gameover_G = 0;
+const int color_gameover_B = 0;
+
 
 //Path run
     static int bkgn_x = 0;
