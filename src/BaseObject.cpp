@@ -98,7 +98,7 @@ bool BaseObject::CheckCollision(const SDL_Rect &object1 ,const SDL_Rect &object2
         }
     }
     
-    // Case 2: size object 1 < size object 2
+    // Case 2: size object 1 > size object 2
     if (left_b > left_a && left_b < right_a)
     {
         if (top_b > top_a && top_b < bottom_a)
@@ -131,7 +131,7 @@ bool BaseObject::CheckCollision(const SDL_Rect &object1 ,const SDL_Rect &object2
         }
     }
     
-    // Case 3: size object 1 = size object 2
+    // Case 3: size object 1 == size object 2
     if (top_a == top_b && right_a == right_b && bottom_a == bottom_b)
     {
         return true;
