@@ -60,6 +60,7 @@ void MainObject::HandleInputAction(SDL_Event events, SDL_Renderer* screen, Mix_C
             case SDLK_a:
                 x_val_ = -x_step;
                 break;
+            default: break;
         }
     }
     else if(events.type == SDL_KEYUP){
@@ -92,6 +93,7 @@ void MainObject::HandleInputAction(SDL_Event events, SDL_Renderer* screen, Mix_C
             case SDLK_a:
                 x_val_ += x_step;
                 break;
+            default: break;
         }
     }
     else if(events.type == SDL_MOUSEBUTTONDOWN)
