@@ -4,7 +4,6 @@
 
 const int EXP_WIDTH = 256;
 const int EXP_HEIGHT = 256;
-
 class ExplosionObject:public BaseObject
 {
 public:

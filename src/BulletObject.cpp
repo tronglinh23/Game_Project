@@ -21,7 +21,7 @@ void BulletObject::HandleMoveFromRighttoLeft(const int& x_border, const int& y_b
 }
 
 void BulletObject::HandleMove(const int& x_border, const int& y_border, const int& k){
-    if(bullet_type_game_ == 1 && bullet_type_ == LASER_2){
+    if(bullet_type_game_ == 1 && bullet_type_ == LASER_2){ // dan ban toe 
         if(k == 2) {
             rect_.x += x_val_;
             rect_.y += x_val_/8;

@@ -17,7 +17,6 @@ public:
     void HandMove();
     void SetbulletList(std::vector<BulletObject*> bullet_list, const int& stt) {p_bullet_list_[stt] = bullet_list;}
     std::vector<BulletObject*> GetbulletList(const int& stt) const {return p_bullet_list_[stt];}
-    
     void Display_bullet(SDL_Renderer* des);
     void Removebullet(const int& stt,const int& x);
     void Set_Amount_Bullet(const int& amount_bullet){amount_bullet_ = amount_bullet;}

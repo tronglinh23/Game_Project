@@ -11,7 +11,6 @@ public:
     void setSize(const int& w , const int& h){rect_.w = w, rect_.h = h;}
     SDL_Rect GetRect() const {return rect_;} 
     SDL_Texture* GetTexture() const {return p_object_;}
-
     bool LoadIMG(std::string path, SDL_Renderer* screen); // loadimage de ve ra 
     void Render(SDL_Renderer* des, const SDL_Rect* clip = NULL); // day len render 
     bool CheckCollision(const SDL_Rect &object1 ,const SDL_Rect &object2);

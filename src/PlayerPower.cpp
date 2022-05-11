@@ -22,7 +22,6 @@ void PlayerPower::DisplayLife(SDL_Renderer* des){
     }
 }
 void PlayerPower::Init(){
-    // LoadIMG("res/play_power.png",renderer);
     number_ = 3;
     if(pos_life_.size() > 0)
     {
