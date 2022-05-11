@@ -132,7 +132,7 @@ const int color_gameover_B = 0;
     static unsigned int time_game = 0;
     static unsigned int amount_bullet_main_object = 1;
     static unsigned int time_menu_stop = 0;
-    static int highest_score = 999;
+    static int highest_score = 0;
 
 // Common functions
 void logSDLError(std::ostream& os, const std::string &msg, bool fatal); // cout Errors

@@ -13,6 +13,7 @@
 #include "PlayerPower.hpp"
 #include "Text_Object.hpp"
 #include "SupportObject.hpp"
+#include <fstream>
 // Init Background
 void InitBackground(BaseObject &background){
     bool ret = background.LoadIMG(pics_background.c_str(),renderer);
@@ -317,6 +318,8 @@ void ShowFrame_CheckGameOver(MainObject &main_, ExplosionObject* explod, TextObj
 // Main
 int main(int argc, char* argv[])
 {
+    std::fstream file ("highestscore.txt"); // take highest score
+    file >> highest_score;
     srand(time(NULL));
     initSDL(window, renderer);
     Init_Audio();
@@ -617,6 +620,9 @@ int main(int argc, char* argv[])
         } 
         SDL_RenderPresent(renderer);
     }
+    std::ofstream highest_score_game ("highestscore.txt"); // change highest score
+    highest_score_game << highest_score;
+    highest_score_game.close();
     Time_game.Free();
     mark_game.Free();
     delete [] p_threat_list;
