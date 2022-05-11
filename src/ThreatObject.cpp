@@ -68,15 +68,7 @@ void ThreatObject::Makebullet(SDL_Renderer* des, const int& x_limit , const int&
 void ThreatObject::HandleMove(const int& x_border, const int& y_boder){
    
     rect_.x -= x_val_; // obstacle di chuyen
-    if(rect_.x < 0) {
-        rect_.x = SCREEN_WIDTH;
-        rect_.y = rand() % (SCREEN_HEIGHT + 400);
-        // std::cout << rect_.y << " "; 
-        if(rect_.y >= SCREEN_HEIGHT - 50){
-            rect_.y *= 5.0/10;
-            // std::cout << rect_.y << " ";
-        }
-    }
+    if(rect_.x < 0) ResetThreat(x_border,life_);
 }
 
 void ThreatObject::ResetThreat(const int& xborder, const int& life){

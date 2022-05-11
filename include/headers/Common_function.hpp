@@ -58,8 +58,8 @@
     const int y_pos_render_time_text = 10;
     // Subtract mark text - collid
     static TTF_Font *Subtr_mark = NULL;
-    const std::string subtr_mark_text = "res/font/Rabanera-outline-shadow.ttf";
-    const int size_subtr_mark_text = 35;
+    const std::string subtr_mark_text = "res/font/quadrangle.ttf";
+    const int size_subtr_mark_text = 30;
     const int color_SubtrText_R = 0;
     const int color_SubtrText_G = 255;
     const int color_SubtrText_B = 30;

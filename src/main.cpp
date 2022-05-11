@@ -299,7 +299,7 @@ void ShowFrame_CheckGameOver(MainObject &main_, ExplosionObject* explod, TextObj
         explod->RenderEx(renderer,NULL);
         Subtr_mark_game.SetText("-10");
         Subtr_mark_game.loadFromRenderedText(Subtr_mark,renderer);
-        Subtr_mark_game.RenderText(renderer, main_.GetRect().x + 35 , main_.GetRect().y - 35);
+        Subtr_mark_game.RenderText(renderer, main_.GetRect().x + 50 , main_.GetRect().y - 50);
         SDL_RenderPresent(renderer);
     }
     SDL_Delay(500);
@@ -470,7 +470,7 @@ int main(int argc, char* argv[])
                     ob_sp->Remove_support_Object(SCREEN_WIDTH);
                     Subtr_Mark_game.SetText("+5");
                     Subtr_Mark_game.loadFromRenderedText(Subtr_mark,renderer);
-                    Subtr_Mark_game.RenderText(renderer, g_mainobject.GetRect().x + 35 , g_mainobject.GetRect().y - 35);
+                    Subtr_Mark_game.RenderText(renderer, g_mainobject.GetRect().x + 50 , g_mainobject.GetRect().y - 50);
                     Mix_PlayChannel(0,g_sound_eat_sp_object,0);
                 }
             }
