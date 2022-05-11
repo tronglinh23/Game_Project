@@ -10,7 +10,6 @@
 //Screen
     const int SCREEN_WIDTH = 1200;
     const int SCREEN_HEIGHT = 600;
-    const int SCREEN_BPP = 32;
     const int speed_run_screen = 2;
 
 // Init default
