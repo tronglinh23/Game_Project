@@ -26,7 +26,7 @@ bool BaseObject::LoadIMG(std::string path, SDL_Renderer* screen)
             rect_.w = Load_Surface->w;
             rect_.h = Load_Surface->h;
         }
-        if(new_texture == NULL){
+        else{
             std::cout << "Unable to create texture from " << path << " SDL ERROR : " << SDL_GetError() << std::endl;
         }
         SDL_FreeSurface(Load_Surface);
